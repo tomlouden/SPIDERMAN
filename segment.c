@@ -21,3 +21,22 @@ double segment(double r, double theta) {
 
     return area;
 }
+
+double sector(double r, double theta) {
+    double area;
+
+    area = (pow(r,2))*theta/2;
+
+    return area;
+}
+
+double find_sector_region(double r1, double r2, double theta) {
+    double a1,a2,area;
+
+    a1 = sector(r1,theta);
+    a2 = sector(r2,theta);
+
+    area = a2 - a1;
+
+    return area;
+}

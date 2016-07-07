@@ -3,6 +3,10 @@
 #include "heron.h"
 #include "segment.h"
 #include "areas.h"
+#include "intersection.h"
+#include "generate.h"
+#include "blocked.h"
+#include <stdio.h>
 
 static char module_docstring[] =
     "This module is used to calcuate the areas of geometric shapes";
@@ -18,6 +22,10 @@ static PyObject *web_segment(PyObject *self, PyObject *args);
 static PyObject *web_find_segment_area(PyObject *self, PyObject *args);
 static PyObject *web_find_quad_area(PyObject *self, PyObject *args);
 static PyObject *web_one_in_one_out(PyObject *self, PyObject *args);
+static PyObject *web_circle_intersect(PyObject *self, PyObject *args);
+static PyObject *web_line_intersect(PyObject *self, PyObject *args);
+static PyObject *web_generate_planet(PyObject *self, PyObject *args);
+static PyObject *web_blocked(PyObject *self, PyObject *args);
 
 static PyMethodDef module_methods[] = {
     {"heron", web_heron, METH_VARARGS, web_docstring},
@@ -25,21 +33,25 @@ static PyMethodDef module_methods[] = {
     {"find_segment_area", web_find_segment_area, METH_VARARGS, segment_docstring},
     {"find_quad_area", web_find_quad_area, METH_VARARGS, quad_docstring},
     {"one_in_one_out", web_one_in_one_out, METH_VARARGS, quad_docstring},
+    {"circle_intersect", web_circle_intersect, METH_VARARGS, quad_docstring},
+    {"line_intersect", web_line_intersect, METH_VARARGS, quad_docstring},
+    {"generate_planet", web_generate_planet, METH_VARARGS, quad_docstring},
+    {"blocked", web_blocked, METH_VARARGS, quad_docstring},
     {NULL, NULL, 0, NULL}
 };
 
 PyMODINIT_FUNC
 #if PY_MAJOR_VERSION >= 3
-PyInit__heron(void)
+PyInit__web(void)
 #else
-init_heron(void)
+init_web(void)
 #endif
 {
 	#if PY_MAJOR_VERSION >= 3
 		PyObject *module;
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"_heron",             /* m_name */
+			"_web",             /* m_name */
 			module_docstring,    /* m_doc */
 			-1,                  /* m_size */
 			module_methods,      /* m_methods */
@@ -191,5 +203,73 @@ static PyObject *web_one_in_one_out(PyObject *self, PyObject *args)
     /* Build the output tuple */
 
     PyObject *ret = Py_BuildValue("d",area);
+    return ret;
+}
+
+static PyObject *web_circle_intersect(PyObject *self, PyObject *args)
+{
+    double x1,y1,r1,x2,y2,r2;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "dddddd", &x1,&y1,&r1,&x2,&y2,&r2))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double *intersect = circle_intersect(x1,y1,r1,x2,y2,r2);
+
+    /* Build the output tuple */
+
+    PyObject *ret = Py_BuildValue("[d,d,d,d]",intersect[0],intersect[1],intersect[2],intersect[3]);
+    return ret;
+}
+
+static PyObject *web_line_intersect(PyObject *self, PyObject *args)
+{
+    double x1,y1,x2,y2,r2;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "ddddd", &x1,&y1,&x2,&y2,&r2))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double *intersect = line_intersect(x1,y1,x2,y2,r2);
+
+    /* Build the output tuple */
+
+    PyObject *ret = Py_BuildValue("[d,d,d,d]",intersect[0],intersect[1],intersect[2],intersect[3]);
+    return ret;
+}
+
+static PyObject *web_generate_planet(PyObject *self, PyObject *args)
+{
+    int n_layers;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "i", &n_layers))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double **planet_struct = generate_planet(n_layers);
+
+    /* Build the output tuple */
+
+    printf("%f\n",planet_struct[0][0]);
+
+    PyObject *ret = Py_BuildValue("f",planet_struct[0][0]);
+    return ret;
+}
+
+static PyObject *web_blocked(PyObject *self, PyObject *args)
+{
+    int n_layers;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "i", &n_layers))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double planet_struct = blocked(n_layers);
+
+    PyObject *ret = Py_BuildValue("f",1.0);
     return ret;
 }

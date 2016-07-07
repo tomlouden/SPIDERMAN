@@ -40,3 +40,31 @@ double one_in_one_out(double *c1,double *c2,double *e1,double *e2,double r_inner
         
     return area;
 }
+
+double two_circles_external(double *c1,double *c2,double r_outer,double r2,double x2,double y2){
+    double a_1,a_2,area;
+
+    /* segment of the large circle (star) first*/
+    a_1 = find_segment_area(c1[0],c2[0],x2,r2);
+
+    /* segment of the small circle (planet)*/
+    a_2 = find_segment_area(c1[0],c2[0],0,r_outer);
+        
+    area = a_1 + a_2;
+        
+    return area;
+}
+
+double two_circles_internal(double *c1,double *c2,double r_inner,double r2,double x2,double y2){
+    double a_1,a_2,area;
+
+    /* segment of the large circle (star) first*/
+    a_1 = find_segment_area(c1[0],c2[0],x2,r2);
+
+    /* segment of the small circle (planet)*/
+    a_2 = find_segment_area(c1[0],c2[0],0,r_inner);
+        
+    area = a_1 + -a_2;
+        
+    return area;
+}
