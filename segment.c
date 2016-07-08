@@ -1,5 +1,8 @@
 #include "segment.h"
 #include "math.h"
+#include "intersection.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 double find_segment_area(double c1x, double c2x,double x2,double r2){
     double area,theta1,theta2,theta;
@@ -41,17 +44,75 @@ double find_sector_region(double r1, double r2, double theta) {
     return area;
 }
 
-double find_circles_region(double xc1, double yc1, double xc2, double yc2, double x1, double y1, double r1, double x2, double y2, double r2) {
+double find_circles_region(double x1, double y1, double r1, double x2, double y2, double r2) {
     double a1,a2,area;
 
-    double theta1 =
+    double center_distance = sqrt(pow(x2-x1,2) + pow(y2-y1,2));
 
-    double r1 = 
+    // if they don't touch then there's no area...
+    if(center_distance > (r1 + r2)){
+        return 0.0;
+    }
+
+    double *cross_points1 = circle_intersect(x1,y1,r1,x2,y2,r2);
+
+    double *cross_points2 = circle_intersect(x2-x2,y2-y2,r2,x1-x2,y1-y2,r1);
+
+    cross_points2[0] = cross_points2[0] + x2;
+    cross_points2[1] = cross_points2[1] + y2;
+
+    // if there is no collision, and the circles are closer than their 
+    // radii, then the whole of the smaller circle is covered.
+    printf("%f\n",cross_points1[0]);
+    if(isnan(cross_points1[0])){
+        double central_cross = M_PI*pow(r1,2);
+        return central_cross;
+    }
+    printf("circle1 cross %f %f %f %f\n",cross_points1[0],cross_points1[1],cross_points1[2],cross_points1[3]);
+
+    printf("circle2 cross %f %f %f %f\n",cross_points2[0],cross_points2[1],cross_points2[2],cross_points2[3]);
+
+    double theta1 = cross_points1[4] - cross_points1[5];
+    double theta2 = cross_points2[4] - cross_points2[5];
+
+    if((theta1 < 0)){
+        theta1 = 2*M_PI + theta1;
+    }
+
+    if((theta2 < 0)){
+        theta2 = 2*M_PI + theta1;
+    }
+
+    printf("theta1 %f\n",theta1);
+    printf("theta2 %f\n",theta2);
+
+    // if the small circle is inside the big circle, it will always
+    // be the larger of the two angles
+
+    if((theta1 < M_PI) && (r1 < center_distance)){
+        theta1 = 2*M_PI - theta1;
+    }
+
+    // if the small circle is outside, it will always be
+    // the smaller of the two angles
+
+    if((theta1 > M_PI) && (r1 > center_distance)){
+        theta1 = 2*M_PI - theta1;
+    }
+
+
+    // the larger circle can never have an angle greater than pi 
+    if(theta2 > M_PI){
+        theta2 = 2*M_PI - theta2;
+    }
+
+    printf("theta1 %f\n",theta1);
+    printf("theta2 %f\n",theta2);
 
     a1 = segment(r1,theta1);
     a2 = segment(r2,theta2);
 
-    area = a2 - a1;
+    area = a2 + a1;
 
     return area;
 }

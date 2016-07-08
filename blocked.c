@@ -1,5 +1,6 @@
 #include "blocked.h"
 #include "generate.h"
+#include "segment.h"
 #include "intersection.h"
 #include "math.h"
 #include <stdlib.h>
@@ -20,6 +21,15 @@ double blocked(int n_layers, double x2, double y2, double r2){
     x1 = 0;
     y1 = 0;
     r1 = 1;
+
+    // first check for overlaps in the central circle
+
+    printf("before circle %f\n",total_blocked);
+
+    double central_crossover = find_circles_region(x1,y1,planet[0][14],x2,y2,r2);
+    printf("central circle %f\n",central_crossover);
+    total_blocked = total_blocked + central_crossover*planet[0][16];
+    printf("after circle %f\n",total_blocked);
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
         // does the outer circle cross?

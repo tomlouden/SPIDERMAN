@@ -46,7 +46,7 @@ double **generate_planet(int n_layers){
 
     // This will be assigned later by another function//
     // For now, make total luminosity of the planet = 1//
-    planet[0][16] = 1.0/n_segments;  // Region brightness //
+    planet[0][16] = 1.0/M_PI;  // Region brightness //
 
     int k = 1;
     for (int i = 1; i < n_layers; ++i) {
@@ -78,7 +78,7 @@ double **generate_planet(int n_layers){
             planet[k][8] = planet[k][14]*sin(planet[k][11]); // outer y //
             planet[k][9] = (planet[k][8] - planet[k][6]) / (planet[k][7] - planet[k][5]); // gradient //
 
-            planet[k][16] = 1.0;  // Region brightness //
+            planet[k][16] = 1.0/M_PI;  // Region brightness //
 
             printf("%f\n",planet[k][16]);
 
