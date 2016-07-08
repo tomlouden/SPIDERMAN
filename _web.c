@@ -262,13 +262,14 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 static PyObject *web_blocked(PyObject *self, PyObject *args)
 {
     int n_layers;
+    double x2,y2,r2;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "i", &n_layers))
+    if (!PyArg_ParseTuple(args, "iddd", &n_layers,&x2,&y2,&r2))
         return NULL;
 
     /* Call the external C function to compute the area. */
-    double planet_struct = blocked(n_layers);
+    double planet_struct = blocked(n_layers,x2,y2,r2);
 
     PyObject *ret = Py_BuildValue("f",1.0);
     return ret;

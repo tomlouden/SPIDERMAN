@@ -40,10 +40,8 @@ double *circle_intersect(double x1,double y1,double r1,double x2,double y2,doubl
     return coords;
 }
 
-double *line_intersect(double x1,double y1,double x2,double y2,double r2){
-    double m,x_first,y_first,x_second,y_second;
-
-    m = y1/x1;
+double *line_intersect(double m,double theta,double x2,double y2,double r2){
+    double x_first,y_first,x_second,y_second;
     
     x_first = ((2*x2 + 2*y2*m) + sqrt(pow((2*x2 + 2*y2*m),2) - 4*(1 + pow(m,2))*(pow(x2,2) + pow(y2,2) - pow(r2,2))))/(2*(1 + pow(m,2)));
     x_second = ((2*x2 + 2*y2*m) - sqrt(pow((2*x2 + 2*y2*m),2) - 4*(1 + pow(m,2))*(pow(x2,2) + pow(y2,2) - pow(r2,2))))/(2*(1 + pow(m,2)));
@@ -51,12 +49,17 @@ double *line_intersect(double x1,double y1,double x2,double y2,double r2){
     y_first = x_first*m;
     y_second = x_second*m;
 
-    double* coords = malloc(sizeof(double) * 4);
+    double* coords = malloc(sizeof(double) * 6);
+
+    double r_first = sqrt(pow(x_first,2) + pow(y_first,2));
+    double r_second =sqrt(pow(x_second,2) + pow(y_second,2));
 
     coords[0] = x_first;
     coords[1] = y_first;
     coords[2] = x_second;
     coords[3] = y_second;
+    coords[4] = r_first;
+    coords[5] = r_second;
 
     return coords;
 }

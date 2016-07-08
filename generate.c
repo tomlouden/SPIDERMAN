@@ -17,7 +17,7 @@ double **generate_planet(int n_layers){
 
     planet = malloc(sizeof(double) * n_segments); // dynamic `array (size 4) of pointers to int`
     for (int i = 0; i < n_segments; ++i) {
-      planet[i] = malloc(sizeof(double) * 16);
+      planet[i] = malloc(sizeof(double) * 17);
       // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
     }
 
@@ -54,7 +54,9 @@ double **generate_planet(int n_layers){
         double increment = 2.0*M_PI/nslice;
         // the starting point is arbitrary and doesn't matter.//
         // But this looks cooler.//
-        double theta = increment/2;
+//        double theta = increment/2;
+// but it makes collision detection harder...
+        double theta = 0.0;
         for (int j = 0; j < nslice; ++j) {
             
             planet[k][10] = theta; // start angle //
@@ -68,15 +70,17 @@ double **generate_planet(int n_layers){
             planet[k][1] = planet[k][13]*sin(planet[k][10]); // inner y //
             planet[k][2] = planet[k][14]*cos(planet[k][10]); // outer x //
             planet[k][3] = planet[k][14]*sin(planet[k][10]); // outer y //
-            planet[k][4] = (planet[k][2] - planet[k][0]) / (planet[k][3] - planet[k][1]); // gradient //
+            planet[k][4] =  (planet[k][3] - planet[k][1]) / (planet[k][2] - planet[k][0]); // gradient //
 
             planet[k][5] = planet[k][13]*cos(planet[k][11]); // inner x //
             planet[k][6] = planet[k][13]*sin(planet[k][11]); // inner y //
             planet[k][7] = planet[k][14]*cos(planet[k][11]); // outer x //
             planet[k][8] = planet[k][14]*sin(planet[k][11]); // outer y //
-            planet[k][9] = (planet[k][7] - planet[k][5]) / (planet[k][8] - planet[k][6]); // gradient //
+            planet[k][9] = (planet[k][8] - planet[k][6]) / (planet[k][7] - planet[k][5]); // gradient //
 
-            planet[k][16] = 1.0/n_segments;  // Region brightness //
+            planet[k][16] = 1.0;  // Region brightness //
+
+            printf("%f\n",planet[k][16]);
 
             theta = theta + increment;
             k = k+ 1;

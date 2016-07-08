@@ -28,5 +28,5 @@ def line_intersect(x1,y1,x2,y2,r2):
 def generate_planet(n_layers):
 	return _web.generate_planet(n_layers)
 
-def blocked(n_layers):
-	return _web.blocked(n_layers)
+def blocked(n_layers,x2,y2,r2):
+	return _web.blocked(n_layers,x2,y2,r2)
