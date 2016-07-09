@@ -80,8 +80,6 @@ double **generate_planet(int n_layers){
 
             planet[k][16] = 1.0/M_PI;  // Region brightness //
 
-            printf("%f\n",planet[k][16]);
-
             theta = theta + increment;
             k = k+ 1;
           // each i-th pointer is now pointing to dynamic array (size 10) of actual int values

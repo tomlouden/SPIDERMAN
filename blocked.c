@@ -3,6 +3,7 @@
 #include "segment.h"
 #include "intersection.h"
 #include "math.h"
+#include "areas.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,12 +25,8 @@ double blocked(int n_layers, double x2, double y2, double r2){
 
     // first check for overlaps in the central circle
 
-    printf("before circle %f\n",total_blocked);
-
     double central_crossover = find_circles_region(x1,y1,planet[0][14],x2,y2,r2);
-    printf("central circle %f\n",central_crossover);
     total_blocked = total_blocked + central_crossover*planet[0][16];
-    printf("after circle %f\n",total_blocked);
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
         // does the outer circle cross?
@@ -121,14 +118,52 @@ double blocked(int n_layers, double x2, double y2, double r2){
         if((n_inner == 0) && (n_outer == 0) && (n_first == 0) && (n_second == 0)){
             double star_dist = sqrt(pow(planet[k][0] -x2,2) + pow(planet[k][0] -y2,2));
             if(star_dist < r2){
-                printf("15: %f\n",planet[k][15]);
-                printf("16: %f\n",planet[k][16]);
                 total_blocked = total_blocked + planet[k][15]*planet[k][16];
             }
         }
+        else if((n_inner == 1) && (n_outer == 1) && (n_first == 0) && (n_second == 0)){
 
+            // The case where the large circle crosses only the bounding circles
+            // of the region
+
+            double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
+            double er2 = sqrt(pow(planet[k][5]-x2,2) + pow(planet[k][6]-y2,2));
+
+            double *e1 = malloc(sizeof(double) * 2);
+            double *e2 = malloc(sizeof(double) * 2);
+
+            if(er1 < r2){
+                e1[0] = planet[k][0];
+                e1[1] = planet[k][1];
+                e2[0] = planet[k][2];
+                e2[1] = planet[k][3];
+            }
+            else if(er2 < r2){
+                e1[0] = planet[k][5];
+                e1[1] = planet[k][6];
+                e2[0] = planet[k][7];
+                e2[1] = planet[k][8];
+            }
+            else{
+                printf("SOMETHING WRONG\n");
+//                return 0;
+            }
+
+            double aa = one_in_one_out(single_inner,single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
+            aa = aa*planet[k][16];
+            printf("%f\n",aa);
+            total_blocked = total_blocked + aa;
+        }
+        else{
+            printf("UNKNOWN CASE\n");
+            return 0;
+        }
 
     }
+
+    double simple_fit = find_circles_region(x1,y1,r1,x2,y2,r2)/M_PI;
+
+    printf("simple fit: %f\n",simple_fit);
 
     printf("total_blocked: %f\n",total_blocked);
 

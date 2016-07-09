@@ -9,6 +9,8 @@ double find_segment_area(double c1x, double c2x,double x2,double r2){
 
     theta1 = acos((c1x - x2)/r2);
     theta2 = acos((c2x - x2)/r2);
+
+    printf("%f %f\n",theta1,theta2);
     
     theta = fabs(theta1 - theta2);
     
@@ -20,8 +22,14 @@ double find_segment_area(double c1x, double c2x,double x2,double r2){
 double segment(double r, double theta) {
     double area;
 
-    area = (pow(r,2))*(theta - sin(theta));
+    if(theta > M_PI){
+        theta = 2*M_PI - theta;
+        printf("new theta %f\n",theta);
+        area = (M_PI*pow(r,2)) - 0.5*(pow(r,2))*(theta - sin(theta));
+        return area;
+    }
 
+    area = 0.5*(pow(r,2))*(theta - sin(theta));
     return area;
 }
 
@@ -63,16 +71,42 @@ double find_circles_region(double x1, double y1, double r1, double x2, double y2
 
     // if there is no collision, and the circles are closer than their 
     // radii, then the whole of the smaller circle is covered.
-    printf("%f\n",cross_points1[0]);
     if(isnan(cross_points1[0])){
         double central_cross = M_PI*pow(r1,2);
         return central_cross;
     }
-    printf("circle1 cross %f %f %f %f\n",cross_points1[0],cross_points1[1],cross_points1[2],cross_points1[3]);
+//    printf("circle1 cross %f %f %f %f\n",cross_points1[0],cross_points1[1],cross_points1[2],cross_points1[3]);
 
-    printf("circle2 cross %f %f %f %f\n",cross_points2[0],cross_points2[1],cross_points2[2],cross_points2[3]);
+//    printf("circle2 cross %f %f %f %f\n",cross_points2[0],cross_points2[1],cross_points2[2],cross_points2[3]);
 
-    double theta1 = cross_points1[4] - cross_points1[5];
+//    printf("circle1 cross %f %f\n",cross_points1[4],cross_points1[5]);
+
+    // need to be careful about which way to integrate...
+
+    double small_theta = cross_points1[4] - cross_points1[5];
+
+    if((small_theta > M_PI)){
+        small_theta = 2*M_PI - small_theta;
+    }
+
+    small_theta = small_theta/2.0;
+
+    double test_theta = cross_points1[4] - small_theta;
+
+    double test_x = r1*cos(test_theta);
+    double test_y = r1*sin(test_theta);
+
+    // whether this test point is in the big circle tells us
+    // which way to integrate
+
+    double test_r = sqrt(pow(test_x-x2,2) + pow(test_y-y2,2));
+
+    double theta1 = cross_points1[5] - cross_points1[4];
+
+    if(test_r < r2){
+        double theta1 = cross_points1[4] - cross_points1[5];
+    }
+
     double theta2 = cross_points2[4] - cross_points2[5];
 
     if((theta1 < 0)){
@@ -80,25 +114,13 @@ double find_circles_region(double x1, double y1, double r1, double x2, double y2
     }
 
     if((theta2 < 0)){
-        theta2 = 2*M_PI + theta1;
+        theta2 = 2*M_PI + theta2;
     }
 
-    printf("theta1 %f\n",theta1);
-    printf("theta2 %f\n",theta2);
+//    printf("theta1 %f\n",theta1);
+//    printf("theta2 %f\n",theta2);
 
-    // if the small circle is inside the big circle, it will always
-    // be the larger of the two angles
-
-    if((theta1 < M_PI) && (r1 < center_distance)){
-        theta1 = 2*M_PI - theta1;
-    }
-
-    // if the small circle is outside, it will always be
-    // the smaller of the two angles
-
-    if((theta1 > M_PI) && (r1 > center_distance)){
-        theta1 = 2*M_PI - theta1;
-    }
+//    printf("r1 %f cd %f\n",r1,center_distance);
 
 
     // the larger circle can never have an angle greater than pi 
@@ -106,11 +128,14 @@ double find_circles_region(double x1, double y1, double r1, double x2, double y2
         theta2 = 2*M_PI - theta2;
     }
 
-    printf("theta1 %f\n",theta1);
-    printf("theta2 %f\n",theta2);
+//    printf("theta1 %f\n",theta1);
+//    printf("theta2 %f\n",theta2);
 
     a1 = segment(r1,theta1);
     a2 = segment(r2,theta2);
+
+//    printf("a1 %f\n",a1);
+//    printf("a2 %f\n",a2);
 
     area = a2 + a1;
 
