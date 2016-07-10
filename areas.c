@@ -34,22 +34,22 @@ double one_in_one_out(double *c1,double *c2,double *e1,double *e2,double r_inner
 
     a_1 = find_segment_area(c_outer[0],c_inner[0],x2,r2);
 
-    printf("a_1 %f\n",a_1);
+    printf("a_1 %f\n",a_1/M_PI);
 
     /* segment of the small circle (planet)*/
     a_2 = find_segment_area(c_outer[0],e_outer[0],0,r_outer);
 
-    printf("a_2 %f\n",a_2);
+    printf("a_2 %f\n",a_2/M_PI);
     
     /* the central quadrilateral*/
     a_3 = find_quad_area(c_inner,e_inner,c_outer,e_outer);
 
-    printf("a_3 %f\n",a_3);
+    printf("a_3 %f\n",a_3/M_PI);
     
     /* the overlap with the interior quad.*/
     a_4 = find_segment_area(c_inner[0],e_inner[0],0,r_inner);
     
-    printf("a_4 %f\n",a_4);
+    printf("a_4 %f\n",a_4/M_PI);
 
     area = a_1 + a_2 + a_3 + -1*a_4;
         

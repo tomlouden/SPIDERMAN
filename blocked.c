@@ -167,5 +167,7 @@ double blocked(int n_layers, double x2, double y2, double r2){
 
     printf("total_blocked: %f\n",total_blocked);
 
+    printf("dif: %f\n",total_blocked-simple_fit);
+
     return total_blocked;
 }
