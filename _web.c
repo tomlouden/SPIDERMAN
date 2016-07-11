@@ -232,7 +232,7 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args)
         return NULL;
 
     /* Call the external C function to compute the area. */
-    double *intersect = line_intersect(x1,y1,x2,y2,r2);
+    double *intersect = line_intersect(0,0,x1,y1,x2,y2,r2);
 
     /* Build the output tuple */
 

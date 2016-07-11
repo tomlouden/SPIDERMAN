@@ -9,8 +9,6 @@ double find_segment_area(double c1x, double c2x,double x2,double r2){
 
     theta1 = acos((c1x - x2)/r2);
     theta2 = acos((c2x - x2)/r2);
-
-    printf("%f %f\n",theta1,theta2);
     
     theta = fabs(theta1 - theta2);
     
