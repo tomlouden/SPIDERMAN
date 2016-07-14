@@ -8,14 +8,10 @@
 #include <stdio.h>
 
 
-double blocked(int n_layers, double x2, double y2, double r2){
+double blocked(double **planet, int n_layers, double x2, double y2, double r2){
     double x1,y1,r1;
     double *inner_cross, *outer_cross, *first_line, *second_line;
     double total_blocked=0.0;
-
-    // generate the planet grid
-    double **planet = generate_planet(n_layers);
-
 
     // planet parameters
 

@@ -6,6 +6,8 @@
 #include "intersection.h"
 #include "generate.h"
 #include "blocked.h"
+#include "main.h"
+#include "pyutil.h"
 #include <stdio.h>
 
 static char module_docstring[] =
@@ -271,15 +273,38 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 static PyObject *web_blocked(PyObject *self, PyObject *args)
 {
     int n_layers;
-    double x2,y2,r2;
+    double r2;
+    PyObject *x_obj, *y_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iddd", &n_layers,&x2,&y2,&r2))
+    if (!PyArg_ParseTuple(args, "iOOd", &n_layers,&x_obj,&y_obj,&r2))
         return NULL;
 
-    /* Call the external C function to compute the area. */
-    double planet_struct = blocked(n_layers,x2,y2,r2);
+    PyObject *x_array = PyArray_FROM_OTF(x_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    PyObject *y_array = PyArray_FROM_OTF(y_obj, NPY_DOUBLE, NPY_IN_ARRAY);
 
-    PyObject *ret = Py_BuildValue("f",planet_struct);
-    return ret;
+    /* If that didn't work, throw an exception. */
+    if (x_array == NULL || y_array == NULL) {
+        Py_XDECREF(x_array);
+        Py_XDECREF(y_array);
+        return NULL;
+    }
+
+    /* How many data points are there? */
+    int N = (int)PyArray_DIM(x_array, 0);
+
+    /* Get pointers to the data as C-types. */
+    double *x2    = (double*)PyArray_DATA(x_array);
+    double *y2    = (double*)PyArray_DATA(y_array);
+
+    /* Call the external C function to compute the area. */
+    double *output = call_blocked(n_layers,N,x2,y2,r2);
+
+    PyObject *pylist = Convert_Big_Array(output,N);
+
+    /* Clean up. */
+    Py_DECREF(x_array);
+    Py_DECREF(y_array);
+
+    return pylist;
 }
