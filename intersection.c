@@ -23,14 +23,13 @@ double *circle_intersect(double x1,double y1,double r1,double x2,double y2,doubl
 
     double *coords = malloc(sizeof(double) * 6);
 
-    theta_first = acos(x_first/r1);
+    theta_first = atan2(y_first,x_first);
 
     if(theta_first < 0){
         theta_first = 2*M_PI + theta_first;
     }
 
-    theta_second = acos(x_second/r1);
-
+    theta_second = atan2(y_second,x_second);
 
     if(theta_second < 0){
         theta_second = 2*M_PI + theta_second;
@@ -43,7 +42,7 @@ double *circle_intersect(double x1,double y1,double r1,double x2,double y2,doubl
     coords[4] = theta_first;
     coords[5] = theta_second;
 
-    printf("circle %f %f %f %f %f %f\n",coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
+//    printf("circle %f %f %f %f %f %f\n",coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
 
     return coords;
 }
@@ -66,13 +65,13 @@ double *old_circle_intersect(double x1,double y1,double r1,double x2,double y2,d
 
     double *coords = malloc(sizeof(double) * 6);
 
-    theta_first = atan(y_first/x_first);
+    theta_first = atan2(y_first,x_first);
 
     if(theta_first < 0){
         theta_first = 2*M_PI + theta_first;
     }
 
-    theta_second = atan(y_second/x_second);
+    theta_second = atan2(y_second,x_second);
 
     if(theta_second < 0){
         theta_second = 2*M_PI + theta_second;
@@ -85,7 +84,7 @@ double *old_circle_intersect(double x1,double y1,double r1,double x2,double y2,d
     coords[4] = theta_first;
     coords[5] = theta_second;
 
-    printf("circle %f %f %f %f %f %f\n",coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
+//    printf("circle %f %f %f %f %f %f\n",coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
 
     return coords;
 }

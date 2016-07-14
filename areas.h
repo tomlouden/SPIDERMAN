@@ -1,3 +1,11 @@
 double one_in_one_out(double *c1,double *c2,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2);
-double one_edge_one_outer(double *c1,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2);
-double one_edge_one_inner(double *c1,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2,double t_area);
+double one_edge_one_outer_a(double *c1,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2);
+double one_edge_one_outer_b(double *c1,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2,double total_area);
+double one_edge_one_inner_a(double *c1,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2);
+double one_edge_one_inner_b(double *c1,double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2,double t_area);
+double one_edge_two_inner_one_outer_a(double *outer1,double *edge1,double *edge2,double r_inner,double r_outer,double r2,double x2,double y2);
+double one_edge_two_inner_one_outer_b(double *outer1,double *edge1,double *edge2,double *edge3,double *edge4,double *c1,double *c2,double r_inner,double r_outer,double r2,double x2,double y2);
+double two_edges_a(double *e1,double *e2,double *e3,double *e4,double r_inner,double x2,double y2,double r2);
+double two_edges_b(double *e1,double *e2,double *e3,double *e4,double r_outer,double x2,double y2,double r2);
+double two_inner_two_edges_a(double *c1,double *c2,double *e1,double *e2,double *e3,double *e4,double r_inner,double r_outer,double x2,double y2,double r2, double t_area);
+double two_inner_two_edges_b(double *c1,double *c2,double *e1,double *e2,double *e3,double *e4,double r_inner,double r_outer,double x2,double y2,double r2,double t_area);

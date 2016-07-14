@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double find_segment_area(double c1x, double c2x,double x2,double r2){
+double old_find_segment_area(double c1x, double c2x,double x2,double r2){
     double area,theta1,theta2,theta;
 
     theta1 = acos((c1x - x2)/r2);
@@ -16,13 +16,40 @@ double find_segment_area(double c1x, double c2x,double x2,double r2){
     return area;
 }
 
+double find_segment_area(double *c1x, double *c2x,double x2,double y2,double r2){
+    double area,theta1,theta2,theta;
+
+    theta1 = acos((c1x[0] - x2)/r2);
+    theta2 = acos((c2x[0] - x2)/r2);
+
+    theta1 = atan2(c1x[1]-y2,c1x[0]-x2);
+    theta2 = atan2(c2x[1]-y2,c2x[0]-x2);
+
+    if(theta1<0){
+        theta1 = theta1 + 2*M_PI;
+    }
+
+    if(theta2<0){
+        theta2 = theta2 + 2*M_PI;
+    }
+    
+    theta = fabs(theta1 - theta2);
+
+    // THIS WORKS BUT ISN'T GENERAL ENOUGH AND SHOULD PROBABLY BE CHANGED
+    if(theta>M_PI){
+        theta = 2*M_PI - theta;
+    }
+    
+    area = segment(r2,theta);
+    return area;
+}
 
 double segment(double r, double theta) {
     double area;
 
     if(theta > M_PI){
         theta = 2*M_PI - theta;
-        printf("new theta %f\n",theta);
+//        printf("new theta %f\n",theta);
         area = (M_PI*pow(r,2)) - 0.5*(pow(r,2))*(theta - sin(theta));
         return area;
     }

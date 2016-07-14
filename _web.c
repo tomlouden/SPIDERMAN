@@ -114,14 +114,23 @@ static PyObject *web_segment(PyObject *self, PyObject *args)
 
 static PyObject *web_find_segment_area(PyObject *self, PyObject *args)
 {
-    double c1x,c2x,x2,r2;
+    double c1x,c2x,c1y,c2y,x2,y2,r2;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "dddd", &c1x, &c2x,&x2,&r2))
+    if (!PyArg_ParseTuple(args, "ddddddd", &c1x, &c2x, &c1y, &c2y,&x2,&y2,&r2))
         return NULL;
 
     /* Call the external C function to compute the area. */
-    double area = find_segment_area(c1x,c2x,x2,r2);
+
+    double *c1 = malloc(sizeof(double) * 2);
+    double *c2 = malloc(sizeof(double) * 2);
+
+    c1[0] = c1x;
+    c1[1] = c1y;
+    c2[0] = c2x;
+    c2[1] = c2y;
+
+    double area = find_segment_area(c1,c2,x2,y2,r2);
 
     /* Build the output tuple */
 
@@ -271,6 +280,6 @@ static PyObject *web_blocked(PyObject *self, PyObject *args)
     /* Call the external C function to compute the area. */
     double planet_struct = blocked(n_layers,x2,y2,r2);
 
-    PyObject *ret = Py_BuildValue("f",1.0);
+    PyObject *ret = Py_BuildValue("f",planet_struct);
     return ret;
 }
