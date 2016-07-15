@@ -4,18 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double old_find_segment_area(double c1x, double c2x,double x2,double r2){
-    double area,theta1,theta2,theta;
-
-    theta1 = acos((c1x - x2)/r2);
-    theta2 = acos((c2x - x2)/r2);
-    
-    theta = fabs(theta1 - theta2);
-    
-    area = segment(r2,theta);
-    return area;
-}
-
 double find_segment_area(double *c1x, double *c2x,double x2,double y2,double r2){
     double area,theta1,theta2,theta;
 
@@ -47,12 +35,11 @@ double find_segment_area(double *c1x, double *c2x,double x2,double y2,double r2)
 double segment(double r, double theta) {
     double area;
 
-    if(theta > M_PI){
-        theta = 2*M_PI - theta;
-//        printf("new theta %f\n",theta);
-        area = (M_PI*pow(r,2)) - 0.5*(pow(r,2))*(theta - sin(theta));
-        return area;
-    }
+//    if(theta > M_PI){
+//        theta = 2*M_PI - theta;
+//        area = (M_PI*pow(r,2)) - 0.5*(pow(r,2))*(theta - sin(theta));
+//        return area;
+//    }
 
     area = 0.5*(pow(r,2))*(theta - sin(theta));
     return area;
@@ -98,13 +85,10 @@ double find_circles_region(double x1, double y1, double r1, double x2, double y2
     // radii, then the whole of the smaller circle is covered.
     if(isnan(cross_points1[0])){
         double central_cross = M_PI*pow(r1,2);
+        free(cross_points1);
+        free(cross_points2);
         return central_cross;
     }
-//    printf("circle1 cross %f %f %f %f\n",cross_points1[0],cross_points1[1],cross_points1[2],cross_points1[3]);
-
-//    printf("circle2 cross %f %f %f %f\n",cross_points2[0],cross_points2[1],cross_points2[2],cross_points2[3]);
-
-//    printf("circle1 cross %f %f\n",cross_points1[4],cross_points1[5]);
 
     // need to be careful about which way to integrate...
 
@@ -142,27 +126,18 @@ double find_circles_region(double x1, double y1, double r1, double x2, double y2
         theta2 = 2*M_PI + theta2;
     }
 
-//    printf("theta1 %f\n",theta1);
-//    printf("theta2 %f\n",theta2);
-
-//    printf("r1 %f cd %f\n",r1,center_distance);
-
-
     // the larger circle can never have an angle greater than pi 
     if(theta2 > M_PI){
         theta2 = 2*M_PI - theta2;
     }
 
-//    printf("theta1 %f\n",theta1);
-//    printf("theta2 %f\n",theta2);
-
     a1 = segment(r1,theta1);
     a2 = segment(r2,theta2);
 
-//    printf("a1 %f\n",a1);
-//    printf("a2 %f\n",a2);
-
     area = a2 + a1;
+
+    free(cross_points1);
+    free(cross_points2);
 
     return area;
 }

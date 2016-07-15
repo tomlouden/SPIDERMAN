@@ -52,6 +52,9 @@ double two_inner_two_edges_a(double *c1,double *c2,double *e1,double *e2,double 
 
     area = total_area - area;
 
+    free(first_c);
+    free(second_c);
+
     return area;
 
 }

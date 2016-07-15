@@ -305,6 +305,7 @@ static PyObject *web_blocked(PyObject *self, PyObject *args)
     /* Clean up. */
     Py_DECREF(x_array);
     Py_DECREF(y_array);
+    free(output);
 
     return pylist;
 }

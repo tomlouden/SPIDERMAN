@@ -22,6 +22,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
     // first check for overlaps in the central circle
 
     double central_crossover = find_circles_region(x1,y1,planet[0][14],x2,y2,r2);
+
     total_blocked = total_blocked + central_crossover*planet[0][16];
 
 //    printf("total center blocked %f\n",total_blocked);
@@ -118,6 +119,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
         // this test needs the +1s because of some bullshit about signed 0s
 
+
         if((second_line[4] >= planet[k][13]) && (second_line[4] <= planet[k][14]) && ((1+second_line[0]*planet[k][7]) >= 1) && ((1+second_line[1]*planet[k][8]) >= 1)){
             n_second = n_second +1;
             single_second[0] = second_line[0];
@@ -131,6 +133,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
         }
 
 //        printf("n_inner %i n_outer %i n_first %i n_second %i, (inner_r=%f)\n",n_inner,n_outer,n_first,n_second,planet[k][13]);
+
 
         if((n_inner == 0) && (n_outer == 0) && (n_first == 0) && (n_second == 0)){
             double star_dist = sqrt(pow(planet[k][0] -x2,2) + pow(planet[k][1] -y2,2));
@@ -170,6 +173,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             }
 
             double aa = one_in_one_out(single_inner,single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
+            free(e1);
+            free(e2);
 
             aa = aa*planet[k][16];
 
@@ -209,6 +214,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             }
 
             double aa1 = one_in_one_out(single_inner,single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
+            free(e1);
+            free(e2);
 
             double *lx1 = malloc(sizeof(double) * 2);
             double *lx2 = malloc(sizeof(double) * 2);
@@ -281,6 +288,12 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             else if(er1 <= r2){
                 aa = two_inner_two_edges_b(c1,c2,e1,e2,e3,e4,planet[k][13],planet[k][14],x2,y2,r2,planet[k][15]);
             }
+            free(c1);
+            free(c2);
+            free(e1);
+            free(e2);
+            free(e3);
+            free(e4);
 
             aa = aa*planet[k][16];
 
@@ -308,6 +321,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             }
 
             double aa = find_segment_area(lx1,lx2,x2,y2,r2);
+            free(lx1);
+            free(lx2);
 
             total_blocked = total_blocked + aa;
         }
@@ -423,6 +438,9 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             else{
 //                printf("CASE NOT RECOGNISED\n");
             }
+
+            free(e1);
+            free(e2);
 
             aa = aa*planet[k][16];
 
@@ -543,6 +561,10 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //                printf("CASE NOT RECOGNISED\n");
             }
 
+            free(e1);
+            free(e2);
+
+
             aa = aa*planet[k][16];
 
 //            printf("triangle area %f\n",aa);
@@ -574,6 +596,9 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
                 double area = planet[k][15] - (a_1 - a_2);
                 total_blocked = total_blocked + area*planet[k][16];
             }
+            free(c1);
+            free(c2);
+
         }
 
         // in this one two edges are crossed, and nothing else (note, this one should have two versions)
@@ -621,6 +646,11 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
                 aa = two_edges_b(e1,e2,e3,e4,planet[k][14],x2,y2,r2);
             }
+            free(e1);
+            free(e2);
+            free(e3);
+            free(e4);
+
 
             aa = aa*planet[k][16];
 
@@ -678,6 +708,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double aa = 0.0;
             if(er1 > r2){
                 aa = one_edge_two_inner_one_outer_a(single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
+                free(e1);
+                free(e2);
             }
             else{
 
@@ -711,6 +743,13 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
                 }
 
                 aa = one_edge_two_inner_one_outer_b(single_outer,e1,e2,e3,e4,c1,c2,planet[k][13],planet[k][14],r2,x2,y2);
+                free(e1);
+                free(e2);
+                free(e3);
+                free(e4);
+                free(c1);
+                free(c2);
+
             }
 
             aa = aa*planet[k][16];
@@ -754,6 +793,10 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             aa = aa*planet[k][16];
 
             total_blocked = total_blocked + aa;
+            free(c1);
+            free(c2);
+            free(c3);
+            free(c4);
 
 
         }
@@ -763,6 +806,12 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             printf("n_inner %i n_outer %i n_first %i n_second %i\n",n_inner,n_outer,n_first,n_second);
             printf("box corners %f,%f %f,%f %f,%f %f,%f \n",planet[k][0],planet[k][1],planet[k][2],planet[k][3],planet[k][5],planet[k][6],planet[k][7],planet[k][8]);
             printf("%f,%f\n",single_second[0],single_second[1]);
+            free(single_inner);
+            free(single_outer);
+            free(single_first);
+            free(single_second);
+            free(first_line);
+            free(second_line);
             return 0;
         }
         double simple_fit = find_circles_region(x1,y1,planet[k][14],x2,y2,r2)/M_PI;
@@ -770,6 +819,15 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //        printf("total_blocked %f\n",total_blocked);
 //        printf("simple fit: %f\n",simple_fit);
 //        printf("dif: %f\n",total_blocked-simple_fit);
+        free(single_inner);
+        free(single_outer);
+        free(single_first);
+        free(single_second);
+        free(inner_cross);
+        free(outer_cross);
+        free(first_line);
+        free(second_line);
+
     }
 
     double simple_fit = find_circles_region(x1,y1,r1,x2,y2,r2)/M_PI;

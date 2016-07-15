@@ -16,5 +16,7 @@ double *call_blocked(int n_layers, int n_points, double *x2, double *y2, double 
         output[n] = blocked(planet,n_layers,x2[n],y2[n],r2);
     }
 
+    free(planet);
+
     return output;
 }
