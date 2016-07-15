@@ -7,24 +7,18 @@
 
 double two_inner_two_edges_a(double *c1,double *c2,double *e1,double *e2,double *e3,double *e4,double r_inner,double r_outer,double x2,double y2,double r2,double total_area){
     double a_1,a_2,a_3,a_4,a_5,a_6,area;
+    double *first_c, *second_c;
 
     double er1 = sqrt(pow(c1[0]-e1[0],2) + pow(c1[1]-e1[1],2));
     double er2 = sqrt(pow(c2[0]-e1[0],2) + pow(c2[1]-e1[1],2));
 
-    double *first_c = malloc(sizeof(double) * 2);
-    double *second_c = malloc(sizeof(double) * 2);
-
     if(er1 < er2){
-        first_c[0] =c1[0];
-        first_c[1] =c1[1];
-        second_c[0] =c2[0];
-        second_c[1] =c2[1];
+        first_c =c1;
+        second_c =c2;
     }
     else{
-        first_c[0] =c2[0];
-        first_c[1] =c2[1];
-        second_c[0] =c1[0];
-        second_c[1] =c1[1];
+        first_c =c2;
+        second_c =c1;
     }
 
 
@@ -51,9 +45,6 @@ double two_inner_two_edges_a(double *c1,double *c2,double *e1,double *e2,double 
     area = a_3 -a_1 -a_2 + a_6 - a_4 - a_5;
 
     area = total_area - area;
-
-    free(first_c);
-    free(second_c);
 
     return area;
 
