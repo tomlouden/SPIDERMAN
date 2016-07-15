@@ -19,7 +19,16 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
     y1 = 0;
     r1 = 1;
 
-    // first check for overlaps in the central circle
+    // do they intersect at all?
+
+    double c_d = sqrt(pow(x2,2) + pow(y2,2));
+
+    if(c_d > (r1+r2)){
+        // will not intersect at all!
+        return 0;
+    }
+
+    // then check for overlaps in the central circle
 
     double central_crossover = find_circles_region(x1,y1,planet[0][14],x2,y2,r2);
 
