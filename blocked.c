@@ -51,7 +51,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
 //        printf("inner1 %f inner2 %f start %f end %f\n",inner_cross[4],inner_cross[5],planet[k][10],planet[k][11]);
 
-        double *single_inner = malloc(sizeof(double) * 2);
+        double single_inner[2];
 
         if((inner_cross[4] >= planet[k][10]) && (inner_cross[4] <= planet[k][11])){
             n_inner = n_inner +1;
@@ -73,7 +73,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
         // does the outer inner circle cross?
         outer_cross = circle_intersect(x1,y1,outer_r,x2,y2,r2);
 
-        double *single_outer = malloc(sizeof(double) * 2);
+        double single_outer[2];
 
 //        printf("OUTER CROSS THETAS %f %f \n", outer_cross[4],outer_cross[5]);
 //        printf("REGION LIMITS %f %f \n", planet[k][10],planet[k][11]);
@@ -97,7 +97,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
 //        printf("first_line1 %f firstline2 %f start %f end %f\n",first_line[4],first_line[5],planet[k][13],planet[k][14]);
 
-        double *single_first = malloc(sizeof(double) * 2);
+        double single_first[2];
 
 
         // some of these logic tests are just to make sure the intersection happens on the same side//
@@ -124,7 +124,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //        printf("second_line %f %f %f %f %f\n", second_line[0],second_line[1],second_line[4],planet[k][13],planet[k][14]);
 //        printf("second_line %f %f %f %f %f\n", second_line[2],second_line[3],second_line[5],planet[k][13],planet[k][14]);
 
-        double *single_second = malloc(sizeof(double) * 2);
+        double single_second[2];
 
         // this test needs the +1s because of some bullshit about signed 0s
 
@@ -158,8 +158,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
             double er2 = sqrt(pow(planet[k][5]-x2,2) + pow(planet[k][6]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
 
 
             if(er1 < r2){
@@ -182,8 +182,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             }
 
             double aa = one_in_one_out(single_inner,single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
-            free(e1);
-            free(e2);
 
             aa = aa*planet[k][16];
 
@@ -199,8 +197,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
             double er2 = sqrt(pow(planet[k][5]-x2,2) + pow(planet[k][6]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
 
 
             if(er1 < r2){
@@ -223,11 +221,9 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             }
 
             double aa1 = one_in_one_out(single_inner,single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
-            free(e1);
-            free(e2);
 
-            double *lx1 = malloc(sizeof(double) * 2);
-            double *lx2 = malloc(sizeof(double) * 2);
+            double lx1[2];
+            double lx2[2];
 
             if(n_first == 2){
                 lx1[0] = first_line[0];
@@ -254,13 +250,13 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
             double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
-            double *e3 = malloc(sizeof(double) * 2);
-            double *e4 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
+            double e3[2];
+            double e4[2];
 
-            double *c1 = malloc(sizeof(double) * 2);
-            double *c2 = malloc(sizeof(double) * 2);
+            double c1[2];
+            double c2[2];
 
             double aa = 0.0;
 
@@ -297,12 +293,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             else if(er1 <= r2){
                 aa = two_inner_two_edges_b(c1,c2,e1,e2,e3,e4,planet[k][13],planet[k][14],x2,y2,r2,planet[k][15]);
             }
-            free(c1);
-            free(c2);
-            free(e1);
-            free(e2);
-            free(e3);
-            free(e4);
 
             aa = aa*planet[k][16];
 
@@ -313,8 +303,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
         // A nice simple case which is only a single segment
         else if(((n_inner == 0) && (n_outer == 0) && (n_first == 2) && (n_second == 0)) || ((n_inner == 0) && (n_outer == 0) && (n_first == 0) && (n_second == 2))){
 
-            double *lx1 = malloc(sizeof(double) * 2);
-            double *lx2 = malloc(sizeof(double) * 2);
+            double lx1[2];
+            double lx2[2];
 
             if(n_first == 2){
                 lx1[0] = first_line[0];
@@ -330,8 +320,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             }
 
             double aa = find_segment_area(lx1,lx2,x2,y2,r2);
-            free(lx1);
-            free(lx2);
 
             total_blocked = total_blocked + aa;
         }
@@ -346,8 +334,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double er3 = sqrt(pow(planet[k][2]-x2,2) + pow(planet[k][3]-y2,2));
             double er4 = sqrt(pow(planet[k][7]-x2,2) + pow(planet[k][8]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
 
             int corners_inside = 0;
 
@@ -448,9 +436,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //                printf("CASE NOT RECOGNISED\n");
             }
 
-            free(e1);
-            free(e2);
-
             aa = aa*planet[k][16];
 
 //            printf("triangle area %f\n",aa);
@@ -466,8 +451,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double er3 = sqrt(pow(planet[k][2]-x2,2) + pow(planet[k][3]-y2,2));
             double er4 = sqrt(pow(planet[k][7]-x2,2) + pow(planet[k][8]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
 
             int corners_inside = 0;
 
@@ -570,10 +555,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //                printf("CASE NOT RECOGNISED\n");
             }
 
-            free(e1);
-            free(e2);
-
-
             aa = aa*planet[k][16];
 
 //            printf("triangle area %f\n",aa);
@@ -587,8 +568,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
             double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
 
-            double *c1 = malloc(sizeof(double) * 2);
-            double *c2 = malloc(sizeof(double) * 2);
+            double c1[2];
+            double c2[2];
 
             c1[0]=outer_cross[0];
             c1[1]=outer_cross[1];
@@ -605,8 +586,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
                 double area = planet[k][15] - (a_1 - a_2);
                 total_blocked = total_blocked + area*planet[k][16];
             }
-            free(c1);
-            free(c2);
 
         }
 
@@ -616,10 +595,10 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
             double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
-            double *e3 = malloc(sizeof(double) * 2);
-            double *e4 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
+            double e3[2];
+            double e4[2];
 
             double aa = 0.0;
 
@@ -655,10 +634,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
                 aa = two_edges_b(e1,e2,e3,e4,planet[k][14],x2,y2,r2);
             }
-            free(e1);
-            free(e2);
-            free(e3);
-            free(e4);
 
 
             aa = aa*planet[k][16];
@@ -676,8 +651,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double er3 = sqrt(pow(planet[k][2]-x2,2) + pow(planet[k][3]-y2,2));
             double er4 = sqrt(pow(planet[k][7]-x2,2) + pow(planet[k][8]-y2,2));
 
-            double *e1 = malloc(sizeof(double) * 2);
-            double *e2 = malloc(sizeof(double) * 2);
+            double e1[2];
+            double e2[2];
 
 
             // which of the corner points is inside?
@@ -717,15 +692,13 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             double aa = 0.0;
             if(er1 > r2){
                 aa = one_edge_two_inner_one_outer_a(single_outer,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
-                free(e1);
-                free(e2);
             }
             else{
 
-                double *c1 = malloc(sizeof(double) * 2);
-                double *c2 = malloc(sizeof(double) * 2);
-                double *e3 = malloc(sizeof(double) * 2);
-                double *e4 = malloc(sizeof(double) * 2);
+                double c1[2];
+                double c2[2];
+                double e3[2];
+                double e4[2];
 
 
                 e3[0] = planet[k][0];
@@ -752,12 +725,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
                 }
 
                 aa = one_edge_two_inner_one_outer_b(single_outer,e1,e2,e3,e4,c1,c2,planet[k][13],planet[k][14],r2,x2,y2);
-                free(e1);
-                free(e2);
-                free(e3);
-                free(e4);
-                free(c1);
-                free(c2);
 
             }
 
@@ -776,10 +743,10 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
         else if((n_inner == 2) && (n_outer == 2) && (n_first == 0) && (n_second == 0)){
 //          Almost forgot about this one...
 
-            double *c1 = malloc(sizeof(double) * 2);
-            double *c2 = malloc(sizeof(double) * 2);
-            double *c3 = malloc(sizeof(double) * 2);
-            double *c4 = malloc(sizeof(double) * 2);
+            double c1[2];
+            double c2[2];
+            double c3[2];
+            double c4[2];
 
             c1[0]=outer_cross[0];
             c1[1]=outer_cross[1];
@@ -802,10 +769,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             aa = aa*planet[k][16];
 
             total_blocked = total_blocked + aa;
-            free(c1);
-            free(c2);
-            free(c3);
-            free(c4);
 
 
         }
@@ -815,10 +778,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             printf("n_inner %i n_outer %i n_first %i n_second %i\n",n_inner,n_outer,n_first,n_second);
             printf("box corners %f,%f %f,%f %f,%f %f,%f \n",planet[k][0],planet[k][1],planet[k][2],planet[k][3],planet[k][5],planet[k][6],planet[k][7],planet[k][8]);
             printf("%f,%f\n",single_second[0],single_second[1]);
-            free(single_inner);
-            free(single_outer);
-            free(single_first);
-            free(single_second);
+            free(inner_cross);
+            free(outer_cross);
             free(first_line);
             free(second_line);
             return 0;
@@ -828,10 +789,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //        printf("total_blocked %f\n",total_blocked);
 //        printf("simple fit: %f\n",simple_fit);
 //        printf("dif: %f\n",total_blocked-simple_fit);
-        free(single_inner);
-        free(single_outer);
-        free(single_first);
-        free(single_second);
         free(inner_cross);
         free(outer_cross);
         free(first_line);
