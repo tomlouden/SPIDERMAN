@@ -25,8 +25,11 @@ def circle_intersect(x1,y1,r1,x2,y2,r2):
 def line_intersect(x1,y1,x2,y2,r2):
 	return _web.line_intersect(x1,y1,x2,y2,r2)
 
-def generate_planet(n_layers):
-	return _web.generate_planet(n_layers)
+def generate_planet(n_layers,xi,T_n,delta_T,lambda0,phi0):
+	return _web.generate_planet(n_layers,xi,T_n,delta_T,lambda0,phi0)
 
 def blocked(n_layers,x2,y2,r2):
 	return _web.blocked(n_layers,x2,y2,r2)
+
+def zhang_2016(lat,lon,xi,T_n,delta_T):
+	return _web.zhang_2016(lat,lon,xi,T_n,delta_T)

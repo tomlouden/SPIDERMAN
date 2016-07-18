@@ -1,8 +1,83 @@
 #include "generate.h"
 #include "segment.h"
+#include "orthographic.h"
 #include "math.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+double **map_model(double **planet,int n_layers,double xi, double T_n, double delta_T,double lambda0, double phi0){
+
+    double R = 1.0;
+
+    double *coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
+
+    double la = coords[1];
+    double lo = coords[0];
+
+    planet[0][16] = pow(zhang_2016(la,lo,xi,T_n,delta_T),4);
+
+    for (int k = 1; k < pow(n_layers,2); ++k) {
+//        planet[k][16] = zhang_2016(la,lo,xi,T_n,delta_T)
+        double R_mid = (planet[k][13] + planet[k][14])/2.0;
+        double theta_mid = (planet[k][10] + planet[k][11])/2.0;
+
+        double mid_x = R_mid*cos(theta_mid);
+        double mid_y = R_mid*sin(theta_mid);
+        double *coords = cart_to_ortho(R, mid_x, mid_y, lambda0, phi0);
+        double la = coords[1];
+        // sign change to longitude - we're looking at the planet from the 
+        // other side than in the simulations
+        double lo = -1*coords[0];
+
+        planet[k][16] = pow(zhang_2016(la,lo,xi,T_n,delta_T),4);
+    }
+
+    return planet;
+}
+
+double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T){
+    double T;
+    double eta;
+
+    // this is equation B.7 in Zhang and Showman 2016
+    // Xi is the ratio of advective and radiative timescales
+    // T_n is the nightside equilibrium temperature
+    // delta_T is the diference between night and dayside eqt
+
+    double phi = lat;
+    double lambda = lon;
+
+    double lambda_s = atan(xi);
+
+    /*
+    double eta = (xi/(1 + pow(xi,2)));
+    printf("1 %f\n",eta);
+
+    eta = (exp(M_PI/(2*eta)) + exp(3*M_PI/(2*eta)));
+    printf("2 %f\n",eta);
+
+    eta = 1/(exp(2*M_PI/eta) - 1.0);
+    printf("3 %f\n",eta);
+    */
+
+    eta = (xi/(1 + pow(xi,2)))*(exp(M_PI/(2*xi)) + exp(3*M_PI/(2*xi)))/(exp(2*M_PI/xi) - 1.0);
+
+    if((-M_PI/2.0 <= lambda) && (lambda <= M_PI/2.0)){
+        T = T_n + delta_T*cos(phi)*cos(lambda_s)*cos(lambda-lambda_s) + eta*delta_T*cos(phi)*exp(-lambda/xi);
+    }
+    else if((-M_PI <= lambda) && (lambda <= -M_PI/2.0)){
+        T = T_n + eta*delta_T*cos(phi)*exp(-(M_PI+lambda)/xi);
+    }
+    else if ((M_PI/2 <= lambda) && (lambda <= M_PI)){
+        T = T_n + eta*delta_T*cos(phi)*exp((M_PI-lambda)/xi);
+    }
+    else{
+        printf("UNEXPECTED CASE\n");
+        return 0;
+    }
+
+    return T;
+}
 
 double **generate_planet(int n_layers){
     double central, s_r, m;
@@ -70,7 +145,7 @@ double **generate_planet(int n_layers){
             planet[k][1] = planet[k][13]*sin(planet[k][10]); // inner y //
             planet[k][2] = planet[k][14]*cos(planet[k][10]); // outer x //
             planet[k][3] = planet[k][14]*sin(planet[k][10]); // outer y //
-            planet[k][4] =  (planet[k][3] - planet[k][1]) / (planet[k][2] - planet[k][0]); // gradient //
+            planet[k][4] = (planet[k][3] - planet[k][1]) / (planet[k][2] - planet[k][0]); // gradient //
 
             planet[k][5] = planet[k][13]*cos(planet[k][11]); // inner x //
             planet[k][6] = planet[k][13]*sin(planet[k][11]); // inner y //

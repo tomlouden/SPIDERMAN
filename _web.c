@@ -28,6 +28,7 @@ static PyObject *web_circle_intersect(PyObject *self, PyObject *args);
 static PyObject *web_line_intersect(PyObject *self, PyObject *args);
 static PyObject *web_generate_planet(PyObject *self, PyObject *args);
 static PyObject *web_blocked(PyObject *self, PyObject *args);
+static PyObject *web_zhang_2016(PyObject *self, PyObject *args);
 
 static PyMethodDef module_methods[] = {
     {"heron", web_heron, METH_VARARGS, web_docstring},
@@ -39,6 +40,7 @@ static PyMethodDef module_methods[] = {
     {"line_intersect", web_line_intersect, METH_VARARGS, quad_docstring},
     {"generate_planet", web_generate_planet, METH_VARARGS, quad_docstring},
     {"blocked", web_blocked, METH_VARARGS, quad_docstring},
+    {"zhang_2016", web_zhang_2016, METH_VARARGS, quad_docstring},
     {NULL, NULL, 0, NULL}
 };
 
@@ -253,21 +255,29 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args)
 
 static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 {
-    int n_layers;
+    int n_layers,n_1,n_2;
+    double xi,T_n,delta_T,lambda0,phi0;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "i", &n_layers))
+    if (!PyArg_ParseTuple(args, "iddddd", &n_layers,&xi,&T_n,&delta_T,&lambda0,&phi0))
         return NULL;
 
     /* Call the external C function to compute the area. */
     double **planet_struct = generate_planet(n_layers);
 
+    planet_struct = map_model(planet_struct,n_layers,xi,T_n,delta_T,lambda0,phi0);
+
     /* Build the output tuple */
 
-    printf("%f\n",planet_struct[0][0]);
+    n_1 =pow(n_layers,2);
+    n_2=17;
 
-    PyObject *ret = Py_BuildValue("f",planet_struct[0][0]);
-    return ret;
+    PyObject *pylist = Convert_2d_Array(planet_struct,n_1,n_2);
+
+    /* Clean up. */
+    free(planet_struct);
+
+    return pylist;
 }
 
 static PyObject *web_blocked(PyObject *self, PyObject *args)
@@ -308,4 +318,20 @@ static PyObject *web_blocked(PyObject *self, PyObject *args)
     free(output);
 
     return pylist;
+}
+
+static PyObject *web_zhang_2016(PyObject *self, PyObject *args)
+{
+    double lat, lon, zeta, T_n, delta_T;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "ddddd", &lat, &lon, &zeta, &T_n, &delta_T))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double output = zhang_2016(lat, lon, zeta, T_n, delta_T);
+
+     PyObject *ret = Py_BuildValue("d",output);
+
+    return ret;
 }
