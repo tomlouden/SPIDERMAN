@@ -72,7 +72,7 @@ double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T)
         T = T_n + eta*delta_T*cos(phi)*exp((M_PI-lambda)/xi);
     }
     else{
-        printf("UNEXPECTED CASE\n");
+        printf("UNEXPECTED CASE IN ZHANG\n");
         return 0;
     }
 

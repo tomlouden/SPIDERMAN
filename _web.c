@@ -6,6 +6,7 @@
 #include "intersection.h"
 #include "generate.h"
 #include "blocked.h"
+#include "ephemeris.h"
 #include "main.h"
 #include "pyutil.h"
 #include <stdio.h>
@@ -29,6 +30,8 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args);
 static PyObject *web_generate_planet(PyObject *self, PyObject *args);
 static PyObject *web_blocked(PyObject *self, PyObject *args);
 static PyObject *web_zhang_2016(PyObject *self, PyObject *args);
+static PyObject *web_separation_of_centers(PyObject *self, PyObject *args);
+static PyObject *web_lightcurve(PyObject *self, PyObject *args);
 
 static PyMethodDef module_methods[] = {
     {"heron", web_heron, METH_VARARGS, web_docstring},
@@ -41,6 +44,8 @@ static PyMethodDef module_methods[] = {
     {"generate_planet", web_generate_planet, METH_VARARGS, quad_docstring},
     {"blocked", web_blocked, METH_VARARGS, quad_docstring},
     {"zhang_2016", web_zhang_2016, METH_VARARGS, quad_docstring},
+    {"separation_of_centers", web_separation_of_centers, METH_VARARGS, quad_docstring},
+    {"lightcurve", web_lightcurve, METH_VARARGS, quad_docstring},
     {NULL, NULL, 0, NULL}
 };
 
@@ -334,4 +339,57 @@ static PyObject *web_zhang_2016(PyObject *self, PyObject *args)
      PyObject *ret = Py_BuildValue("d",output);
 
     return ret;
+}
+
+
+static PyObject *web_separation_of_centers(PyObject *self, PyObject *args)
+{
+    double t,tc,per,a,inc,ecc,omega,r_s,r2;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "ddddddddd", &t,&tc,&per,&a,&inc,&ecc,&omega,&r_s,&r2))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double *output = separation_of_centers(t,tc,per,a,inc,ecc,omega,r_s,r2);
+
+    PyObject *ret = Py_BuildValue("[d,d,d]",output[0],output[1],output[2]);
+
+    return ret;
+}
+
+static PyObject *web_lightcurve(PyObject *self, PyObject *args)
+{
+    int n_layers;
+    double tc,per,a,inc,ecc,omega,r_s,r2,xi,T_n,delta_T,star_bright;
+    PyObject *t_obj;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "iOdddddddddddd", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&r_s,&r2,&xi,&T_n,&delta_T,&star_bright))
+        return NULL;
+
+    PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+
+    /* If that didn't work, throw an exception. */
+    if (t_array == NULL) {
+        Py_XDECREF(t_array);
+        return NULL;
+    }
+
+    /* How many data points are there? */
+    int N = (int)PyArray_DIM(t_array, 0);
+
+    /* Get pointers to the data as C-types. */
+    double *t2    = (double*)PyArray_DATA(t_array);
+
+    /* Call the external C function to compute the area. */
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,r_s,r2,xi,T_n,delta_T,star_bright);
+
+    PyObject *pylist = Convert_Big_Array(output,N);
+
+    /* Clean up. */
+    Py_DECREF(t_array);
+    free(output);
+
+    return pylist;
 }
