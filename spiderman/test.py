@@ -1,4 +1,4 @@
-import SPIDERMAN._test as _test
+import spiderman._test as _test
 
 def hello():
 	print('hello world')

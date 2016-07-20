@@ -79,7 +79,7 @@ init_web(void)
 		import_array();
 		return module;
 	#else
-	    PyObject *m = Py_InitModule3("_heron", module_methods, module_docstring);
+	    PyObject *m = Py_InitModule3("_web", module_methods, module_docstring);
 		if (m == NULL)
 			return;
 		/* Load `numpy` functionality. */

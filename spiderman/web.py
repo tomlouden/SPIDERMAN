@@ -1,5 +1,5 @@
-import SPIDERMAN._web as _web
-import SPIDERMAN._polar as _polar
+import spiderman._web as _web
+import spiderman._polar as _polar
 
 def one_in_one_out(c1,c2,e1,e2,r_inner,r_outer,r2,x2,y2):
 	return _web.one_in_one_out(c1,c2,e1,e2,r_inner,r_outer,r2,x2,y2)
