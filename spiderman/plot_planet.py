@@ -39,7 +39,8 @@ min_temp = T_n**4
 max_temp = (T_n + delta_T)**4
 
 
-for i in range(0,len(ts)-1):
+#for i in range(0,len(ts)-1):
+for i in range(0,101):
 	t = ts[i]
 	coords = web.separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,ratio)
 
@@ -52,7 +53,7 @@ for i in range(0,len(ts)-1):
 	if len(ni) < 2:
 		ni = '0'+ni
 
-	plotname = 'plots/test_'+ni+'.png'
+	plotname = 'plots/test_'+'{:03d}'.format(i)+'.png'
 
 	phase = ((t-tc)/per)
 
@@ -88,14 +89,12 @@ for i in range(0,len(ts)-1):
 	ys[1,:] = ys[1,::-1]
 
 	val = (dp + planet[0][16]-min_temp)/(dp + max_temp-min_temp)
-	print(0,val)
 
 	c = plt.cm.inferno(val)
 	ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 
 	for i in range (1,len(planet)):
 		val = (dp + planet[i][16]-min_temp)/(dp + max_temp-min_temp)
-		print(i,val)
 		c = plt.cm.inferno(val)
 
 		n = planet[i]
