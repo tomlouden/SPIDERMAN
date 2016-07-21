@@ -5,11 +5,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double r_s, double r2,double xi,double T_n,double delta_T,double star_bright){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double xi,double T_n,double delta_T,double star_bright){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
     double p_blocked, p_bright,phase_z,phase_dz,phase_dt;
+
+    double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
 
     double c = 299792458.0;
     
@@ -18,13 +20,13 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double *output = malloc(sizeof(double) * n_points);
 
-    double *transit_coords = separation_of_centers(tc,tc,per,a,inc,ecc,omega,r_s,r2);
+    double *transit_coords = separation_of_centers(tc,tc,per,a,inc,ecc,omega,a_rs,r2);
 
     double transit_z = transit_coords[3];
 
     for (n = 0; n < n_points; n++) {
 
-        coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,r_s,r2);
+        coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
         phase = ((t[n]-tc)/per);
 
         // make correction for finite light travel speed
@@ -33,7 +35,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         phase_dz = transit_z-phase_z;
         phase_dt = (phase_dz/c)/(3600.0*24.0);
 
-        coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,r_s,r2);
+        coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
 
 
         if(phase > 1){
@@ -43,9 +45,12 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             phase = phase + ceil(phase) + 1;
         }
 
-        lambda0 = M_PI+(phase*2*M_PI);
+        lambda0 = (M_PI+(phase*2*M_PI));
         if(lambda0 > 2*M_PI){
             lambda0 = lambda0 - 2*M_PI;
+        }
+        if(lambda0 < -2*M_PI){
+            lambda0 = lambda0 + 2*M_PI;
         }
 
         phi0 = tan(coords[1]/coords[2]);

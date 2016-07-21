@@ -34,8 +34,8 @@ def blocked(n_layers,x2,y2,r2):
 def zhang_2016(lat,lon,xi,T_n,delta_T):
 	return _web.zhang_2016(lat,lon,xi,T_n,delta_T)
 
-def separation_of_centers(t,tc,per,a,inc,ecc,omega,r_s,r2):
-	return _web.separation_of_centers(t,tc,per,a,inc,ecc,omega,r_s,r2)
+def separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2):
+	return _web.separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2)
 
-def lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,r_s,r2,xi,T_n,delta_T,star_bright):
-	return _web.lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,r_s,r2,xi,T_n,delta_T,star_bright)
+def lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,star_bright):
+	return _web.lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,star_bright)

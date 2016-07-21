@@ -4,20 +4,20 @@
 #include <stdio.h>
 
 
-double *separation_of_centers(double t, double tc, double per, double a, double inc, double ecc, double omega, double R_s, double Ratio){
+double *separation_of_centers(double t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double Ratio){
 	// based on equations in Winn 2010 (chapter of sara seager book same year)
 	double r,f,M,n,tp,E,eps;
 	double X,Y,Z;
 
 	//have to scale a
 
-	double solar_r = 6.957e8; // m
 	double au = 1.4960e11; // m
 
 	a = a*au;
 
+	omega = omega*M_PI/180; // change omega from degrees to radians
 
-	double stellar_r = solar_r*R_s;
+	double stellar_r = a/a_rs;
 
 	double image_scale = stellar_r/Ratio;
 
