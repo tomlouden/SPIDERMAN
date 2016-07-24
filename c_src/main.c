@@ -33,7 +33,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     printf("star flux %f\n",star_bright);
 
-    star_bright = star_bright*M_PI*pow(r2,2)
+    star_bright = star_bright*M_PI*pow(r2,2);
 
     printf("new star flux%f\n",star_bright);
 
