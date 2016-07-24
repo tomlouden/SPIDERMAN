@@ -29,6 +29,8 @@ double bb_flux(double l1, double l2, double T,int n_segments){
 		L += simpson(bb_lower, bb_upper, bb_mid, l_lower, l_upper);
 	}
 
+	printf("%f %f\n",T,L);
+
 	return L;
 }
 
