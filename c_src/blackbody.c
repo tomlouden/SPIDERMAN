@@ -23,7 +23,7 @@ double bb_flux(double l1, double l2, double T,int n_segments){
     	l_lower = (l1+k*wvl_int);
     	l_upper = (l1+(k+1)*wvl_int);
     	bb_lower = bb(l_lower,T);
-    	bb_mid = bb(0.5*(l_lower+l_lower),T);
+    	bb_mid = bb(0.5*(l_lower+l_upper),T);
     	bb_upper = bb(l_upper,T);
 
 		L += simpson(bb_lower, bb_upper, bb_mid, l_lower, l_upper);
