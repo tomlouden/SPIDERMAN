@@ -13,7 +13,7 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
 
     double l1 = 1.1e-6;
     double l2 = 1.6e-6;
-    double n_bb_seg = 1;
+    int n_bb_seg = 1;
 
     double *coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
 
@@ -22,7 +22,7 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
 
     point_T = zhang_2016(la,lo,xi,T_n,delta_T);
 
-    planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg)*pow(planet[0][15],2);
+    planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
 //        planet[k][16] = zhang_2016(la,lo,xi,T_n,delta_T)
