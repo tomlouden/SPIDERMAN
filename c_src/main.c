@@ -72,6 +72,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
+            printf("%f %f\n", planet[j][16],planet[j][15]);
             p_bright = p_bright + planet[j][16]*planet[j][15];
         }
 
