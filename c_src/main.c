@@ -62,9 +62,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         }
 
         phi0 = tan(coords[1]/coords[2]);
-        printf("BEFORE MAP\n");
         planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0);
-        printf("AFTER MAP\n");
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
