@@ -16,7 +16,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double c = 299792458.0;
     
     double l1 = 1.1e-6;
-    double l2 = 1.6e-6;
+    double l2 = 1.7e-6;
     int n_bb_seg = 100;
     double star_T = 4250;
 
