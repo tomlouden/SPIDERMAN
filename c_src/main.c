@@ -77,7 +77,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
-//        printf("output[n] %f, star_bright %f, p_bright %f, p_blocked %f\n",output[n],star_bright,p_bright,p_blocked);
+        printf("output[n] %f, star_bright %f, p_bright %f, p_blocked %f\n",output[n],star_bright,p_bright,p_blocked);
     }
 
     free(planet);
