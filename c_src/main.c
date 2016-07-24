@@ -17,9 +17,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     
     double l1 = 1.1e-6;
     double l2 = 1.6e-6;
-    double n_bb_seg = 10;
+    int n_bb_seg = 10;
     double star_T = 4250;
-
 
     printf("%f %f\n",T_n,delta_T);
 
@@ -80,7 +79,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
-        printf("output[n] %f, star_bright %f, p_bright %f, p_blocked %f\n",output[n],star_bright,p_bright,p_blocked);
+//        printf("output[n] %f, star_bright %f, p_bright %f, p_blocked %f\n",output[n],star_bright,p_bright,p_blocked);
     }
 
     free(planet);
