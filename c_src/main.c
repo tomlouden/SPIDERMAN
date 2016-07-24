@@ -31,6 +31,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     star_bright = bb_flux(l1,l2,star_T,n_bb_seg)*M_PI*pow(r2,2);
 
+    printf("star flux %f\n",bb_flux(l1,l2,star_T,n_bb_seg));
+    printf("%f\n",M_PI*pow(r2,2));
+
 
     for (n = 0; n < n_points; n++) {
 
