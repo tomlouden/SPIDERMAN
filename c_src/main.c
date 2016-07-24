@@ -15,6 +15,11 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double c = 299792458.0;
     
+    double l1 = 1.1e-6;
+    double l2 = 1.6e-6;
+    double n_bb_seg = 10;
+    double star_T = 4250;
+
     // generate the planet grid
     double **planet = generate_planet(n_layers);
 
@@ -23,6 +28,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double *transit_coords = separation_of_centers(tc,tc,per,a,inc,ecc,omega,a_rs,r2);
 
     double transit_z = transit_coords[3];
+
+    star_bright = bb_flux(l1,l2,star_T,n_bb_seg)*M_PI*pow(r2,2);
+
 
     for (n = 0; n < n_points; n++) {
 

@@ -9,6 +9,7 @@
 #include "ephemeris.h"
 #include "main.h"
 #include "pyutil.h"
+#include "blackbody.h"
 #include <stdio.h>
 
 static char module_docstring[] =
