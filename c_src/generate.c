@@ -13,7 +13,7 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
 
     double l1 = 1.1e-6;
     double l2 = 1.6e-6;
-    double n_bb_seg = 10;
+    double n_bb_seg = 1;
 
     double *coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
 
