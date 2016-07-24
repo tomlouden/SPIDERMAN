@@ -39,8 +39,7 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
 
         point_T = zhang_2016(la,lo,xi,T_n,delta_T);
 
-        planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg)*pow(planet[k][15],2);
-        printf("%i %f\n",k,planet[k][16]);
+        planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
     }
 
     return planet;
