@@ -1,3 +1,5 @@
+#include "util.h"
+
 int compare_function(const void *a,const void *b) {
 	double *x = (double *) a;
 	double *y = (double *) b;
@@ -9,7 +11,7 @@ int compare_function(const void *a,const void *b) {
 double simpson(double fa, double fb, double fmid, double a, double b) {
 	double int_f;
 
-	int_f = ((b-a)/6)*(fa + 4*fmid + fb);
+	int_f = ((b-a)/6.0)*(fa + 4.0*fmid + fb);
 
 	return int_f;
 

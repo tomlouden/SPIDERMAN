@@ -20,6 +20,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double n_bb_seg = 10;
     double star_T = 4250;
 
+
+    printf("%f %f\n",T_n,delta_T);
+
     // generate the planet grid
     double **planet = generate_planet(n_layers);
 

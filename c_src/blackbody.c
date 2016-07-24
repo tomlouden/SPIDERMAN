@@ -15,8 +15,8 @@ double bb_flux(double l1, double l2, double T,int n_segments){
 	double L=0;
 	double wvl_diff = l2-l1;
 	double wvl_int = wvl_diff/n_segments;
-	double l_lower = l1;
-	double l_upper = l2;
+	double l_lower = 0.0;
+	double l_upper = 0.0;
 	double bb_lower,bb_mid,bb_upper;
 
     for (int k = 0; k <n_segments; ++k) {
