@@ -35,6 +35,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     free(coords);
 
+    int n_segments = pow(n_layers,2);
+
+
     for (n = 0; n < n_points; n++) {
 
         double *old_coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
@@ -69,7 +72,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         phi0 = tan(coords[1]/coords[2]);
         double **planet = map_model(old_planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
 
-        int n_segments = pow(n_layers,2);
         for (int i = 0; i < n_segments; ++i) {
           free(planet[i]);
           // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
@@ -95,7 +97,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     }
 
 
-    int n_segments = pow(n_layers,2);
     for (int i = 0; i < n_segments; ++i) {
       free(old_planet[i]);
       // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
