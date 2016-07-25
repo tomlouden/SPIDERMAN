@@ -33,6 +33,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     star_bright = star_bright*M_PI*pow(r2,2);
 
+    free(coords)
+
     for (n = 0; n < n_points; n++) {
 
         coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
