@@ -37,10 +37,11 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     for (n = 0; n < n_points; n++) {
 
-        output[n] = 1.0;/*
-
         coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
         phase = ((t[n]-tc)/per);
+
+        free(coords)
+        output[n] = 1.0;/*
 
         // make correction for finite light travel speed
 
