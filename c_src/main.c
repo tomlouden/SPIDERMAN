@@ -25,6 +25,13 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     // generate the planet grid
     double **planet = generate_planet(n_layers);
 
+    int n_segments = pow(n_layers,2);
+    for (int i = 0; i < n_segments; ++i) {
+      free(planet[i]);
+      // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
+    }
+
+
     free(planet);
 
     return output;
