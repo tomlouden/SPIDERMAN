@@ -51,7 +51,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         free(coords);
 
-
         if(phase > 1){
             phase = phase - floor(phase);
         }
@@ -66,6 +65,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         if(lambda0 < -2*M_PI){
             lambda0 = lambda0 + 2*M_PI;
         }
+
+        output[n] = 1.0;/*
 
         phi0 = tan(coords[1]/coords[2]);
         planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
@@ -83,6 +84,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
+    */
     }
 
     int n_segments = pow(n_layers,2);
