@@ -362,11 +362,11 @@ static PyObject *web_separation_of_centers(PyObject *self, PyObject *args)
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
     int n_layers;
-    double tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2;
+    double tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s;
     PyObject *t_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOddddddddddddd", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&xi,&T_n,&delta_T,&p_u1,&p_u2))
+    if (!PyArg_ParseTuple(args, "iOdddddddddddddd", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&xi,&T_n,&delta_T,&p_u1,&p_u2,&T_s))
         return NULL;
 
     PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -384,7 +384,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     double *t2    = (double*)PyArray_DATA(t_array);
 
     /* Call the external C function to compute the area. */
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 

@@ -37,5 +37,5 @@ def zhang_2016(lat,lon,xi,T_n,delta_T):
 def separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2):
 	return _web.separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2)
 
-def lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2):
-	return _web.lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2)
+def lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s):
+	return _web.lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s)

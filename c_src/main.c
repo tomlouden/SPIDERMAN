@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double xi,double T_n,double delta_T,double u1, double u2){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double xi,double T_n,double delta_T,double u1, double u2,double star_T){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
@@ -19,7 +19,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double l1 = 1.1e-6;
     double l2 = 1.7e-6;
     int n_bb_seg = 10;
-    double star_T = 4520;
 
     // generate the planet grid
     double **planet = generate_planet(n_layers);
