@@ -66,10 +66,10 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             lambda0 = lambda0 + 2*M_PI;
         }
 
-        output[n] = 1.0;/*
-
         phi0 = tan(coords[1]/coords[2]);
         planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
+
+        output[n] = 1.0;/*
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
