@@ -22,10 +22,12 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double *output = malloc(sizeof(double) * n_points);
 
-    return output;
-
     // generate the planet grid
     double **planet = generate_planet(n_layers);
+
+    free(planet);
+
+    return output;
 
     double *transit_coords = separation_of_centers(tc,tc,per,a,inc,ecc,omega,a_rs,r2);
 
