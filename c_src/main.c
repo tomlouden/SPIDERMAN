@@ -23,7 +23,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double *output = malloc(sizeof(double) * n_points);
 
     // generate the planet grid
-    double **planet = generate_planet(n_layers);
+    double **old_planet = generate_planet(n_layers);
 
     double *transit_coords = separation_of_centers(tc,tc,per,a,inc,ecc,omega,a_rs,r2);
 
@@ -67,7 +67,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         }
 
         phi0 = tan(coords[1]/coords[2]);
-        planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
+        double **planet = map_model(old_planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
 
         int n_segments = pow(n_layers,2);
         for (int i = 0; i < n_segments; ++i) {
@@ -94,6 +94,13 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     */
     }
 
+
+    int n_segments = pow(n_layers,2);
+    for (int i = 0; i < n_segments; ++i) {
+      free(old_planet[i]);
+      // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
+    }
+    free(old_planet);
     free(coords);
     free(transit_coords);
 
