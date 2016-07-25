@@ -70,7 +70,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         }
 
         phi0 = tan(coords[1]/coords[2]);
-        double **planet = map_model(old_planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
+        double **planet = old_planet;
+        planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
         output[n] = 1.0;/*
 
         for (int i = 0; i < n_segments; ++i) {
