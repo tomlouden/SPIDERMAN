@@ -35,7 +35,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     for (n = 0; n < n_points; n++) {
 
-        output[n] = 1.0;/*
+        output[n] = 1.0;
 
         coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
         phase = ((t[n]-tc)/per);
@@ -79,7 +79,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
-    */
     }
 
     int n_segments = pow(n_layers,2);
