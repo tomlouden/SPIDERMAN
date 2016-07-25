@@ -7,7 +7,7 @@ _web = Extension("spiderman._web",["c_src/_web.c","c_src/heron.c","c_src/segment
 _polar = Extension("spiderman._polar", ["c_src/_polar.c","c_src/polar.c"])
 
 setup(	name='spiderman-package', 
-	version="0.1.0",
+	version="0.2.0",
 	author='Tom Louden',
 	author_email = 't.m.louden@warwick.ac.uk',
 	url = 'https://github.com/tmlouden/spiderman',

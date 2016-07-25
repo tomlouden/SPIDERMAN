@@ -6,14 +6,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double **map_model(double **planet,int n_layers,double xi, double T_n, double delta_T,double lambda0, double phi0){
-    double point_T;
+double **map_model(double **planet,int n_layers,double xi, double T_n, double delta_T,double lambda0, double phi0, double u1, double u2){
+    double point_T,mu;
 
     double R = 1.0;
 
     double l1 = 1.1e-6;
     double l2 = 1.7e-6;
-    int n_bb_seg = 100;
+    int n_bb_seg = 10;
 
     double *coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
 
@@ -40,6 +40,11 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
         point_T = zhang_2016(la,lo,xi,T_n,delta_T);
 
         planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+        // limb darkening
+
+        mu = sqrt(1 - pow(R_mid,2));
+
+        planet[k][16] = planet[k][16]*(1 - u1*(1-mu) - u2*(pow(1-mu,2)));
     }
 
     return planet;

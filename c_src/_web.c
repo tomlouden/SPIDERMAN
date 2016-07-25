@@ -262,16 +262,16 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args)
 static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 {
     int n_layers,n_1,n_2;
-    double xi,T_n,delta_T,lambda0,phi0;
+    double xi,T_n,delta_T,lambda0,phi0,p_u1,p_u2;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iddddd", &n_layers,&xi,&T_n,&delta_T,&lambda0,&phi0))
+    if (!PyArg_ParseTuple(args, "iddddddd", &n_layers,&xi,&T_n,&delta_T,&lambda0,&phi0,&p_u1,&p_u2))
         return NULL;
 
     /* Call the external C function to compute the area. */
     double **planet_struct = generate_planet(n_layers);
 
-    planet_struct = map_model(planet_struct,n_layers,xi,T_n,delta_T,lambda0,phi0);
+    planet_struct = map_model(planet_struct,n_layers,xi,T_n,delta_T,lambda0,phi0,p_u1,p_u2);
 
     /* Build the output tuple */
 
@@ -362,11 +362,11 @@ static PyObject *web_separation_of_centers(PyObject *self, PyObject *args)
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
     int n_layers;
-    double tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,star_bright;
+    double tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2;
     PyObject *t_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOdddddddddddd", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&xi,&T_n,&delta_T,&star_bright))
+    if (!PyArg_ParseTuple(args, "iOddddddddddddd", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&xi,&T_n,&delta_T,&p_u1,&p_u2))
         return NULL;
 
     PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -384,7 +384,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     double *t2    = (double*)PyArray_DATA(t_array);
 
     /* Call the external C function to compute the area. */
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,star_bright);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 

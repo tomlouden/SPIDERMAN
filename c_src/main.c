@@ -2,10 +2,11 @@
 #include "blocked.h"
 #include "ephemeris.h"
 #include "math.h"
+#include "blackbody.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double xi,double T_n,double delta_T,double star_bright){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double xi,double T_n,double delta_T,double u1, double u2){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
@@ -17,8 +18,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     
     double l1 = 1.1e-6;
     double l2 = 1.7e-6;
-    int n_bb_seg = 100;
-    double star_T = 4250;
+    int n_bb_seg = 10;
+    double star_T = 4520;
 
     // generate the planet grid
     double **planet = generate_planet(n_layers);
@@ -29,14 +30,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double transit_z = transit_coords[3];
 
-    star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
-
-    printf("star flux %f\n",star_bright);
+    double star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
 
     star_bright = star_bright*M_PI*pow(r2,2);
-
-    printf("new star flux%f\n",star_bright);
-
 
     for (n = 0; n < n_points; n++) {
 
@@ -68,11 +64,10 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         }
 
         phi0 = tan(coords[1]/coords[2]);
-        planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0);
+        planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
-            printf("%f %f\n", planet[j][16],planet[j][15]);
             p_bright = p_bright + planet[j][16]*planet[j][15];
         }
 
@@ -84,7 +79,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
-        printf("output[n] %f, star_bright %f, p_bright %f, p_blocked %f\n",output[n],star_bright,p_bright,p_blocked);
     }
 
     free(planet);
