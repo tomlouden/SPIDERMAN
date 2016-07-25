@@ -47,6 +47,8 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
         planet[k][16] = planet[k][16]*(1 - u1*(1-mu) - u2*(pow(1-mu,2)));
     }
 
+    free(coords);
+
     return planet;
 }
 

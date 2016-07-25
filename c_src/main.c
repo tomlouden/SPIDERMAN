@@ -82,6 +82,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     free(planet);
     free(coords);
+    free(transit_coords);
 
     return output;
 }
