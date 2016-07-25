@@ -35,6 +35,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     for (n = 0; n < n_points; n++) {
 
+        output[n] = 1.0;/*
+
         coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
         phase = ((t[n]-tc)/per);
 
@@ -64,7 +66,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         phi0 = tan(coords[1]/coords[2]);
         planet = map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
 
-
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
             p_bright = p_bright + planet[j][16]*planet[j][15];
@@ -78,6 +79,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
+    */
     }
 
     free(planet);
