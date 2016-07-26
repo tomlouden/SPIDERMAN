@@ -71,9 +71,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
 
-
-        output[n] = 1.0;/*
-
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
             p_bright = p_bright + planet[j][16]*planet[j][15];
@@ -87,7 +84,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
-    */
     }
 
     int n_segments = pow(n_layers,2);
