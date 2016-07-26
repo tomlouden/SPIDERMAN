@@ -65,16 +65,7 @@ double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T)
 
     double lambda_s = atan(xi);
 
-    /*
-    double eta = (xi/(1 + pow(xi,2)));
-    printf("1 %f\n",eta);
-
-    eta = (exp(M_PI/(2*eta)) + exp(3*M_PI/(2*eta)));
-    printf("2 %f\n",eta);
-
-    eta = 1/(exp(2*M_PI/eta) - 1.0);
-    printf("3 %f\n",eta);
-    */
+    // this bit is numerically unstable
 
     eta = (xi/(1 + pow(xi,2)))*(exp(M_PI/(2*xi)) + exp(3*M_PI/(2*xi)))/(exp(2*M_PI/xi) - 1.0);
 

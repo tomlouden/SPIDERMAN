@@ -15,7 +15,7 @@
 static char module_docstring[] =
     "This module is used to calcuate the areas of geometric shapes";
 static char web_docstring[] =
-    "Calculate triange area with only the lengths known.";
+    "Calculate triangle area with only the lengths known.";
 static char segment_docstring[] =
     "Calculate the area of a circle segment.";
 static char quad_docstring[] =
