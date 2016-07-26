@@ -30,7 +30,7 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
 
         double mid_x = R_mid*cos(theta_mid);
         double mid_y = R_mid*sin(theta_mid);
-        double coords = cart_to_ortho(R, mid_x, mid_y, lambda0, phi0);
+        double *coords = cart_to_ortho(R, mid_x, mid_y, lambda0, phi0);
         la = coords[1];
         // sign change to longitude - we're looking at the planet from the 
         // other side than in the simulations
