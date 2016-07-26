@@ -15,7 +15,7 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
     double l2 = 1.7e-6;
     int n_bb_seg = 10;
 
-    double *coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
+    double *old_coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
 
     double la = coords[1];
     double lo = coords[0];
@@ -30,11 +30,13 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
 
         double mid_x = R_mid*cos(theta_mid);
         double mid_y = R_mid*sin(theta_mid);
-        coords = cart_to_ortho(R, mid_x, mid_y, lambda0, phi0);
+        double coords = cart_to_ortho(R, mid_x, mid_y, lambda0, phi0);
         la = coords[1];
         // sign change to longitude - we're looking at the planet from the 
         // other side than in the simulations
         lo = -1*coords[0];
+
+        free(coords);
 
         point_T = zhang_2016(la,lo,xi,T_n,delta_T);
 
@@ -46,7 +48,7 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
         planet[k][16] = planet[k][16]*(1 - u1*(1-mu) - u2*(pow(1-mu,2)));
     }
 
-    free(coords);
+    free(old_coords);
 
 }
 
