@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double **map_model(double **planet,int n_layers,double xi, double T_n, double delta_T,double lambda0, double phi0, double u1, double u2){
+void map_model(double **planet,int n_layers,double xi, double T_n, double delta_T,double lambda0, double phi0, double u1, double u2){
     double point_T,mu;
 
     double R = 1.0;
@@ -25,7 +25,6 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
     planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
-//        planet[k][16] = zhang_2016(la,lo,xi,T_n,delta_T)
         double R_mid = (planet[k][13] + planet[k][14])/2.0;
         double theta_mid = (planet[k][10] + planet[k][11])/2.0;
 
@@ -49,7 +48,6 @@ double **map_model(double **planet,int n_layers,double xi, double T_n, double de
 
     free(coords);
 
-    return planet;
 }
 
 double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T){
