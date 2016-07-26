@@ -271,7 +271,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     /* Call the external C function to compute the area. */
     double **planet_struct = generate_planet(n_layers);
 
-    planet_struct = map_model(planet_struct,n_layers,xi,T_n,delta_T,lambda0,phi0,p_u1,p_u2);
+    map_model(planet_struct,n_layers,xi,T_n,delta_T,lambda0,phi0,p_u1,p_u2);
 
     /* Build the output tuple */
 
