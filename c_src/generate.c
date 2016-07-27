@@ -18,7 +18,7 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
     double *old_coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
 
     double la = old_coords[1];
-    double lo = old_coords[0];
+    double lo = -1*old_coords[0];
     free(old_coords);
 
     point_T = zhang_2016(la,lo,xi,T_n,delta_T);
