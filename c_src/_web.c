@@ -276,7 +276,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     /* Build the output tuple */
 
     n_1 =pow(n_layers,2);
-    n_2=17;
+    n_2=18;
 
     PyObject *pylist = Convert_2d_Array(planet_struct,n_1,n_2);
 

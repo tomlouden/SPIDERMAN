@@ -23,6 +23,7 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
 
     point_T = zhang_2016(la,lo,xi,T_n,delta_T);
 
+    planet[0][17] = point_T;
     planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
@@ -41,6 +42,7 @@ void map_model(double **planet,int n_layers,double xi, double T_n, double delta_
 
         point_T = zhang_2016(la,lo,xi,T_n,delta_T);
 
+        planet[k][17] = point_T;
         planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
         // limb darkening
 
@@ -100,7 +102,7 @@ double **generate_planet(int n_layers){
 
     planet = malloc(sizeof(double) * n_segments); // dynamic `array (size 4) of pointers to int`
     for (int i = 0; i < n_segments; ++i) {
-      planet[i] = malloc(sizeof(double) * 17);
+      planet[i] = malloc(sizeof(double) * 18);
       // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
     }
 
@@ -130,6 +132,7 @@ double **generate_planet(int n_layers){
     // This will be assigned later by another function//
     // For now, make total luminosity of the planet = 1//
     planet[0][16] = 1.0/M_PI;  // Region brightness //
+    planet[0][17] = 1.0/M_PI;  // Region brightness //
 
     int k = 1;
     for (int i = 1; i < n_layers; ++i) {
@@ -162,6 +165,8 @@ double **generate_planet(int n_layers){
             planet[k][9] = (planet[k][8] - planet[k][6]) / (planet[k][7] - planet[k][5]); // gradient //
 
             planet[k][16] = 1.0/M_PI;  // Region brightness //
+
+            planet[k][17] = 1.0/M_PI;  // Region brightness //
 
             theta = theta + increment;
             k = k+ 1;
