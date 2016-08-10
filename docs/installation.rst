@@ -17,9 +17,10 @@ Installing from GitHub is straightforward, simply type
 ::
 
    $ git clone https://github.com/tomlouden/SPIDERMAN
-To 'clone' the repository, then install using the setup script:
+To 'clone' the repository, then ``cd`` into the folder and install using the setup script:
 ::
 
+   $ cd SPIDERMAN
    $ sudo python setup.py install
 
 And that's it!
