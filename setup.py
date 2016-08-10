@@ -7,15 +7,16 @@ _web = Extension("spiderman._web",["c_src/_web.c","c_src/heron.c","c_src/segment
 _polar = Extension("spiderman._polar", ["c_src/_polar.c","c_src/polar.c"])
 
 setup(	name='spiderman-package', 
-	version="0.2.0",
+	version="0.2.2",
 	author='Tom Louden',
 	author_email = 't.m.louden@warwick.ac.uk',
-	url = 'https://github.com/tmlouden/spiderman',
+	url = 'https://github.com/tomlouden/spiderman',
+	download_url = 'https://github.com/tomlouden/spiderman/0.2.2',
 	packages =['spiderman'],
 	license = ['GNU GPLv3'],
 	description ='Fast secondary eclipse and phase curve modeling',
 	classifiers = [
-		'Development Status :: 5 - Beta/Stable',
+		'Development Status :: 4 - Beta',
 		'Intended Audience :: Science/Research',
 		'Topic :: Scientific/Engineering',
 		'Programming Language :: Python'
