@@ -14,3 +14,10 @@ Contents:
    intro
    installation
    ack
+
+Release Notes
+==============
+
+0.2.2 (2016/08/10)
+==================
+- First stable release.
