@@ -6,6 +6,7 @@ pip
 The fastest way to get the latest stable version of ``spiderman`` up and running is through pip:
 
 ::
+
 	$ pip install spiderman-package
 
 From source
