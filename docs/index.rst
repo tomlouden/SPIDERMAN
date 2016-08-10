@@ -13,6 +13,7 @@ Contents:
 
    intro
    installation
+   ack
 
 
 Indices and tables
