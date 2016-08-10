@@ -3,32 +3,28 @@ Installation
 ============
 pip
 ---
-You can install ``batman`` with pip (recommended):
+The fastest way to get the latest stable version of ``spiderman`` up and running is through pip:
 
 ::
-
-	$ pip install batman-package
+	$ pip install spiderman-package
 
 From source
 -----------
-You can also install directly from source. The most current `stable release <https://pypi.python.org/pypi/batman-package/>`_ is up on PyPI and the `development version <https://github.com/lkreidberg/batman>`_ can be found on GitHub.
+To get the most up to date version of spider install directly from source, though stability is not guarenteed. The `development version <https://github.com/tomlouden/spiderman>`_ can be found on GitHub.
 
+Installing from GitHub is straightforward, simply type
+::
 
-Unpack the distribution with ``tar -xvf`` and navigate to the source root directory.  To install, run the setup script:
-
+   $ git clone https://github.com/tomlouden/SPIDERMAN
+To 'clone' the repository, then install using the setup script:
 ::
 
    $ sudo python setup.py install
 
-Note that you'll need to ``cd`` out of the source directory **before** you can import ``batman``.
+And that's it!
+(Note that you'll need to ``cd`` out of the source directory **before** you can import ``spiderman``.)
 
 
 Tests
 -----
-To check whether the install is working, I recommend running a few basic tests with:
-
-::
-
-	$ python -c 'import batman; batman.test()'
-
-
+An Ipython notebook is included with a few examples, I recommend running it to test everything is working correctly. (built in test functions coming soon)
