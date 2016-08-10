@@ -1,1 +1,0 @@
-Search.setIndex({envversion:47,filenames:["index","intro"],objects:{},objnames:{},objtypes:{},terms:{content:0,current:1,follow:1,index:0,introduct:0,louden:1,modul:0,ngt:1,page:0,project:1,search:0,tom:1,wasp:1,work:1},titles:["Welcome to spiderman&#8217;s documentation!","Introduction"],titleterms:{document:0,indic:0,introduct:1,spiderman:0,tabl:0,welcom:0}})
