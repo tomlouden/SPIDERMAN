@@ -1,0 +1,16 @@
+class ModelParams(object):
+    def __init__(self):
+		self.t0= None
+		self.per= None
+		self.a_abs= None
+		self.inc= None
+		self.ecc= None
+		self.w= None
+		self.a= None
+		self.rp= None
+		self.xi= None
+		self.T_n= None
+		self.delta_T= None
+		self.p_u1= None
+		self.p_u2= None
+		self.T_s= None

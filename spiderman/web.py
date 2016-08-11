@@ -1,5 +1,4 @@
 import spiderman._web as _web
-import spiderman._polar as _polar
 
 def one_in_one_out(c1,c2,e1,e2,r_inner,r_outer,r2,x2,y2):
 	return _web.one_in_one_out(c1,c2,e1,e2,r_inner,r_outer,r2,x2,y2)
@@ -15,9 +14,6 @@ def find_quad_area(a,b,c,d):
 
 def segment(r,theta):
 	return _web.segment(r,theta)
-
-def polar(r1,r2,theta1,theta2):
-	return _polar.polar(r1,r2,theta1,theta2)
 
 def circle_intersect(x1,y1,r1,x2,y2,r2):
 	return _web.circle_intersect(x1,y1,r1,x2,y2,r2)
@@ -37,5 +33,5 @@ def zhang_2016(lat,lon,xi,T_n,delta_T):
 def separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2):
 	return _web.separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2)
 
-def lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s):
-	return _web.lightcurve(n_layers,t,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s)
+def lightcurve(t,sp,n_layers=5):
+	return _web.lightcurve(n_layers,t,sp.t0,sp.per,sp.a_abs,sp.inc,sp.ecc,sp.w,sp.a,sp.rp,sp.xi,sp.T_n,sp.delta_T,sp.p_u1,sp.p_u2,sp.T_s)
