@@ -33,5 +33,6 @@ def zhang_2016(lat,lon,xi,T_n,delta_T):
 def separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2):
 	return _web.separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2)
 
-def lightcurve(t,sp,n_layers=5):
-	return _web.lightcurve(n_layers,t,sp.t0,sp.per,sp.a_abs,sp.inc,sp.ecc,sp.w,sp.a,sp.rp,sp.xi,sp.T_n,sp.delta_T,sp.p_u1,sp.p_u2,sp.T_s)
+def lightcurve(t,sp):
+	brightness_params = sp.format_bright_params()
+	return _web.lightcurve(sp.n_layers,t,sp.t0,sp.per,sp.a_abs,sp.inc,sp.ecc,sp.w,sp.a,sp.rp,sp.p_u1,sp.p_u2,sp.brightness_type,brightness_params)

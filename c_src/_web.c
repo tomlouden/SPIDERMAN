@@ -261,17 +261,26 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args)
 
 static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 {
-    int n_layers,n_1,n_2;
-    double xi,T_n,delta_T,lambda0,phi0,p_u1,p_u2;
+    int n_layers,n_1,n_2,bright_type;
+    double lambda0,phi0,p_u1,p_u2;
+    PyObject *bright_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iddddddd", &n_layers,&xi,&T_n,&delta_T,&lambda0,&phi0,&p_u1,&p_u2))
+    if (!PyArg_ParseTuple(args, "iddddiO", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj))
         return NULL;
 
     /* Call the external C function to compute the area. */
     double **planet_struct = generate_planet(n_layers);
 
-    map_model(planet_struct,n_layers,xi,T_n,delta_T,lambda0,phi0,p_u1,p_u2);
+    PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (bright_array == NULL) {
+        Py_XDECREF(bright_array);
+        return NULL;
+    }
+    /* Get pointers to the data as C-types. */
+    double *brightness_params    = (double*)PyArray_DATA(bright_array);
+
+    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params);
 
     /* Build the output tuple */
 
@@ -361,15 +370,24 @@ static PyObject *web_separation_of_centers(PyObject *self, PyObject *args)
 
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
-    int n_layers;
-    double tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s;
-    PyObject *t_obj;
+    int n_layers, bright_type;
+    double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
+    PyObject *t_obj,*bright_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOdddddddddddddd", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&xi,&T_n,&delta_T,&p_u1,&p_u2,&T_s))
+    if (!PyArg_ParseTuple(args, "iOddddddddddiO", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj))
         return NULL;
 
+    PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (bright_array == NULL) {
+        Py_XDECREF(bright_array);
+        return NULL;
+    }
+    /* Get pointers to the data as C-types. */
+    double *brightness_params    = (double*)PyArray_DATA(bright_array);
+
     PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+
 
     /* If that didn't work, throw an exception. */
     if (t_array == NULL) {
@@ -379,12 +397,11 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     /* How many data points are there? */
     int N = (int)PyArray_DIM(t_array, 0);
-
     /* Get pointers to the data as C-types. */
     double *t2    = (double*)PyArray_DATA(t_array);
 
     /* Call the external C function to compute the area. */
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,xi,T_n,delta_T,p_u1,p_u2,T_s);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 

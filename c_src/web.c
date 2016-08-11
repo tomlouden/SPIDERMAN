@@ -6,11 +6,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double xi,double T_n,double delta_T,double u1, double u2,double star_T){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
     double p_blocked, p_bright,phase_z,phase_dz,phase_dt;
+    double star_bright;
 
     double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
 
@@ -29,9 +30,16 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double transit_z = transit_coords[3];
 
-    double star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
+    if(brightness_model == 0){
+        star_bright = 1.0;
+    }
 
-    star_bright = star_bright*M_PI*pow(r2,2);
+    // brightness model 1 is the Xi 2016 model, requires a stellar temperature
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
+        double star_T =brightness_params[0];
+        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
+        star_bright = star_bright*M_PI*pow(r2,2);
+    }
 
     free(coords);
 
@@ -67,7 +75,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         phi0 = tan(coords[1]/coords[2]);
 
 
-        map_model(planet,n_layers,xi,T_n,delta_T,lambda0,phi0,u1,u2);
+        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params);
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
