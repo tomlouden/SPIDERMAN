@@ -7,7 +7,7 @@
 #include "generate.h"
 #include "blocked.h"
 #include "ephemeris.h"
-#include "main.h"
+#include "web.h"
 #include "pyutil.h"
 #include "blackbody.h"
 #include <stdio.h>
