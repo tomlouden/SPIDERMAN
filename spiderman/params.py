@@ -1,3 +1,4 @@
+import numpy as np
 class ModelParams(object):
 
 	def __init__(self,brightness_model='xi'):
@@ -62,3 +63,25 @@ class ModelParams(object):
 		if (self.brightness_type == 4):
 			brightness_params = [self.T_s,self.xi,self.T_n,self.delta_T]
 		return brightness_params
+
+	def calc_phase(self,t):
+		phase = ((t-self.t0)/self.per)
+		if(phase > 1):
+			phase = phase - np.floor(phase)
+		if(phase < 0):
+			phase = phase + np.ceil(phase) + 1
+		self.phase = phase
+
+	def calc_substellar(self,t,coords):
+		star_x = 0.0-coords[0]
+		star_y = 0.0-coords[1]
+		star_z = 0.0-coords[2]
+		self.calc_phase(t)
+		lambda0 = (np.pi + self.phase*2*np.pi)
+		phi0 = np.tan(star_y/star_z)
+		if(lambda0 > 2*np.pi):
+			lambda0 = lambda0 - 2*np.pi;
+		if(lambda0 < -2*np.pi):
+			lambda0 = lambda0 + 2*np.pi;
+		self.lambda0 = lambda0
+		self.phi0 = phi0

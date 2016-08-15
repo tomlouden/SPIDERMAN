@@ -83,7 +83,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
             planet[k][17] = 0.0;
         }
         if(brightness_model == 1){
-            double point_T = brightness_params[0];
+            double point_T = brightness_params[1];
             planet[k][17] = point_T;
             planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
         }
@@ -112,9 +112,9 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         }
 
         if(brightness_model == 4){
-            double xi =brightness_params[0];
-            double T_n =brightness_params[1];
-            double delta_T =brightness_params[2];
+            double xi =brightness_params[1];
+            double T_n =brightness_params[2];
+            double delta_T =brightness_params[3];
             double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
             planet[k][17] = point_T;
             planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
