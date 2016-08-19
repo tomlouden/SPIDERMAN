@@ -72,7 +72,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             lambda0 = lambda0 + 2*M_PI;
         }
 
-        phi0 = tan(coords[1]/coords[2]);
+        phi0 = atan(coords[1]/coords[2]);
 
 
         map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params);
