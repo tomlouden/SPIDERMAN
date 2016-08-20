@@ -21,5 +21,6 @@ setup(	name='spiderman-package',
 		],
 	include_dirs = [np.get_include()],
 	install_requires = ['numpy'],
-	ext_modules=[_web]
+	ext_modules=[_web],
+	package_data = {'spiderman': ['art/*','test_data/*']},
 )
