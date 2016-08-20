@@ -11,15 +11,53 @@ from matplotlib import gridspec
 import seaborn as sb
 from numpy.random import randn
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import os.path
 import batman
 
 def get_star_png():
-	return sp.__file__
+	spiderdir = os.path.dirname(sp.__file__)
+	png_name = os.path.join(spiderdir,'art/sun_transp.png')
+	image = read_png(png_name)
+	return image
 
-def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0):
+	if ax == False:
+		f, ax = plt.subplots()
+	image = sp.get_star_png()
+
+	star_r_pix = 180
+	star_offset_pix = 200
+
+	p_imrat = star_r_pix*spider_params.rp
+
+	coords = sp.separation_of_centers(t,spider_params)
+
+	planet_pix = [star_offset_pix + coords[0]*p_imrat,star_offset_pix + coords[1]*p_imrat]
+
+	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix)
+
+	if(abs(abs(spider_params.phase)-0.5) > 0.25):
+		#in front 
+		s_zorder = 1
+	else:
+		s_zorder = 3
+
+	im = ax.imshow(image,zorder=s_zorder)
+	patch = patches.Circle((200, 200), radius=200, transform=ax.transData)
+	im.set_clip_path(patch)
+
+	ax.set_xlim(star_offset_pix+40*p_imrat,star_offset_pix+-40*p_imrat)
+	ax.set_ylim(star_offset_pix+-10*p_imrat,star_offset_pix+10*p_imrat)
+
+
+
+def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0]):
 
 	if ax == False:
 		f, ax = plt.subplots()
+		new_ax = True
+	else:
+		new_ax = False
 
 	planet = sp.generate_planet(spider_params,t)
 
@@ -30,11 +68,11 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 
 	thetas = np.linspace(planet[0][10],planet[0][11],100)
-	r = planet[0][14]
+	r = planet[0][14]*scale_planet
 	radii = [0,r]
 
-	xs = np.outer(radii, np.cos(thetas))
-	ys = np.outer(radii, np.sin(thetas))
+	xs = np.outer(radii, np.cos(thetas))+ planet_cen[0]
+	ys = np.outer(radii, np.sin(thetas))+ planet_cen[1]
 	xs[1,:] = xs[1,::-1]
 	ys[1,:] = ys[1,::-1]
 
@@ -57,14 +95,14 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 		n = planet[j]
 
-		r1 = n[13]
-		r2 = n[14]
+		r1 = n[13]*scale_planet
+		r2 = n[14]*scale_planet
 		radii = [r1,r2]
 
 		thetas = np.linspace(n[10],n[11],100)
 
-		xs = np.outer(radii, np.cos(thetas))
-		ys = np.outer(radii, np.sin(thetas))
+		xs = np.outer(radii, np.cos(thetas)) + planet_cen[0]
+		ys = np.outer(radii, np.sin(thetas)) + planet_cen[1]
 
 		xs[1,:] = xs[1,::-1]
 		ys[1,:] = ys[1,::-1]
@@ -77,10 +115,10 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	ax.spines['bottom'].set_color("black")
 	ax.spines['left'].set_color("black")
 
-	bs = 1.1
-
-	ax.set_xlim(+bs,-bs)
-	ax.set_ylim(-bs,+bs)
+	if new_ax == True:
+		bs = 1.1
+		ax.set_xlim(+bs,-bs)
+		ax.set_ylim(-bs,+bs)
 
 	ax.get_xaxis().set_visible(False)
 	ax.get_yaxis().set_visible(False)
@@ -189,7 +227,6 @@ def make_movie():
 
 	fn = 'sun_transp.png'
 	image = read_png(fn)
-
 
 	zero_temp = min_temp - dp
 

@@ -70,6 +70,7 @@ class ModelParams(object):
 			phase = phase - np.floor(phase)
 		if(phase < 0):
 			phase = phase + np.ceil(phase) + 1
+		print(phase)
 		self.phase = phase
 
 	def calc_substellar(self,t,coords):
@@ -83,5 +84,6 @@ class ModelParams(object):
 			lambda0 = lambda0 - 2*np.pi;
 		if(lambda0 < -2*np.pi):
 			lambda0 = lambda0 + 2*np.pi;
+		print(lambda0)
 		self.lambda0 = lambda0
 		self.phi0 = phi0
