@@ -13,6 +13,9 @@ from numpy.random import randn
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import batman
 
+def get_star_png():
+	return sp.__file__
+
 def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0):
 
 	if ax == False:
@@ -218,7 +221,7 @@ def make_movie():
 			phase = phase + np.ceil(phase) + 1
 
 		lambda0 = (np.pi + phase*2*np.pi)
-		phi0 = np.tan(star_y/star_z)
+		phi0 = np.arctan2(star_y,star_z)
 		if(lambda0 > 2*np.pi):
 			lambda0 = lambda0 - 2*np.pi;
 		if(lambda0 < -2*np.pi):

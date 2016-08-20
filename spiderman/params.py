@@ -78,7 +78,7 @@ class ModelParams(object):
 		star_z = 0.0-coords[2]
 		self.calc_phase(t)
 		lambda0 = (np.pi + self.phase*2*np.pi)
-		phi0 = np.tan(star_y/star_z)
+		phi0 = np.arctan2(star_y,star_z)
 		if(lambda0 > 2*np.pi):
 			lambda0 = lambda0 - 2*np.pi;
 		if(lambda0 < -2*np.pi):
