@@ -73,10 +73,6 @@ class ModelParams(object):
 	def calc_substellar(self,t):
 		self.calc_phase(t)
 		coords = sp.separation_of_centers(t,self)
-		print(coords)
 		substellar = _web.calc_substellar(self.phase,np.array(coords))
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
-		print(self.phase)
-		print(self.lambda0)
-		print(self.phi0)

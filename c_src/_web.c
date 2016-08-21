@@ -284,8 +284,6 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     /* Get pointers to the data as C-types. */
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
 
-    printf("%f %f\n",lambda0,phi0);
-
     map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params);
 
     /* Build the output tuple */

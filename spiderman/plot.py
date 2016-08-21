@@ -32,7 +32,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	coords = sp.separation_of_centers(t,spider_params)
 
-	planet_pix = [star_offset_pix + coords[0]*p_imrat,star_offset_pix + coords[1]*p_imrat]
+	planet_pix = [star_offset_pix - coords[0]*p_imrat,star_offset_pix - coords[1]*p_imrat]
 
 	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix)
 
