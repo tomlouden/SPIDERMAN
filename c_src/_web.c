@@ -33,6 +33,8 @@ static PyObject *web_blocked(PyObject *self, PyObject *args);
 static PyObject *web_zhang_2016(PyObject *self, PyObject *args);
 static PyObject *web_separation_of_centers(PyObject *self, PyObject *args);
 static PyObject *web_lightcurve(PyObject *self, PyObject *args);
+static PyObject *web_calc_phase(PyObject *self, PyObject *args);
+static PyObject *web_calc_substellar(PyObject *self, PyObject *args);
 
 static PyMethodDef module_methods[] = {
     {"heron", web_heron, METH_VARARGS, web_docstring},
@@ -47,6 +49,8 @@ static PyMethodDef module_methods[] = {
     {"zhang_2016", web_zhang_2016, METH_VARARGS, quad_docstring},
     {"separation_of_centers", web_separation_of_centers, METH_VARARGS, quad_docstring},
     {"lightcurve", web_lightcurve, METH_VARARGS, quad_docstring},
+    {"calc_phase", web_calc_phase, METH_VARARGS, quad_docstring},
+    {"calc_substellar", web_calc_substellar, METH_VARARGS, quad_docstring},
     {NULL, NULL, 0, NULL}
 };
 
@@ -280,6 +284,8 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     /* Get pointers to the data as C-types. */
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
 
+    printf("%f %f\n",lambda0,phi0);
+
     map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params);
 
     /* Build the output tuple */
@@ -364,6 +370,52 @@ static PyObject *web_separation_of_centers(PyObject *self, PyObject *args)
     double *output = separation_of_centers(t,tc,per,a,inc,ecc,omega,a_rs,r2);
 
     PyObject *ret = Py_BuildValue("[d,d,d]",output[0],output[1],output[2]);
+
+    return ret;
+}
+
+static PyObject *web_calc_phase(PyObject *self, PyObject *args)
+{
+    double t,tc,per;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "ddd", &t,&tc,&per))
+        return NULL;
+
+    /* Call the external C function to compute the area. */
+    double output = calc_phase(t,tc,per);
+
+    PyObject *ret = Py_BuildValue("d",output);
+
+    return ret;
+}
+
+static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
+{
+    double phase;
+    PyObject *c_obj;
+
+    /* Parse the input tuple */
+    if (!PyArg_ParseTuple(args, "dO", &phase,&c_obj))
+        return NULL;
+
+    PyObject *c_array = PyArray_FROM_OTF(c_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+
+    /* If that didn't work, throw an exception. */
+    if (c_array == NULL) {
+        Py_XDECREF(c_array);
+        return NULL;
+    }
+
+    double *c    = (double*)PyArray_DATA(c_array);
+
+    /* Call the external C function to compute the area. */
+    double *output = calc_substellar(phase,c);
+
+    PyObject *ret = Py_BuildValue("[d,d]",output[0],output[1]);
+
+    Py_DECREF(c_array);
+    free(c);
 
     return ret;
 }

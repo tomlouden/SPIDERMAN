@@ -3,7 +3,6 @@
 #include "ephemeris.h"
 #include "math.h"
 #include "blackbody.h"
-#include "web.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -47,9 +46,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     for (n = 0; n < n_points; n++) {
 
         double *old_coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
-
-        phase = calc_phase(t[n],tc,per);
-
+        phase = ((t[n]-tc)/per);
 
         // make correction for finite light travel speed
 
@@ -57,15 +54,25 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         phase_dz = transit_z-phase_z;
         phase_dt = (phase_dz/c)/(3600.0*24.0);
 
-        double *substellar = calc_substellar(phase,coords);
-
-        lambda0 = substellar[0];
-        phi0 = substellar[1];
-
         free(old_coords);
-        free(substellar);
-
         double *coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
+
+        if(phase > 1){
+            phase = phase - floor(phase);
+        }
+        if(phase < 0){
+            phase = phase + ceil(phase) + 1;
+        }
+
+        lambda0 = (M_PI+(phase*2*M_PI));
+        if(lambda0 > 2*M_PI){
+            lambda0 = lambda0 - 2*M_PI;
+        }
+        if(lambda0 < -2*M_PI){
+            lambda0 = lambda0 + 2*M_PI;
+        }
+
+        phi0 = atan2(coords[1],coords[2]);
 
         map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params);
 
@@ -96,41 +103,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     free(transit_coords);
 
     return output;
-}
-
-double calc_phase(double t, double t0, double per){
-    double phase;
-
-    phase = ((t-t0)/per);
-
-    if(phase > 1){
-        phase = phase - floor(phase);
-    }
-    if(phase < 0){
-        phase = phase + ceil(phase) + 1;
-    }
-
-    return phase;
-}
-
-double *calc_substellar(double phase, double *coords){
-    double lambda0,phi0;
-    double *output = malloc(sizeof(double) * 2);
-
-    lambda0 = (M_PI+(phase*2*M_PI));
-    if(lambda0 > 2*M_PI){
-        lambda0 = lambda0 - 2*M_PI;
-    }
-    if(lambda0 < -2*M_PI){
-        lambda0 = lambda0 + 2*M_PI;
-    }
-
-    phi0 = atan2(coords[1],coords[2]);
-
-    output[0] = lambda0;
-    output[1] = phi0;
-    return output;
-
 }
 
 double *call_blocked(int n_layers, int n_points, double *x2, double *y2, double r2){
