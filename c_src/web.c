@@ -5,6 +5,7 @@
 #include "blackbody.h"
 #include "web.h"
 #include <stdlib.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params){
@@ -64,6 +65,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         free(old_coords);
         free(substellar);
+
+        double *coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
 
         double *coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
 
