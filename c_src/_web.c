@@ -415,8 +415,6 @@ static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
     PyObject *ret = Py_BuildValue("[d,d]",output[0],output[1]);
 
     Py_DECREF(c_array);
-    free(c);
-    free(output);
 
     return ret;
 }
@@ -460,7 +458,6 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     /* Clean up. */
     Py_DECREF(t_array);
-    free(output);
 
     return pylist;
 }
