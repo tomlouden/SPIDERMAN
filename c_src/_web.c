@@ -416,6 +416,7 @@ static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
 
     Py_DECREF(c_array);
     free(c);
+    free(output);
 
     return ret;
 }

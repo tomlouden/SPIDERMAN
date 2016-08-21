@@ -24,8 +24,7 @@ def line_intersect(x1,y1,x2,y2,r2):
 
 def generate_planet(sp,t):
 	brightness_params = sp.format_bright_params()
-	coords = separation_of_centers(t,sp)
-	sp.calc_substellar(t,coords)
+	sp.calc_substellar(t)
 	return np.array(_web.generate_planet(sp.n_layers,sp.lambda0,sp.phi0,sp.p_u1,sp.p_u2,sp.brightness_type,brightness_params))
 
 def blocked(n_layers,x2,y2,r2):

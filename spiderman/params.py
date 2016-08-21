@@ -1,4 +1,7 @@
 import numpy as np
+import spiderman as sp
+import spiderman._web as _web
+
 class ModelParams(object):
 
 	def __init__(self,brightness_model='xi'):
@@ -65,25 +68,15 @@ class ModelParams(object):
 		return brightness_params
 
 	def calc_phase(self,t):
-		phase = ((t-self.t0)/self.per)
-		if(phase > 1):
-			phase = phase - np.floor(phase)
-		if(phase < 0):
-			phase = phase + np.ceil(phase) + 1
-		print(phase)
-		self.phase = phase
+		self.phase = _web.calc_phase(t,self.t0,self.per)
 
-	def calc_substellar(self,t,coords):
-		star_x = 0.0-coords[0]
-		star_y = 0.0-coords[1]
-		star_z = 0.0-coords[2]
+	def calc_substellar(self,t):
 		self.calc_phase(t)
-		lambda0 = (np.pi + self.phase*2*np.pi)
-		phi0 = np.arctan2(star_y,star_z)
-		if(lambda0 > 2*np.pi):
-			lambda0 = lambda0 - 2*np.pi;
-		if(lambda0 < -2*np.pi):
-			lambda0 = lambda0 + 2*np.pi;
-		print(lambda0)
-		self.lambda0 = lambda0
-		self.phi0 = phi0
+		coords = sp.separation_of_centers(t,self)
+		print(coords)
+		substellar = _web.calc_substellar(self.phase,np.array(coords))
+		self.lambda0 = substellar[0]
+		self.phi0 = substellar[1]
+		print(self.phase)
+		print(self.lambda0)
+		print(self.phi0)
