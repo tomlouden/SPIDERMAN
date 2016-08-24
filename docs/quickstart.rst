@@ -61,7 +61,7 @@ Finally, a lightcurve can be generated simply by using the "lightcurve" method:
 	plt.plot(t,lc)
 
 
-.. figure:: images/f6.pdf
+.. figure:: images/f5.pdf
     :width: 200px
     :align: center
     :height: 100px
@@ -70,7 +70,7 @@ Finally, a lightcurve can be generated simply by using the "lightcurve" method:
 
     The resulting lightcurve
 
-.. figure:: images/f6.png
+.. figure:: images/f5.png
     :width: 200px
     :align: center
     :height: 100px
