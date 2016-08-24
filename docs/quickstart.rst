@@ -14,8 +14,10 @@ This is likely the basic task that you need SPIDERMAN to perform, to, for exampl
 
     figure are like images but with a caption
 
-    and whatever else youwish to add
+and whatever else youwish to add
 
-    .. code-block:: python
+.. code-block:: python
 
-        import image
+    import image
+
+.. warning:: SPIDERMAN currently only produces secondary eclipses and phase-curves - the primary eclipse will not be modelled! To model the primary eclipse an additional code, such as BATMAN (Kreidberg et al 2015) will be required.
