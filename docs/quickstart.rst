@@ -61,6 +61,15 @@ Finally, a lightcurve can be generated simply by using the "lightcurve" method:
 	plt.plot(t,lc)
 
 
+.. figure:: images/f6.pdf
+    :width: 200px
+    :align: center
+    :height: 100px
+    :alt: alternate text
+    :figclass: align-center
+
+    The resulting lightcurve
+
 .. figure:: images/f6.png
     :width: 200px
     :align: center
