@@ -48,6 +48,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	ax.set_xlim(star_offset_pix+40*p_imrat,star_offset_pix+-40*p_imrat)
 	ax.set_ylim(star_offset_pix+-10*p_imrat,star_offset_pix+10*p_imrat)
+	return ax
 
 
 

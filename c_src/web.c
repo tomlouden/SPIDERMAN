@@ -25,6 +25,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double *output = malloc(sizeof(double) * n_points);
 
     // generate the planet grid
+
     double **planet = generate_planet(n_layers);
 
     double *transit_coords = separation_of_centers(tc,tc,per,a,inc,ecc,omega,a_rs,r2);
@@ -50,14 +51,13 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         phase = calc_phase(t[n],tc,per);
 
-
         // make correction for finite light travel speed
 
         phase_z = old_coords[3];
         phase_dz = transit_z-phase_z;
         phase_dt = (phase_dz/c)/(3600.0*24.0);
 
-        double *substellar = calc_substellar(phase,coords);
+        double *substellar = calc_substellar(phase,old_coords);
 
         lambda0 = substellar[0];
         phi0 = substellar[1];

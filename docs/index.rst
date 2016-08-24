@@ -13,6 +13,7 @@ Contents:
 
    intro
    installation
+   quickstart
    ack
 
 Release Notes

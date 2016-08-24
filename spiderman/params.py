@@ -1,6 +1,7 @@
 import numpy as np
 import spiderman as sp
 import spiderman._web as _web
+import spiderman.plot as splt
 
 class ModelParams(object):
 
@@ -76,3 +77,13 @@ class ModelParams(object):
 		substellar = _web.calc_substellar(self.phase,np.array(coords))
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
+
+	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0):
+		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright)
+
+	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0]):
+		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen)
+
+	def lightcurve(self,t):
+		brightness_params = self.format_bright_params()
+		return _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params)

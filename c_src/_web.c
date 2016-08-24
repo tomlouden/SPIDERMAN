@@ -437,7 +437,6 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
 
-
     /* If that didn't work, throw an exception. */
     if (t_array == NULL) {
         Py_XDECREF(t_array);
