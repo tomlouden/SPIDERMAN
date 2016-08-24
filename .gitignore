@@ -9,3 +9,4 @@ docs/_templates
 MANIFEST
 dist/
 *.swp
+*.ipynb_checkpoints
