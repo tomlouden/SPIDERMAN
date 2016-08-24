@@ -14,6 +14,8 @@ Contents:
    intro
    installation
    quickstart
+   plotting
+   brightness_maps
    ack
 
 Release Notes
