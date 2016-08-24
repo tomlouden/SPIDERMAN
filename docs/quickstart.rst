@@ -60,16 +60,6 @@ Finally, a lightcurve can be generated simply by using the "lightcurve" method:
 	lc = spider_params.lightcurve(t)
 	plt.plot(t,lc)
 
-
-.. figure:: images/f5.pdf
-    :width: 200px
-    :align: center
-    :height: 100px
-    :alt: alternate text
-    :figclass: align-center
-
-    The resulting lightcurve
-
 .. figure:: images/f5.png
     :width: 200px
     :align: center
