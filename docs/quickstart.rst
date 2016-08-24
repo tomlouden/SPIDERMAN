@@ -52,11 +52,13 @@ Now set the parameters specific to the brightness model that we defined earlier:
 Now, define the times you wish the model to be evaluated at, let's do a single full orbit:
 
 .. code-block:: python
+
 	t= spider_params.t0 + np.linspace(0, + spider_params.per,100)
 
 Finally, a lightcurve can be generated simply by using the "lightcurve" method:
 
 .. code-block:: python
+
 	lc = spider_params.lightcurve(t)
 	plt.plot(t,lc)
 
