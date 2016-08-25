@@ -2,17 +2,17 @@
 #include "segment.h"
 #include "orthographic.h"
 #include "blackbody.h"
+#include "brightness_maps.h"
 #include "math.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params){
-    double point_T,mu;
+    double point_T,mu,p_t_bright;
+    double l1,l2,R_mid,theta_mid,mid_x,mid_y;
 
     double R = 1.0;
 
-    double l1 = 1.1e-6;
-    double l2 = 1.7e-6;
     int n_bb_seg = 10;
 
     double *old_coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
@@ -21,54 +21,58 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
     double lo = -1*old_coords[0];
     free(old_coords);
 
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
+        l1 = brightness_params[1];
+        l2 = brightness_params[2];
+    }
     if(brightness_model == 0){
-        double p_t_bright = brightness_params[0];
-        planet[0][16] = p_t_bright/M_PI;
+        double p_t_bright = Uniform_b(brightness_params[0]);
+        planet[0][16] = p_t_bright;
         planet[0][17] = 0.0;
     }
     if(brightness_model == 1){
-        double point_T = brightness_params[1];
+        double point_T = Uniform_T(brightness_params[3]);
         planet[0][17] = point_T;
         planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
     }
     if(brightness_model == 2){
         double p_day = brightness_params[0];
         double p_night = brightness_params[1];
-
-        double p_t_bright = p_night;
-        if((-M_PI/2.0 <= lo) && (lo <= M_PI/2.0)){
-            p_t_bright = p_day;
-        }
-        planet[0][16] = p_t_bright/M_PI;
+        p_t_bright = Two_b(la,lo,p_day,p_night);
+        planet[0][16] = p_t_bright;
         planet[0][17] = 0.0;
     }
-
     if(brightness_model == 3){
-        double p_day = brightness_params[1];
-        double p_night = brightness_params[2];
-
+        double p_day = brightness_params[3];
+        double p_night = brightness_params[4];
         double point_T = p_night;
-        if((-M_PI/2.0 <= lo) && (lo <= M_PI/2.0)){
-            point_T = p_day;
-        }
+        point_T = Two_T(la,lo,p_day,p_night);
         planet[0][17] = point_T;
         planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
     }
     if(brightness_model == 4){
-        double xi =brightness_params[1];
-        double T_n =brightness_params[2];
-        double delta_T =brightness_params[3];
+        double xi =brightness_params[3];
+        double T_n =brightness_params[4];
+        double delta_T =brightness_params[5];
         double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
         planet[0][17] = point_T;
         planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
     }
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
-        double R_mid = (planet[k][13] + planet[k][14])/2.0;
-        double theta_mid = (planet[k][10] + planet[k][11])/2.0;
 
-        double mid_x = R_mid*cos(theta_mid);
-        double mid_y = R_mid*sin(theta_mid);
+        if(k == 0){
+            R_mid = 0;
+            mid_x = 0;
+            mid_y = 0;
+        }
+        else{
+            R_mid = (planet[k][13] + planet[k][14])/2.0;
+            theta_mid = (planet[k][10] + planet[k][11])/2.0;
+            mid_x = R_mid*cos(theta_mid);
+            mid_y = R_mid*sin(theta_mid);
+        }
+
         double *coords = cart_to_ortho(R, mid_x, mid_y, lambda0, phi0);
         la = coords[1];
         // sign change to longitude - we're looking at the planet from the 
@@ -78,43 +82,35 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         free(coords);
 
         if(brightness_model == 0){
-            double p_t_bright = brightness_params[0];
-            planet[k][16] = p_t_bright/M_PI;
+            double p_t_bright = Uniform_b(brightness_params[0]);
+            planet[k][16] = p_t_bright;
             planet[k][17] = 0.0;
         }
         if(brightness_model == 1){
-            double point_T = brightness_params[1];
+            double point_T = Uniform_T(brightness_params[3]);
             planet[k][17] = point_T;
             planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
         }
         if(brightness_model == 2){
             double p_day = brightness_params[0];
             double p_night = brightness_params[1];
-
-            double p_t_bright = p_night;
-            if((-M_PI/2.0 <= lo) && (lo <= M_PI/2.0)){
-                p_t_bright = p_day;
-            }
-
-            planet[k][16] = p_t_bright/M_PI;
+            p_t_bright = Two_b(la,lo,p_day,p_night);
+            planet[k][16] = p_t_bright;
             planet[k][17] = 0.0;
         }
         if(brightness_model == 3){
-            double p_day = brightness_params[1];
-            double p_night = brightness_params[2];
-
+            double p_day = brightness_params[3];
+            double p_night = brightness_params[4];
             double point_T = p_night;
-            if((-M_PI/2.0 <= lo) && (lo <= M_PI/2.0)){
-                point_T = p_day;
-            }
+            point_T = Two_T(la,lo,p_day,p_night);
             planet[k][17] = point_T;
             planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
         }
 
         if(brightness_model == 4){
-            double xi =brightness_params[1];
-            double T_n =brightness_params[2];
-            double delta_T =brightness_params[3];
+            double xi =brightness_params[3];
+            double T_n =brightness_params[4];
+            double delta_T =brightness_params[5];
             double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
             planet[k][17] = point_T;
             planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
@@ -126,42 +122,6 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         planet[k][16] = planet[k][16]*(1 - u1*(1-mu) - u2*(pow(1-mu,2)));
     }
 
-}
-
-double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T){
-    double T;
-    double eta;
-
-    // this is equation B.7 in Zhang and Showman 2016
-    // Xi is the ratio of advective and radiative timescales
-    // T_n is the nightside equilibrium temperature
-    // delta_T is the diference between night and dayside eqt
-
-    double phi = lat;
-    double lambda = lon;
-
-    double lambda_s = atan(xi);
-
-    // this bit is numerically unstable
-
-    eta = (xi/(1 + pow(xi,2)))*(exp(M_PI/(2*xi)) + exp(3*M_PI/(2*xi)))/(exp(2*M_PI/xi) - 1.0);
-
-    if((-M_PI/2.0 <= lambda) && (lambda <= M_PI/2.0)){
-        T = T_n + delta_T*cos(phi)*cos(lambda_s)*cos(lambda-lambda_s) + eta*delta_T*cos(phi)*exp(-lambda/xi);
-    }
-    else if((-M_PI <= lambda) && (lambda <= -M_PI/2.0)){
-        T = T_n + eta*delta_T*cos(phi)*exp(-(M_PI+lambda)/xi);
-    }
-    else if ((M_PI/2 <= lambda) && (lambda <= M_PI)){
-        T = T_n + eta*delta_T*cos(phi)*exp((M_PI-lambda)/xi);
-    }
-    else{
-        printf("lambda %f\n",lambda);
-        printf("UNEXPECTED CASE IN ZHANG\n");
-        return 0;
-    }
-
-    return T;
 }
 
 double **generate_planet(int n_layers){

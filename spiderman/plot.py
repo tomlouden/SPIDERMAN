@@ -20,7 +20,7 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,mycmap=plt.cm.inferno):
 	if ax == False:
 		f, ax = plt.subplots()
 	image = sp.get_star_png()
@@ -34,7 +34,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	planet_pix = [star_offset_pix - coords[0]*p_imrat,star_offset_pix - coords[1]*p_imrat]
 
-	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix)
+	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap)
 
 	if(abs(abs(spider_params.phase)-0.5) > 0.25):
 		#in front 
@@ -52,7 +52,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 
 
-def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0]):
+def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno):
 
 	if ax == False:
 		f, ax = plt.subplots()
@@ -67,16 +67,6 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	else:
 		b_i = 16
 
-
-	thetas = np.linspace(planet[0][10],planet[0][11],100)
-	r = planet[0][14]*scale_planet
-	radii = [0,r]
-
-	xs = np.outer(radii, np.cos(thetas))+ planet_cen[0]
-	ys = np.outer(radii, np.sin(thetas))+ planet_cen[1]
-	xs[1,:] = xs[1,::-1]
-	ys[1,:] = ys[1,::-1]
-
 	if min_temp == False:
 		temps = planet[:,b_i]
 		min_temp = np.min(temps)
@@ -85,12 +75,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	dp = (min_temp*min_bright)
 
-	val = (dp + planet[0][b_i]-min_temp)/(dp + max_temp-min_temp)
-
-	c = plt.cm.inferno(val)
-	ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
-
-	for j in range (1,len(planet)):
+	for j in range (0,len(planet)):
 		val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
 		c = plt.cm.inferno(val)
 
@@ -108,7 +93,6 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 		xs[1,:] = xs[1,::-1]
 		ys[1,:] = ys[1,::-1]
 
-		ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 		ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 
 	ax.set_axis_bgcolor('black')
@@ -129,7 +113,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	zero_temp = min_temp - dp
 	data = [np.linspace(zero_temp,max_temp,1000)]*2
 	fake, fake_ax = plt.subplots()
-	mycax = fake_ax.imshow(data, interpolation='none', cmap=plt.cm.inferno)
+	mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
 	plt.close(fake)
 
 	cax = divider.append_axes("right", size="20%", pad=0.05)

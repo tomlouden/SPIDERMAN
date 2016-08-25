@@ -44,7 +44,7 @@ class ModelParams(object):
 			self.pb_n= None			# Relative planet brightness (Star is 1)
 			self.T_s= None			# **STELLAR** effective temperature
 
-		elif brightness_model == 'xi':
+		elif brightness_model == 'zhang':
 			self.brightness_type= 4	# Integer model identifier
 			self.xi= None			# Ratio between radiative and advective timescales
 			self.T_n= None			# Radiative solution temperature on night side
@@ -59,13 +59,13 @@ class ModelParams(object):
 		if (self.brightness_type == 0):
 			brightness_params = [self.pb]
 		if (self.brightness_type == 1):
-			brightness_params = [self.T_s,self.pb]
+			brightness_params = [self.T_s,self.l1,self.l2,self.pb]
 		if (self.brightness_type == 2):
 			brightness_params = [self.pb_d,self.pb_n]
 		if (self.brightness_type == 3):
-			brightness_params = [self.T_s,self.pb_d,self.pb_n]
+			brightness_params = [self.T_s,self.l1,self.l2,self.pb_d,self.pb_n]
 		if (self.brightness_type == 4):
-			brightness_params = [self.T_s,self.xi,self.T_n,self.delta_T]
+			brightness_params = [self.T_s,self.l1,self.l2,self.xi,self.T_n,self.delta_T]
 		return brightness_params
 
 	def calc_phase(self,t):
@@ -78,12 +78,18 @@ class ModelParams(object):
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
 
-	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0):
+	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,use_phase=False):
+		if use_phase == True:
+			t = self.t0 + self.per*t
 		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright)
 
-	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0]):
+	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False):
+		if use_phase == True:
+			t = self.t0 + self.per*t
 		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen)
 
-	def lightcurve(self,t):
+	def lightcurve(self,t,use_phase=False):
 		brightness_params = self.format_bright_params()
+		if use_phase == True:
+			t = self.t0 + self.per*t
 		return _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params)

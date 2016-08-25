@@ -18,8 +18,6 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double c = 299792458.0;
     
-    double l1 = 1.1e-6;
-    double l2 = 1.7e-6;
     int n_bb_seg = 10;
 
     double *output = malloc(sizeof(double) * n_points);
@@ -38,6 +36,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     // brightness model 1 is the Xi 2016 model, requires a stellar temperature
     if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
+        double l1 = brightness_params[1];
+        double l2 = brightness_params[2];
         double star_T =brightness_params[0];
         star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
         star_bright = star_bright*M_PI*pow(r2,2);
