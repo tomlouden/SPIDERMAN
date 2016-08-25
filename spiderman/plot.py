@@ -20,7 +20,7 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,mycmap=plt.cm.inferno):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,mycmap=plt.cm.inferno,show_cax=True):
 	if ax == False:
 		f, ax = plt.subplots()
 	image = sp.get_star_png()
@@ -34,7 +34,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	planet_pix = [star_offset_pix - coords[0]*p_imrat,star_offset_pix - coords[1]*p_imrat]
 
-	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap)
+	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap,show_cax=show_cax)
 
 	if(abs(abs(spider_params.phase)-0.5) > 0.25):
 		#in front 
@@ -48,11 +48,14 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	ax.set_xlim(star_offset_pix+40*p_imrat,star_offset_pix+-40*p_imrat)
 	ax.set_ylim(star_offset_pix+-10*p_imrat,star_offset_pix+10*p_imrat)
+
+	ax.set(aspect=1)
+
 	return ax
 
 
 
-def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno):
+def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True):
 
 	if ax == False:
 		f, ax = plt.subplots()
@@ -100,6 +103,12 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	ax.spines['bottom'].set_color("black")
 	ax.spines['left'].set_color("black")
 
+	ax.set(aspect=1)
+
+	bs = 1.1
+	ax.set_xlim(+bs,-bs)
+	ax.set_ylim(-bs,+bs)
+
 	if new_ax == True:
 		bs = 1.1
 		ax.set_xlim(+bs,-bs)
@@ -116,15 +125,16 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
 	plt.close(fake)
 
-	cax = divider.append_axes("right", size="20%", pad=0.05)
-#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
-	cbar = plt.colorbar(mycax, cax=cax)
-	cbar.ax.tick_params(colors=("#04d9ff"))
+	if show_cax == True:
+		cax = divider.append_axes("right", size="20%", pad=0.05)
+	#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
+		cbar = plt.colorbar(mycax, cax=cax)
+		cbar.ax.tick_params(colors=("#04d9ff"))
 
-	if temp_map == True:
-		cbar.set_label('T (K)',color=("#04d9ff"))  # horizontal colorbar
-	else:
-		cbar.set_label('Relative brightness',color=("#04d9ff"))  # horizontal colorbar
+		if temp_map == True:
+			cbar.set_label('T (K)',color=("#04d9ff"))  # horizontal colorbar
+		else:
+			cbar.set_label('Relative brightness',color=("#04d9ff"))  # horizontal colorbar
 
 	return ax
 
