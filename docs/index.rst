@@ -21,6 +21,13 @@ Contents:
 Release Notes
 ==============
 
+0.3.0 (2016/08/25)
+==================
+- Updated API - more object oriented.
+- Made fully compatible with BATMAN.
+- Added intuitive plotting scripts.
+- Made example ipython notebooks.
+
 0.2.2 (2016/08/10)
 ==================
 - First stable release.
