@@ -1,2 +1,2 @@
 include c_src/*.h
-include art/sun_transp.png
+include spiderman/art/sun_transp.png
