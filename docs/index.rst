@@ -21,7 +21,7 @@ Contents:
 Release Notes
 ==============
 
-0.3.0 (2016/08/25)
+0.3.1 (2016/08/25)
 ==================
 - Updated API - more object oriented.
 - Made fully compatible with BATMAN.
