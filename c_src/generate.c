@@ -59,6 +59,13 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
     }
 
+    if(brightness_model == 5){
+        double p_t_bright = spherical(la,lo,brightness_params);
+        planet[0][16] = p_t_bright;
+        planet[0][17] = 0.0;
+    }
+
+
     for (int k = 1; k < pow(n_layers,2); ++k) {
 
         if(k == 0){
@@ -115,6 +122,12 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
             planet[k][17] = point_T;
             planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
         }
+        if(brightness_model == 5){
+            double p_t_bright = spherical(la,lo,brightness_params);
+            planet[k][16] = p_t_bright;
+            planet[k][17] = 0.0;
+        }
+
         // limb darkening
 
         mu = sqrt(1 - pow(R_mid,2));

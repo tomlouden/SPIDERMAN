@@ -2,6 +2,7 @@ import numpy as np
 import spiderman as sp
 import spiderman._web as _web
 import spiderman.plot as splt
+import matplotlib.pyplot as plt
 
 class ModelParams(object):
 
@@ -51,6 +52,10 @@ class ModelParams(object):
 			self.delta_T= None		# Day/Night side difference between radiative-only temperature
 			self.T_s= None			# **STELLAR** effective temperature
 
+		elif brightness_model == 'spherical':
+			self.brightness_type= 5	# Integer model identifier
+			self.a= None			# Ratio between radiative and advective timescales
+
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
 			quit()
@@ -96,6 +101,19 @@ class ModelParams(object):
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
+		if (self.brightness_type == 5):
+			brightness_param_names = ['orders','sph']
+			try:
+				brightness_params = [self.orders] + self.sph
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
+			total_modes = (self.orders * (self.orders +1))/2.0
+			if len(self.sph) != total_modes:
+				print('You have not specified the correct number of mode coefficients!')
+				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
+				quit()
 
 		if any(b == None for b in brightness_params):
 			print('Brightness parameters incorrectly assigned')
@@ -113,15 +131,61 @@ class ModelParams(object):
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
 
-	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True):
+	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black'):
 		if use_phase == True:
 			t = self.t0 + self.per*t
-		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,show_cax=show_cax)
+		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,show_cax=show_cax,mycmap=mycmap,theme=theme)
 
-	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True):
+	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black'):
 		if use_phase == True:
 			t = self.t0 + self.per*t
-		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,show_cax=show_cax)
+		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,show_cax=show_cax,mycmap=mycmap,theme=theme)
+
+	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black'):
+
+		if theme == 'black':
+			bg = 'black'
+			tc = ("#04d9ff")
+		else:
+			bg = 'white'
+			tc = 'black'
+
+		fig, axs = plt.subplots(2,2,figsize=(8/0.865,8),facecolor=bg)
+
+		# need a "get max" or "get min" function or something similar so the scale can be set properly
+
+		dp = (min_temp*min_bright)
+
+		self.plot_planet(0,use_phase=True,ax=axs[0,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
+		self.plot_planet(0.25,use_phase=True,ax=axs[0,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
+		self.plot_planet(0.5,use_phase=True,ax=axs[1,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
+		self.plot_planet(0.75,use_phase=True,ax=axs[1,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
+
+#		divider = make_axes_locatable(fig)
+
+		zero_temp = min_temp - dp
+		data = [np.linspace(zero_temp,max_temp,1000)]*2
+		fake, fake_ax = plt.subplots()
+		mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
+		plt.close(fake)
+
+		fig.subplots_adjust(right=0.80)
+		cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+
+		if show_cax == True:
+#			cax = divider.append_axes("right", size="20%", pad=0.05)
+		#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
+			cbar = plt.colorbar(mycax, cax=cbar_ax)
+			cbar.ax.tick_params(colors=tc)
+
+			if temp_map == True:
+				cbar.set_label('T (K)',color=tc)  # horizontal colorbar
+			else:
+				cbar.set_label('Relative brightness',color=tc)  # horizontal colorbar
+
+		fig.subplots_adjust(wspace=0, hspace=0)
+
+		return fig
 
 	def lightcurve(self,t,use_phase=False):
 		brightness_params = self.format_bright_params()

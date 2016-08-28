@@ -10,6 +10,7 @@
 #include "web.h"
 #include "pyutil.h"
 #include "blackbody.h"
+#include "brightness_maps.h"
 #include <stdio.h>
 
 static char module_docstring[] =

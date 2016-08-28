@@ -20,9 +20,18 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,mycmap=plt.cm.inferno,show_cax=True):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,mycmap=plt.cm.inferno,show_cax=True,theme='black'):
+
+	if theme == 'black':
+		bg = 'black'
+		tc = ("#04d9ff")
+	else:
+		bg = 'white'
+		tc = 'black'
+
+
 	if ax == False:
-		f, ax = plt.subplots()
+		f, ax = plt.subplots(facecolor=bg)
 	image = sp.get_star_png()
 
 	star_r_pix = 180
@@ -55,10 +64,17 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 
 
-def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True):
+def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True,theme='black'):
+
+	if theme == 'black':
+		bg = 'black'
+		tc = ("#04d9ff")
+	else:
+		bg = 'white'
+		tc = 'black'
 
 	if ax == False:
-		f, ax = plt.subplots()
+		f, ax = plt.subplots(facecolor=bg)
 		new_ax = True
 	else:
 		new_ax = False
@@ -98,10 +114,11 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 		ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 
-	ax.set_axis_bgcolor('black')
 
-	ax.spines['bottom'].set_color("black")
-	ax.spines['left'].set_color("black")
+	ax.set_axis_bgcolor(bg)
+
+	ax.spines['bottom'].set_color(bg)
+	ax.spines['left'].set_color(bg)
 
 	ax.set(aspect=1)
 
@@ -129,12 +146,12 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 		cax = divider.append_axes("right", size="20%", pad=0.05)
 	#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
 		cbar = plt.colorbar(mycax, cax=cax)
-		cbar.ax.tick_params(colors=("#04d9ff"))
+		cbar.ax.tick_params(colors=tc)
 
 		if temp_map == True:
-			cbar.set_label('T (K)',color=("#04d9ff"))  # horizontal colorbar
+			cbar.set_label('T (K)',color=tc)  # horizontal colorbar
 		else:
-			cbar.set_label('Relative brightness',color=("#04d9ff"))  # horizontal colorbar
+			cbar.set_label('Relative brightness',color=tc)  # horizontal colorbar
 
 	return ax
 

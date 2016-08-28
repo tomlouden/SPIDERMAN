@@ -1,4 +1,8 @@
 #include "math.h"
+#include "harmonics.h"
+#include "legendre_polynomial.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 double Uniform_b(double p_bright){
     return p_bright/M_PI;
@@ -58,4 +62,35 @@ double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T)
     }
 
     return T;
+}
+
+double spherical(double lat, double lon, double *a){
+    double x_vec[1];
+    double fx2;
+    double *fx2_vec;
+    double theta = (M_PI/2.0) - lat;
+    double phi = M_PI + lon;
+
+    int orders = a[0];
+
+    int k = 1;
+
+    x_vec[0] = cos(theta);
+
+    double val = 0.0;
+    for (int l = 0; l < (orders); ++l) {
+
+      for (int m = 0; m < (l+1); ++m) {
+        fx2_vec = pm_polynomial_value(1,l,m,x_vec);
+        fx2 = fx2_vec[l];
+        free ( fx2_vec );
+
+        val = val + a[k]*cos(m*phi)*fx2;
+
+        k = k +1;
+      }
+    }
+
+    return val;
+
 }
