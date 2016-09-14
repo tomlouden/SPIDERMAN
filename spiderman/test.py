@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time as timing
 
-def plot():
+def plot_test():
 	spider_params = sp.ModelParams(brightness_model='zhang')
 
 	spider_params.n_layers= 20
@@ -35,7 +35,7 @@ def plot():
 	plt.show()
 
 
-def time(nlayers=5,tpoints=100,nreps=1000):
+def time_test(nlayers=5,tpoints=100,nreps=1000):
 
 #	spider_params = sp.ModelParams(brightness_model='zhang')
 

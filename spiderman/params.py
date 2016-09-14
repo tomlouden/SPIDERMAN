@@ -141,6 +141,21 @@ class ModelParams(object):
 			t = self.t0 + self.per*t
 		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,show_cax=show_cax,mycmap=mycmap,theme=theme)
 
+	def get_lims(self,t,temp_map=False,use_phase=False):
+		if use_phase == True:
+			t = self.t0 + self.per*t
+
+		planet = sp.generate_planet(self,t)
+		if temp_map == True:
+			b_i = 17
+		else:
+			b_i = 16
+
+		temps = planet[:,b_i]
+
+		return [np.min(temps),np.max(temps)]
+
+
 	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black'):
 
 		if theme == 'black':
@@ -154,7 +169,16 @@ class ModelParams(object):
 
 		# need a "get max" or "get min" function or something similar so the scale can be set properly
 
-		dp = (min_temp*min_bright)
+		if max_temp == False:
+			blims1 = self.get_lims(0,temp_map=temp_map,use_phase=True)
+			blims2 = self.get_lims(0.25,temp_map=temp_map,use_phase=True)
+			blims3 = self.get_lims(0.5,temp_map=temp_map,use_phase=True)
+			blims4 = self.get_lims(0.75,temp_map=temp_map,use_phase=True)
+
+			min_temp = np.min(np.array([blims1,blims2,blims3,blims4]))
+			max_temp = np.max(np.array([blims1,blims2,blims3,blims4]))
+
+		dp = ((max_temp-min_temp)*min_bright)
 
 		self.plot_planet(0,use_phase=True,ax=axs[0,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
 		self.plot_planet(0.25,use_phase=True,ax=axs[0,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
@@ -163,8 +187,13 @@ class ModelParams(object):
 
 #		divider = make_axes_locatable(fig)
 
-		zero_temp = min_temp - dp
-		data = [np.linspace(zero_temp,max_temp,1000)]*2
+#		zero_temp = min_temp - dp
+		zero_temp = min_temp
+
+		if temp_map == True:
+			data = [np.linspace(zero_temp,max_temp,1000)]*2
+		else:
+			data = [np.linspace(zero_temp/max_temp,max_temp/max_temp,1000)]*2
 		fake, fake_ax = plt.subplots()
 		mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
 		plt.close(fake)
@@ -191,4 +220,5 @@ class ModelParams(object):
 		brightness_params = self.format_bright_params()
 		if use_phase == True:
 			t = self.t0 + self.per*t
-		return _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params)
+		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params)
+		return np.array(out)

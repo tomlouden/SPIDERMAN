@@ -20,7 +20,7 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0,mycmap=plt.cm.inferno,show_cax=True,theme='black'):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.cm.inferno,show_cax=True,theme='black'):
 
 	if theme == 'black':
 		bg = 'black'
@@ -43,7 +43,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	planet_pix = [star_offset_pix - coords[0]*p_imrat,star_offset_pix - coords[1]*p_imrat]
 
-	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap,show_cax=show_cax)
+	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap,show_cax=show_cax,theme=theme)
 
 	if(abs(abs(spider_params.phase)-0.5) > 0.25):
 		#in front 
@@ -92,7 +92,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 		max_temp = np.max(temps)
 
 
-	dp = (min_temp*min_bright)
+	dp = ((max_temp-min_temp)*min_bright)
 
 	for j in range (0,len(planet)):
 		val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
@@ -136,7 +136,8 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	divider = make_axes_locatable(ax)
 	# Append axes to the right of ax, with 20% width of ax
 
-	zero_temp = min_temp - dp
+#	zero_temp = min_temp - dp
+	zero_temp = min_temp
 	data = [np.linspace(zero_temp,max_temp,1000)]*2
 	fake, fake_ax = plt.subplots()
 	mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
@@ -240,7 +241,8 @@ def make_movie():
 	fn = 'sun_transp.png'
 	image = read_png(fn)
 
-	zero_temp = min_temp - dp
+#	zero_temp = min_temp - dp
+	zero_temp = min_temp
 
 	data = [np.linspace(zero_temp,max_temp,1000)]*2
 
