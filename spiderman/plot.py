@@ -8,7 +8,7 @@ from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, \
     AnnotationBbox
 import matplotlib.patches as patches
 from matplotlib import gridspec
-import seaborn as sb
+#import seaborn as sb
 from numpy.random import randn
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import os.path
@@ -20,7 +20,7 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.cm.inferno,show_cax=True,theme='black'):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.cm.inferno,show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
@@ -33,7 +33,6 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	if ax == False:
 		f, ax = plt.subplots(facecolor=bg)
 	image = sp.get_star_png()
-
 	star_r_pix = 180
 	star_offset_pix = 200
 
@@ -43,7 +42,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	planet_pix = [star_offset_pix - coords[0]*p_imrat,star_offset_pix - coords[1]*p_imrat]
 
-	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap,show_cax=show_cax,theme=theme)
+	ax = sp.plot_planet(spider_params,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=p_imrat,planet_cen=planet_pix,mycmap=mycmap,show_cax=show_cax,theme=theme,show_axes=show_axes)
 
 	if(abs(abs(spider_params.phase)-0.5) > 0.25):
 		#in front 
@@ -60,11 +59,22 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	ax.set(aspect=1)
 
+	arrr = np.array([-1000,-500,0,500,1000])
+	arrr2 = np.array([-200,0,200])
+
+	ax.set_xticks(arrr+star_offset_pix)
+	ax.set_xticklabels([round(x,3) for x in -1*arrr/(star_r_pix*spider_params.a/spider_params.a_abs)])
+
+	ax.set_yticks(arrr2+star_offset_pix)
+	ax.set_yticklabels([round(x,3) for x in 1*arrr2/(star_r_pix*spider_params.a/spider_params.a_abs)])
+
+	ax.set_xlabel('Projected separation (AU)')
+
 	return ax
 
 
 
-def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True,theme='black'):
+def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
@@ -117,8 +127,16 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	ax.set_axis_bgcolor(bg)
 
-	ax.spines['bottom'].set_color(bg)
-	ax.spines['left'].set_color(bg)
+	if show_axes == False:
+		ax.spines['bottom'].set_color(bg)
+		ax.spines['left'].set_color(bg)
+		ax.spines['top'].set_color(bg)
+		ax.spines['right'].set_color(bg)
+	else:
+		ax.spines['bottom'].set_color(tc)
+		ax.spines['left'].set_color(tc)
+		ax.spines['top'].set_color(tc)
+		ax.spines['right'].set_color(tc)
 
 	ax.set(aspect=1)
 
@@ -131,8 +149,13 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 		ax.set_xlim(+bs,-bs)
 		ax.set_ylim(-bs,+bs)
 
-	ax.get_xaxis().set_visible(False)
-	ax.get_yaxis().set_visible(False)
+	if show_axes == False:
+		ax.get_xaxis().set_visible(False)
+		ax.get_yaxis().set_visible(False)
+	else:
+		ax.get_xaxis().set_visible(True)
+		ax.get_yaxis().set_visible(True)
+
 	divider = make_axes_locatable(ax)
 	# Append axes to the right of ax, with 20% width of ax
 
@@ -157,7 +180,6 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	return ax
 
 def make_movie():
-	#sb.set_style("ticks")
 
 	exp_time = 103.129
 
@@ -287,9 +309,9 @@ def make_movie():
 
 		gs = gridspec.GridSpec(2, 2, width_ratios=[3, 1]) 
 
-		with sb.axes_style("ticks"):
-			ax2 = plt.subplot(gs[2])
-			sb.despine()
+#		with sb.axes_style("ticks"):
+#			ax2 = plt.subplot(gs[2])
+#			sb.despine()
 
 		ax3 = plt.subplot(gs[3], aspect='equal')
 
