@@ -10,69 +10,15 @@
 void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g){
     double point_T,mu,p_t_bright;
     double l1,l2,R_mid,theta_mid,mid_x,mid_y;
+    double la, lo;
 
     double R = 1.0;
-
     int n_bb_seg = 10;
-
-    double *old_coords = cart_to_ortho(R, 0, 0, lambda0, phi0);
-
-    double la = old_coords[1];
-    double lo = -1*old_coords[0];
-    free(old_coords);
 
     if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
         l1 = brightness_params[1];
         l2 = brightness_params[2];
     }
-
-
-
-    if(brightness_model == 0){
-        double p_t_bright = Uniform_b(brightness_params[0]);
-        planet[0][16] = p_t_bright;
-        planet[0][17] = 0.0;
-    }
-    if(brightness_model == 1){
-        double point_T = Uniform_T(brightness_params[3]);
-        planet[0][17] = point_T;
-//      planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
-        planet[0][16] = bb_interp(point_T, bb_g);
-
-    }
-    if(brightness_model == 2){
-        double p_day = brightness_params[0];
-        double p_night = brightness_params[1];
-        p_t_bright = Two_b(la,lo,p_day,p_night);
-        planet[0][16] = p_t_bright;
-        planet[0][17] = 0.0;
-    }
-    if(brightness_model == 3){
-        double p_day = brightness_params[3];
-        double p_night = brightness_params[4];
-        double point_T = p_night;
-        point_T = Two_T(la,lo,p_day,p_night);
-        planet[0][17] = point_T;
-//      planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
-        planet[0][16] = bb_interp(point_T, bb_g);
-    }
-    if(brightness_model == 4){
-        double xi =brightness_params[3];
-        double T_n =brightness_params[4];
-        double delta_T =brightness_params[5];
-        double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
-        planet[0][17] = point_T;
-//        planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
-        planet[0][16] = bb_interp(point_T, bb_g);
-
-    }
-
-    if(brightness_model == 5){
-        double p_t_bright = spherical(la,lo,brightness_params);
-        planet[0][16] = p_t_bright;
-        planet[0][17] = 0.0;
-    }
-
 
     for (int k = 1; k < pow(n_layers,2); ++k) {
 
