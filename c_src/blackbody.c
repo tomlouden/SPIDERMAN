@@ -1,6 +1,7 @@
 #include "blackbody.h"
 #include "util.h"
 #include "math.h"
+#include "spline.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -10,6 +11,53 @@
 //best to stick to simpsons rule
 // a better solution in future would probably be to precompute a grid of models
 // and interpolate 
+
+double bb_interp(double tval, double **bb_g){
+
+	double ypval;
+	double yppval;
+	int n_segments;
+
+	n_segments = (int) bb_g[3][0];
+
+	double yval = spline_cubic_val( n_segments, bb_g[0], bb_g[1], bb_g[2], tval, &ypval, &yppval);
+
+	return yval;
+
+}
+
+double **bb_grid(double l1, double l2, double T_start, double T_end,int n_temps,int n_segments){
+	double T, i;
+    double **grids;
+ 	double *ypp;
+
+	grids = malloc(sizeof(double) * 4); // dynamic `array (size 4) of pointers to int`
+
+	grids[3] = malloc(sizeof(double) * 1); // dynamic `array (size 4) of pointers to int`
+	grids[3][0] = (double) n_temps;
+
+    for (int k = 0; k <3; ++k) {
+		grids[k] = malloc(sizeof(double) * n_temps); // dynamic `array (size 4) of pointers to int`
+	}
+
+    i = (T_end - T_start)/n_temps;
+
+    for (int k = 0; k <n_temps; ++k) {
+    	T = T_start + k*i;
+		grids[0][k] = T;
+		grids[1][k] = bb_flux(l1,l2,T,n_segments);
+	}
+
+	ypp = spline_cubic_set( n_temps, grids[0], grids[1], 0, 0, 0, 0 );
+
+    for (int k = 0; k <n_temps; ++k) {
+		grids[2][k] = ypp[k];
+	}
+
+	free(ypp);
+
+    return grids;
+}
 
 double bb_flux(double l1, double l2, double T,int n_segments){
 	double L=0;

@@ -1,5 +1,4 @@
 #include "math.h"
-#include "harmonics.h"
 #include "legendre_polynomial.h"
 #include <stdlib.h>
 #include <stdio.h>

@@ -40,3 +40,7 @@ def separation_of_centers(t,sp):
 def lightcurve(t,sp):
 	brightness_params = sp.format_bright_params()
 	return _web.lightcurve(sp.n_layers,t,sp.t0,sp.per,sp.a_abs,sp.inc,sp.ecc,sp.w,sp.a,sp.rp,sp.p_u1,sp.p_u2,sp.brightness_type,brightness_params)
+
+def bb_grid(l1,l2,T_start,T_end,n_temps,n_segments):
+	temps, fluxes, deriv = _web.bb_grid(l1,l2,T_start,T_end,n_temps,n_segments)
+	return np.array(temps), np.array(fluxes), np.array(deriv)

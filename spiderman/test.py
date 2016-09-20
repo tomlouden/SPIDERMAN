@@ -24,8 +24,8 @@ def plot_test():
 	spider_params.delta_T= 942  # Day-night temperature contrast
 	spider_params.T_s = 4500    # Temperature of the star
 
-	spider_params.l1 = 1.3    # start of integration channel in microns
-	spider_params.l2 = 1.6    # end of integration channel in microns
+	spider_params.l1 = 1.3e-6    # start of integration channel in microns
+	spider_params.l2 = 1.6e-6    # end of integration channel in microns
 
 	t= spider_params.t0 + np.linspace(0, + spider_params.per,100)
 
@@ -37,9 +37,9 @@ def plot_test():
 
 def time_test(nlayers=5,tpoints=100,nreps=1000):
 
-#	spider_params = sp.ModelParams(brightness_model='zhang')
+	spider_params = sp.ModelParams(brightness_model='zhang')
 
-	spider_params = sp.ModelParams(brightness_model='uniform brightness')
+#	spider_params = sp.ModelParams(brightness_model='uniform brightness')
 
 	spider_params.n_layers= nlayers
 
@@ -59,8 +59,8 @@ def time_test(nlayers=5,tpoints=100,nreps=1000):
 	spider_params.delta_T= 942  # Day-night temperature contrast
 	spider_params.T_s = 4500    # Temperature of the star
 
-	spider_params.l1 = 1.3    # start of integration channel in microns
-	spider_params.l2 = 1.6    # end of integration channel in microns
+	spider_params.l1 = 1.3e-6    # start of integration channel in microns
+	spider_params.l2 = 1.6e-6    # end of integration channel in microns
 
 	spider_params.pb = 0.01    # planet relative brightness
 

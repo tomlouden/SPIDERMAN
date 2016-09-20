@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params){
+void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g){
     double point_T,mu,p_t_bright;
     double l1,l2,R_mid,theta_mid,mid_x,mid_y;
 
@@ -25,6 +25,9 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         l1 = brightness_params[1];
         l2 = brightness_params[2];
     }
+
+
+
     if(brightness_model == 0){
         double p_t_bright = Uniform_b(brightness_params[0]);
         planet[0][16] = p_t_bright;
@@ -33,7 +36,9 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
     if(brightness_model == 1){
         double point_T = Uniform_T(brightness_params[3]);
         planet[0][17] = point_T;
-        planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+//      planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+        planet[0][16] = bb_interp(point_T, bb_g);
+
     }
     if(brightness_model == 2){
         double p_day = brightness_params[0];
@@ -48,7 +53,8 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         double point_T = p_night;
         point_T = Two_T(la,lo,p_day,p_night);
         planet[0][17] = point_T;
-        planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+//      planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+        planet[0][16] = bb_interp(point_T, bb_g);
     }
     if(brightness_model == 4){
         double xi =brightness_params[3];
@@ -56,7 +62,9 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         double delta_T =brightness_params[5];
         double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
         planet[0][17] = point_T;
-        planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+//        planet[0][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+        planet[0][16] = bb_interp(point_T, bb_g);
+
     }
 
     if(brightness_model == 5){
@@ -96,7 +104,8 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         if(brightness_model == 1){
             double point_T = Uniform_T(brightness_params[3]);
             planet[k][17] = point_T;
-            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+//            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+            planet[k][16] = bb_interp(point_T, bb_g);
         }
         if(brightness_model == 2){
             double p_day = brightness_params[0];
@@ -111,7 +120,8 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
             double point_T = p_night;
             point_T = Two_T(la,lo,p_day,p_night);
             planet[k][17] = point_T;
-            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+//            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+            planet[k][16] = bb_interp(point_T, bb_g);
         }
 
         if(brightness_model == 4){
@@ -120,7 +130,8 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
             double delta_T =brightness_params[5];
             double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
             planet[k][17] = point_T;
-            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+//            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
+            planet[k][16] = bb_interp(point_T, bb_g);
         }
         if(brightness_model == 5){
             double p_t_bright = spherical(la,lo,brightness_params);

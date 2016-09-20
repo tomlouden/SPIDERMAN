@@ -35,6 +35,4 @@ void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
   int jhi, char *title );
 double r8vec_dot_product ( int n, double a1[], double a2[] );
 double *r8vec_linspace_new ( int n, double a_first, double a_last );
-void r8vec_print ( int n, double a[], char *title );
 void r8vec2_print ( int n, double a1[], double a2[], char *title );
-void timestamp ( );

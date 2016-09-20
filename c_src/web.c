@@ -3,6 +3,7 @@
 #include "ephemeris.h"
 #include "math.h"
 #include "blackbody.h"
+#include "spline.h"
 #include "web.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,12 +14,16 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double *coords;
     double p_blocked, p_bright,phase_z,phase_dz,phase_dt;
     double star_bright;
+    double **bb_g;
 
     double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
 
     double c = 299792458.0;
     
-    int n_bb_seg = 10;
+    int n_bb_seg = 20;
+    double T_start =500;
+    double T_end =10000;
+    int n_temps=32;
 
     double *output = malloc(sizeof(double) * n_points);
 
@@ -41,6 +46,11 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         double star_T =brightness_params[0];
         star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
         star_bright = star_bright*M_PI*pow(r2,2);
+
+    // also requires the precomputation of the blackbody interpolation grid
+
+        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
+
     }
 
     free(coords);
@@ -67,7 +77,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         double *coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
 
-        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params);
+        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g);
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
@@ -89,11 +99,19 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     int n_segments = pow(n_layers,2);
     for (int i = 0; i < n_segments; ++i) {
       free(planet[i]);
-      // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
     }
     free(planet);
     free(coords);
     free(transit_coords);
+
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
+        for (int j = 0; j < 4; ++j) {
+          free(bb_g[j]);
+        }
+    }
+    free(bb_g);
+
+
 
     return output;
 }

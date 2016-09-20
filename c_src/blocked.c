@@ -39,10 +39,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 //    printf("total center blocked %f\n",total_blocked);
 //    printf("out of %f\n",planet[0][15]*planet[0][16]);
 
-
-    inner_cross = malloc(sizeof(double) * 6);
-    outer_cross = malloc(sizeof(double) * 6);
-
     crosses = malloc(sizeof(double) * n_layers); // dynamic `array (size 4) of pointers to int`
     for (int i = 0; i < n_layers; ++i) {
       crosses[i] = malloc(sizeof(double) * 6);
@@ -56,11 +52,15 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
         for (int l = 0; l < 6; ++l) {
             crosses[j][l] = circle_cross[l];
         }
+        free(circle_cross);
     }
 
 
     for (int j = 1; j < n_layers; ++j) {
 
+
+        inner_cross = malloc(sizeof(double) * 6);
+        outer_cross = malloc(sizeof(double) * 6);
 
         double inner_r = planet[j*j][13];
         double outer_r = planet[j*j][14];
@@ -814,12 +814,11 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
             free(second_line);
 
         }
+        free(inner_cross);
+        free(outer_cross);
 
     }
 
-    free(inner_cross);
-    free(outer_cross);
-    free(circle_cross);
     for (int j = 0; j < n_layers; ++j) {
         free(crosses[j]);
     }
