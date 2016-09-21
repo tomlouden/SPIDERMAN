@@ -436,12 +436,12 @@ static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
 
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
-    int n_layers, bright_type;
+    int n_layers, bright_type, n_star;
     double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
-    PyObject *t_obj,*bright_obj;
+    PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOddddddddddiO", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj))
+    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOi", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star))
         return NULL;
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -453,8 +453,6 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
 
     PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-
-    /* If that didn't work, throw an exception. */
     if (t_array == NULL) {
         Py_XDECREF(t_array);
         return NULL;
@@ -465,8 +463,22 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     /* Get pointers to the data as C-types. */
     double *t2    = (double*)PyArray_DATA(t_array);
 
+    PyObject *teff_array = PyArray_FROM_OTF(teff_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (teff_array == NULL) {
+        Py_XDECREF(teff_array);
+        return NULL;
+    }
+    double *star_teff    = (double*)PyArray_DATA(teff_array);
+
+    PyObject *flux_array = PyArray_FROM_OTF(flux_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (t_array == NULL) {
+        Py_XDECREF(flux_array);
+        return NULL;
+    }
+    double *star_flux    = (double*)PyArray_DATA(flux_array);
+
     /* Call the external C function to compute the area. */
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 

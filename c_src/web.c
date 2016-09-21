@@ -8,13 +8,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
     double p_blocked, p_bright,phase_z,phase_dz,phase_dt;
     double star_bright;
     double **bb_g;
+    double *ypp;
 
     double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
 
@@ -44,7 +45,13 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         double star_T =brightness_params[0];
+        double ypval;
+        double yppval;
+
         star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
+        ypp = spline_cubic_set( nstars, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
+//        star_bright = spline_cubic_val( nstars, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
+
         star_bright = star_bright*M_PI*pow(r2,2);
 
     // also requires the precomputation of the blackbody interpolation grid
