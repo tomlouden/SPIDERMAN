@@ -22,9 +22,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double c = 299792458.0;
     
     int n_bb_seg = 20;
-    double T_start =500;
+    double T_start =0;
     double T_end =10000;
-    int n_temps=32;
+    int n_temps=100;
 
     double *output = malloc(sizeof(double) * n_points);
 

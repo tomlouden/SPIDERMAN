@@ -484,6 +484,8 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     /* Clean up. */
     Py_DECREF(t_array);
+    Py_DECREF(teff_array);
+    Py_DECREF(flux_array);
 
     return pylist;
 }
