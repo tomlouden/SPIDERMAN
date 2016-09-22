@@ -26,6 +26,7 @@ class ModelParams(object):
 
 			self.brightness_type= 0	# Integer model identifier
 			self.pb= None			# Relative planet brightness (Star is 1)
+			self.thermal= False			# Is this a thermal distribution?
 
 		elif brightness_model == 'uniform temperature':
 			self.n_layers = 1		# The default resolution for the grid
@@ -33,6 +34,7 @@ class ModelParams(object):
 			self.brightness_type= 1	# Integer model identifier
 			self.T_p= None			# Relative planet brightness (Star is 1)
 			self.T_s= None			# **STELLAR** effective temperature
+			self.thermal= True			# Is this a thermal distribution?
 
 		elif brightness_model == 'two brightness':
 			self.brightness_type= 2	# Integer model identifier
@@ -44,6 +46,7 @@ class ModelParams(object):
 			self.pb_d= None			# Relative planet brightness (Star is 1)
 			self.pb_n= None			# Relative planet brightness (Star is 1)
 			self.T_s= None			# **STELLAR** effective temperature
+			self.thermal= True			# Is this a thermal distribution?
 
 		elif brightness_model == 'zhang':
 			self.brightness_type= 4	# Integer model identifier
@@ -51,10 +54,12 @@ class ModelParams(object):
 			self.T_n= None			# Radiative solution temperature on night side
 			self.delta_T= None		# Day/Night side difference between radiative-only temperature
 			self.T_s= None			# **STELLAR** effective temperature
+			self.thermal= True			# Is this a thermal distribution?
 
 		elif brightness_model == 'spherical':
 			self.brightness_type= 5	# Integer model identifier
 			self.a= None			# Ratio between radiative and advective timescales
+			self.thermal= False			# Is this a thermal distribution?
 
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
@@ -216,9 +221,22 @@ class ModelParams(object):
 
 		return fig
 
-	def lightcurve(self,t,use_phase=False):
+	def lightcurve(self,t,use_phase=False,stellar_grid=False):
 		brightness_params = self.format_bright_params()
+
+		if self.thermal == True:
+			if stellar_grid == False:
+				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2)
+				teffs = star_grid[0]
+				totals = star_grid[1]
+			else:
+				teffs = stellar_grid[0]
+				totals = stellar_grid[1]
+		else:
+			teffs = []
+			totals = []
+
 		if use_phase == True:
 			t = self.t0 + self.per*t
-		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params)
+		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals))
 		return np.array(out)
