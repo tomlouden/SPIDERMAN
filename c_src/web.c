@@ -48,9 +48,9 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         double ypval;
         double yppval;
 
-        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
+//        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
         ypp = spline_cubic_set( nstars, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
-//        star_bright = spline_cubic_val( nstars, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
+        star_bright = spline_cubic_val( nstars, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
 
         star_bright = star_bright*M_PI*pow(r2,2);
 
