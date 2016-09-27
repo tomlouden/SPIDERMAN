@@ -36,6 +36,8 @@ double *cart_to_ortho(double R, double x, double y, double lambda0, double phi0)
 
 	lambda = lambda0 + atan2(x*sin(c),(rho*cos(c)*cos(phi0) - y*sin(c)*sin(phi0) ) );
 
+	lambda = lambda - M_PI*2*floor(lambda/(M_PI*2));
+
 	if(lambda>M_PI){
 		lambda = lambda-2*M_PI;
 	}
