@@ -277,6 +277,7 @@ class ModelParams(object):
 		return fig
 
 	def lightcurve(self,t,use_phase=False,stellar_grid=False):
+
 		brightness_params = self.format_bright_params()
 
 		if self.thermal == True:
@@ -293,5 +294,6 @@ class ModelParams(object):
 
 		if use_phase == True:
 			t = self.t0 + self.per*t
+
 		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals))
 		return np.array(out)

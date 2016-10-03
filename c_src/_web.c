@@ -478,6 +478,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     double *star_flux    = (double*)PyArray_DATA(flux_array);
 
     /* Call the external C function to compute the area. */
+
     double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star);
 
     PyObject *pylist = Convert_Big_Array(output,N);
