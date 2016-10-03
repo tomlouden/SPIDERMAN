@@ -56,6 +56,13 @@ class ModelParams(object):
 			self.brightness_type= 5	# Integer model identifier
 			self.a= None			# Ratio between radiative and advective timescales
 
+		elif brightness_model == 'kreidberg':
+			self.brightness_type= 6 # Integer model identifer
+			self.insol = None               # insolation in W/m^2
+			self.albedo = None              # albedo
+			self.redist = None              # fraction of incident energy redistributed to the night-side
+			self.T_s = None
+
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
 			quit()
@@ -114,6 +121,14 @@ class ModelParams(object):
 				print('You have not specified the correct number of mode coefficients!')
 				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
 				quit()
+		if (self.brightness_type == 6):
+			brightness_param_names = ['T_s','l1','l2','insol','albedo','redist']
+			try:
+				brightness_params = [self.T_s, self.l1, self.l2, self.insol, self.albedo, self.redist]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
 
 		if any(b == None for b in brightness_params):
 			print('Brightness parameters incorrectly assigned')
@@ -131,12 +146,12 @@ class ModelParams(object):
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
 
-	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
+	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.get_cmap(),theme='black',show_axes=False):
 		if use_phase == True:
 			t = self.t0 + self.per*t
 		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,show_cax=show_cax,mycmap=mycmap,theme=theme,show_axes=show_axes)
 
-	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
+	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.get_cmap(),theme='black',show_axes=False):
 		if use_phase == True:
 			t = self.t0 + self.per*t
 		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,show_cax=show_cax,mycmap=mycmap,theme=theme,show_axes=show_axes)
@@ -156,7 +171,7 @@ class ModelParams(object):
 		return [np.min(temps),np.max(temps)]
 
 
-	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black'):
+	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.get_cmap(),theme='black'):
 
 		if theme == 'black':
 			bg = 'black'
