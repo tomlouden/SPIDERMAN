@@ -107,9 +107,9 @@ class ModelParams(object):
 				print('should be',brightness_param_names)
 				quit()
 		if (self.brightness_type == 5):
-			brightness_param_names = ['orders','sph']
+			brightness_param_names = ['orders','sph','la_o','lo_o']
 			try:
-				brightness_params = [self.orders] + self.sph
+				brightness_params = [self.orders,self.la_o,self.lo_o] + self.sph
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)

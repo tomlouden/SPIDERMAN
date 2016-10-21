@@ -67,12 +67,12 @@ double spherical(double lat, double lon, double *a){
     double x_vec[1];
     double fx2;
     double *fx2_vec;
-    double theta = (M_PI/2.0) - lat;
-    double phi = M_PI + lon;
+    double theta = (M_PI/2.0) - (lat+a[1]);
+    double phi = M_PI + (lon+a[2]);
 
     int orders = a[0];
 
-    int k = 1;
+    int k = 3;
 
     x_vec[0] = cos(theta);
 
@@ -82,7 +82,7 @@ double spherical(double lat, double lon, double *a){
       for (int m = 0; m < (l+1); ++m) {
         fx2_vec = pm_polynomial_value(1,l,m,x_vec);
         fx2 = fx2_vec[l];
-        free ( fx2_vec );
+        free(fx2_vec);
 
         val = val + a[k]*cos(m*phi)*fx2;
 
@@ -90,6 +90,6 @@ double spherical(double lat, double lon, double *a){
       }
     }
 
-    return val;
+    return pow(val,2);
 
 }

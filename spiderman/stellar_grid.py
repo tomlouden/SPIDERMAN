@@ -2,15 +2,12 @@ import os.path
 import fitsio
 import matplotlib.pyplot as plt
 import numpy as np
-
-PHOENIX_DIR = '/storage/astro2/phrmat/PHOENIX'
+import spiderman
 
 def gen_grid(l1,l2):
 
 	logg = 4.5
 	z = -0.0
-
-	print('Generating stellar flux grid')
 
 	h =6.62607004e-34;
 	c =299792458.0;
@@ -18,16 +15,38 @@ def gen_grid(l1,l2):
 
 	teffs = [2500,3000,3500,4000,4500,5000,5500,6000,6500,7000]
 
+	warned = False
+
 	totals = []
 	for teff in teffs:
-		wvl, flux = get_phoenix_spectra(teff,logg,z)
-		b_flux = (2.0*h*(c**2)/(wvl**5))*(1.0/( np.exp( (h*c)/(wvl*kb*teff) )- 1.0));
-		totals += [sum_flux(wvl,flux,l1,l2)]
+		if spiderman.rcParams == True:
+			wvl, flux = get_phoenix_spectra(teff,logg,z)
+			PHOENIX_DIR = spiderman.rcParams['PHOENIX_DIR']
+
+			if warned == False:
+				print 'using stellar spectra in '+PHOENIX_DIR
+
+			if ( ((l1 > np.min(wvl)) & (l1 < np.max(wvl))) & ((l2 > np.min(wvl)) & (l2 < np.max(wvl) )) ):
+				totals += [sum_flux(wvl,flux,l1,l2)]
+			else:
+				if warned == False:
+					print 'wavelengths out of bound for stellar model, using blackbody approximation'
+				b_wvl = np.linspace(l1,l2,1000)
+				b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
+				totals += [sum_flux(b_wvl,b_flux,l1,l2)]
+		else:
+			if warned == False:
+				print 'no stellar models provided, using blackbody approximation'
+			b_wvl = np.linspace(l1,l2,1000)
+			b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
+			totals += [sum_flux(b_wvl,b_flux,l1,l2)]
+		warned = True
+
+
 	teffs = np.array(teffs)
 	totals = np.array(totals)
 
 	return [teffs, totals]
-
 
 def sum_flux(wvl,flux,l1,l2):
 
