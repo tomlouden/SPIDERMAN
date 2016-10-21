@@ -22,7 +22,7 @@ def plot_test():
 	spider_params.xi= 0.3       # Ratio of radiative to advective timescale             
 	spider_params.T_n= 1128     # Temperature of nightside
 	spider_params.delta_T= 942  # Day-night temperature contrast
-	spider_params.T_s = 4500    # Temperature of the star
+	spider_params.T_s = 5000    # Temperature of the star
 
 	spider_params.l1 = 1.3e-6    # start of integration channel in microns
 	spider_params.l2 = 1.6e-6    # end of integration channel in microns
@@ -72,9 +72,11 @@ def time_test(nlayers=5,tpoints=100,nreps=1000):
 
 	start = timing.time()
 
+	star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2)
+
 	ends = []
 	for i in range(0,nreps):
-		lc = sp.lightcurve(t,spider_params)
+		lc = sp.lightcurve(t,spider_params,stellar_grid=star_grid)
 		ends += [timing.time()]
 	ends = np.array(ends)
 
