@@ -20,7 +20,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         l2 = brightness_params[2];
     }
 
-    for (int k = 1; k < pow(n_layers,2); ++k) {
+    for (int k = 0; k < pow(n_layers,2); ++k) {
 
         if(k == 0){
             R_mid = 0;
@@ -78,6 +78,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
             planet[k][17] = point_T;
 //            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
             planet[k][16] = bb_interp(point_T, bb_g);
+//            printf("%f %f %f\n",point_T,bb_flux(l1,l2,point_T,n_bb_seg),planet[k][16]);
         }
         if(brightness_model == 5){
             double p_t_bright = spherical(la,lo,brightness_params);
