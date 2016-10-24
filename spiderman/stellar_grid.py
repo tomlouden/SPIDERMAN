@@ -70,6 +70,8 @@ def sum_flux(wvl,flux,l1,l2):
 def get_phoenix_spectra(teff,logg,z):
 	ftemplate = 'lte{teff:05d}-{logg:4.2f}{z:+3.1f}.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits'
 
+	PHOENIX_DIR = spiderman.rcParams['PHOENIX_DIR']
+
 	filename = os.path.join(PHOENIX_DIR,ftemplate.format(teff=teff,logg=logg,z=z))
 
 	# changing to si, W / m^3 / str
