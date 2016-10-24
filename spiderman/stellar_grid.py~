@@ -31,13 +31,13 @@ def gen_grid(l1,l2):
 				totals += [sum_flux(wvl,flux,l1,l2)]
 			else:
 				if warned == False:
-					print('wavelengths out of bound for stellar model, using blackbody approximation')
+					print 'wavelengths out of bound for stellar model, using blackbody approximation'
 				b_wvl = np.linspace(l1,l2,1000)
 				b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
 				totals += [sum_flux(b_wvl,b_flux,l1,l2)]
 		else:
 			if warned == False:
-				print('no stellar models provided, using blackbody approximation')
+				print 'no stellar models provided, using blackbody approximation'
 			b_wvl = np.linspace(l1,l2,1000)
 			b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
 			totals += [sum_flux(b_wvl,b_flux,l1,l2)]
