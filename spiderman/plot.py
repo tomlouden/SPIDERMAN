@@ -20,7 +20,7 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.get_cm('inferno'),show_cax=True,theme='black',show_axes=False):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
