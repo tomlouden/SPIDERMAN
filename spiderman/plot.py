@@ -20,7 +20,7 @@ def get_star_png():
 	image = read_png(png_name)
 	return image
 
-def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.cm.inferno,show_cax=True,theme='black',show_axes=False):
+def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,mycmap=plt.get_cm('inferno'),show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
@@ -72,7 +72,7 @@ def plot_system(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	return ax
 
-def plot_dist(spider_params,temps,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.viridis_r,show_cax=True,theme='black',show_axes=False):
+def plot_dist(spider_params,temps,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('viridis_r'),show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
@@ -172,7 +172,7 @@ def plot_dist(spider_params,temps,ax=False,min_temp=False,max_temp=False,temp_ma
 
 	return ax
 
-def plot_defined_planet(planet,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True,theme='black',show_axes=False):
+def plot_defined_planet(planet,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
@@ -275,7 +275,7 @@ def plot_defined_planet(planet,ax=False,min_temp=False,max_temp=False,temp_map=F
 
 	return ax
 
-def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.cm.inferno,show_cax=True,theme='black',show_axes=False):
+def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':
 		bg = 'black'
@@ -469,7 +469,7 @@ def make_movie():
 
 	data = [np.linspace(zero_temp,max_temp,1000)]*2
 
-	cax = plt.imshow(data, interpolation='none', cmap=plt.cm.inferno)
+	cax = plt.imshow(data, interpolation='none', cmap=plt.get_cmap('inferno'))
 	plt.close()
 
 	for i in range(0,n_ts-1):
@@ -528,14 +528,14 @@ def make_movie():
 
 		val = (dp + planet[0][17]-min_temp)/(dp + max_temp-min_temp)
 
-		c = plt.cm.inferno(val)
+		c = plt.get_cmap('inferno')(val)
 		ax1.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 		ax3.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 
 		for j in range (1,len(planet)):
 
 			val = (dp + planet[j][17]-min_temp)/(dp + max_temp-min_temp)
-			c = plt.cm.inferno(val)
+			c = plt.get_cmap('inferno')(val)
 
 			n = planet[j]
 
@@ -561,7 +561,7 @@ def make_movie():
 		ys = np.outer(radii, np.sin(thetas))
 		xs[1,:] = xs[1,::-1]
 		ys[1,:] = ys[1,::-1]
-		c = plt.cm.inferno(1.0)
+		c = plt.get_cmap('inferno')(1.0)
 
 		if(abs(abs(phase)-0.5) > 0.25):
 			#in front 
