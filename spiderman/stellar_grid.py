@@ -20,7 +20,7 @@ def gen_grid(l1,l2):
 
 	totals = []
 	for teff in teffs:
-		if spiderman.rcParams == True:
+		if spiderman.rcParams.read == True:
 			wvl, flux = get_phoenix_spectra(teff,logg,z)
 			PHOENIX_DIR = spiderman.rcParams['PHOENIX_DIR']
 
