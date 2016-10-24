@@ -89,7 +89,22 @@ double spherical(double lat, double lon, double *a){
         k = k +1;
       }
     }
-
     return pow(val,2);
+}
 
+double kreidberg_2016(double lat, double lon, double insol, double albedo, double redist){
+    // This function calculates the temperature from equation (1) in Kreidberg & Loeb 2016 
+
+    double sigma = 5.670367e-8;		//Stefan Boltzmann constant (W/m^2/K^4)
+    double T;
+
+    //dayside temperature
+    if((-M_PI/2.0 <= lon) && (lon <= M_PI/2.0)){
+        T = pow((1. - albedo)*insol*((1. - 2.*redist)*cos(lat)*cos(lon) + redist/2.)/sigma, 0.25);      
+    }
+    //nightside temperature
+    else{
+        T = pow((1. - albedo)*insol*redist/2./sigma, 0.25);    			
+    }
+    return T;
 }

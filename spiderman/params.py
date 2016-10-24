@@ -61,6 +61,13 @@ class ModelParams(object):
 			self.a= None			# Ratio between radiative and advective timescales
 			self.thermal= False			# Is this a thermal distribution?
 
+		elif brightness_model == 'kreidberg':
+			self.brightness_type= 6 # Integer model identifer
+			self.insol = None               # insolation in W/m^2
+			self.albedo = None              # albedo
+			self.redist = None              # fraction of incident energy redistributed to the night-side
+			self.T_s = None
+
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
 			quit()
@@ -118,6 +125,14 @@ class ModelParams(object):
 			if len(self.sph) != total_modes:
 				print('You have not specified the correct number of mode coefficients!')
 				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
+				quit()
+		if (self.brightness_type == 6):
+			brightness_param_names = ['T_s','l1','l2','insol','albedo','redist']
+			try:
+				brightness_params = [self.T_s, self.l1, self.l2, self.insol, self.albedo, self.redist]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
 				quit()
 
 		if any(b == None for b in brightness_params):

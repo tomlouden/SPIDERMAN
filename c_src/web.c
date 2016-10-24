@@ -39,7 +39,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     star_bright = 1.0;
 
     // brightness model 1 is the Xi 2016 model, requires a stellar temperature
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         double star_T =brightness_params[0];

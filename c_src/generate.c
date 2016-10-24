@@ -15,7 +15,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
     double R = 1.0;
     int n_bb_seg = 10;
 
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4){
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6) {
         l1 = brightness_params[1];
         l2 = brightness_params[2];
     }
@@ -85,6 +85,14 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
             planet[k][16] = p_t_bright;
             planet[k][17] = 0.0;
         }
+        if(brightness_model == 6){
+           double insol = brightness_params[3];
+           double albedo = brightness_params[4];
+           double redist = brightness_params[5];
+           double point_T = kreidberg_2016(la, lo, insol, albedo, redist);
+           planet[k][16] = bb_interp(point_T, bb_g); 
+           planet[k][17] = point_T;
+         }
 
         // limb darkening
 
