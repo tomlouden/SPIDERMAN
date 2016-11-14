@@ -39,27 +39,43 @@ double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T)
     double phi = lat;
     double lambda = lon;
 
-    double lambda_s = atan(xi);
+    double lambda_s = 0.;
 
-    // this bit is numerically unstable
-
-    eta = (xi/(1 + pow(xi,2)))*(exp(M_PI/(2*xi)) + exp(3*M_PI/(2*xi)))/(exp(2*M_PI/xi) - 1.0);
-
-    if((-M_PI/2.0 <= lambda) && (lambda <= M_PI/2.0)){
-        T = T_n + delta_T*cos(phi)*cos(lambda_s)*cos(lambda-lambda_s) + eta*delta_T*cos(phi)*exp(-lambda/xi);
-    }
-    else if((-M_PI <= lambda) && (lambda <= -M_PI/2.0)){
-        T = T_n + eta*delta_T*cos(phi)*exp(-(M_PI+lambda)/xi);
-    }
-    else if ((M_PI/2 <= lambda) && (lambda <= M_PI)){
-        T = T_n + eta*delta_T*cos(phi)*exp((M_PI-lambda)/xi);
+    if(xi < 0.01){
+	    if((-M_PI/2.0 <= lambda) && (lambda <= M_PI/2.0)){
+		T = T_n + delta_T*cos(phi)*cos(lambda_s)*cos(lambda-lambda_s);
+	    }
+	    else if((-M_PI <= lambda) && (lambda <= -M_PI/2.0)){
+		T = T_n;
+	    }
+	    else if ((M_PI/2 <= lambda) && (lambda <= M_PI)){
+		T = T_n;
+	    }
+	    else{
+		printf("lambda %f\n",lambda);
+		printf("UNEXPECTED CASE IN ZHANG\n");
+		return 0;
+	    }
     }
     else{
-        printf("lambda %f\n",lambda);
-        printf("UNEXPECTED CASE IN ZHANG\n");
-        return 0;
-    }
+	    eta = (xi/(1 + pow(xi,2)))*(exp(M_PI/(2*xi)) + exp(3*M_PI/(2*xi)))/(exp(2*M_PI/xi) - 1.0);
+	    lambda_s = atan(xi);
 
+	    if((-M_PI/2.0 <= lambda) && (lambda <= M_PI/2.0)){
+		T = T_n + delta_T*cos(phi)*cos(lambda_s)*cos(lambda-lambda_s) + eta*delta_T*cos(phi)*exp(-lambda/xi);
+	    }
+	    else if((-M_PI <= lambda) && (lambda <= -M_PI/2.0)){
+		T = T_n + eta*delta_T*cos(phi)*exp(-(M_PI+lambda)/xi);
+	    }
+	    else if ((M_PI/2 <= lambda) && (lambda <= M_PI)){
+		T = T_n + eta*delta_T*cos(phi)*exp((M_PI-lambda)/xi);
+	    }
+	    else{
+		printf("lambda %f\n",lambda);
+		printf("UNEXPECTED CASE IN ZHANG\n");
+		return 0;
+	    }
+    }
     return T;
 }
 
