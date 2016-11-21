@@ -312,6 +312,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 
     /* Clean up. */
     free(planet_struct);
+    Py_DECREF(bright_array);
 
     return pylist;
 }
@@ -436,6 +437,7 @@ static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
 
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
+
     int n_layers, bright_type, n_star;
     double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
     PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj;
@@ -484,9 +486,11 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     PyObject *pylist = Convert_Big_Array(output,N);
 
     /* Clean up. */
+    free(output);
     Py_DECREF(t_array);
     Py_DECREF(teff_array);
     Py_DECREF(flux_array);
+    Py_DECREF(bright_array);
 
     return pylist;
 }
@@ -506,6 +510,8 @@ static PyObject *web_bb_grid(PyObject *self, PyObject *args)
     printf("%f\n",output[0][0]);
 
     PyObject *pylist = Convert_2d_Array(output,3,n_temps);
+
+    free(output);
 
     return pylist;
 }
