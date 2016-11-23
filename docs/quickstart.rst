@@ -15,7 +15,7 @@ Now, it is necesarry to generate a parameter object, this will be the main way o
 
 .. code-block:: python
 
-	spider_params = sp.ModelParams(brightness_model='xi')
+	spider_params = sp.ModelParams(brightness_model="zhang")
 
 Now that the parameter object has been created, we can define the parameters as so:
 
