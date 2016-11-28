@@ -275,6 +275,138 @@ def plot_defined_planet(planet,ax=False,min_temp=False,max_temp=False,temp_map=F
 
 	return ax
 
+def square_plot(spider_params,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False,nla=100,nlo=100):
+
+	if theme == 'black':
+		bg = 'black'
+		tc = ("#04d9ff")
+	else:
+		bg = 'white'
+		tc = 'black'
+	bg = 'white'
+
+
+	if ax == False:
+		f, ax = plt.subplots(facecolor=bg)
+		new_ax = True
+	else:
+		new_ax = False
+
+	las = np.linspace(-np.pi/2,np.pi/2,nla)
+	los = np.linspace(-np.pi,np.pi,nlo)
+
+	plt.ylim(-90,90)
+	plt.xlim(-180,180)
+
+	fluxes = []
+	for la in las:
+		row = []
+		for lo in los:
+			flux = sp.call_map_model(spider_params,la,lo)
+			row += [flux]
+		fluxes += [row]
+	fluxes = np.array(fluxes)
+
+	lala, lolo = np.meshgrid(los,las)
+
+	cax = plt.pcolor(lala*180/np.pi,lolo*180/np.pi,fluxes,cmap=mycmap)
+
+	plt.colorbar()
+
+	plt.plot([0],[0],'gx',ms=10)
+
+	plt.show()
+
+	return 0
+
+	if temp_map == True:
+		b_i = 17
+	else:
+		b_i = 16
+
+	if min_temp == False:
+		temps = planet[:,b_i]
+		min_temp = np.min(temps)
+		max_temp = np.max(temps)
+
+
+	dp = ((max_temp-min_temp)*min_bright)
+
+	for j in range (0,len(planet)):
+		val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
+		c = mycmap(val)
+
+		n = planet[j]
+
+		r1 = n[13]*scale_planet
+		r2 = n[14]*scale_planet
+		radii = [r1,r2]
+
+		thetas = np.linspace(n[10],n[11],100)
+
+		xs = np.outer(radii, np.cos(thetas)) + planet_cen[0]
+		ys = np.outer(radii, np.sin(thetas)) + planet_cen[1]
+
+		xs[1,:] = xs[1,::-1]
+		ys[1,:] = ys[1,::-1]
+
+		ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
+
+
+	ax.set_axis_bgcolor(bg)
+
+	if show_axes == False:
+		ax.spines['bottom'].set_color(bg)
+		ax.spines['left'].set_color(bg)
+		ax.spines['top'].set_color(bg)
+		ax.spines['right'].set_color(bg)
+	else:
+		ax.spines['bottom'].set_color(tc)
+		ax.spines['left'].set_color(tc)
+		ax.spines['top'].set_color(tc)
+		ax.spines['right'].set_color(tc)
+
+	ax.set(aspect=1)
+
+	bs = 1.1
+	ax.set_xlim(+bs,-bs)
+	ax.set_ylim(-bs,+bs)
+
+	if new_ax == True:
+		bs = 1.1
+		ax.set_xlim(+bs,-bs)
+		ax.set_ylim(-bs,+bs)
+
+	if show_axes == False:
+		ax.get_xaxis().set_visible(False)
+		ax.get_yaxis().set_visible(False)
+	else:
+		ax.get_xaxis().set_visible(True)
+		ax.get_yaxis().set_visible(True)
+
+	divider = make_axes_locatable(ax)
+	# Append axes to the right of ax, with 20% width of ax
+
+#	zero_temp = min_temp - dp
+	zero_temp = min_temp
+	data = [np.linspace(zero_temp,max_temp,1000)]*2
+	fake, fake_ax = plt.subplots()
+	mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
+	plt.close(fake)
+
+	if show_cax == True:
+		cax = divider.append_axes("right", size="20%", pad=0.05)
+	#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
+		cbar = plt.colorbar(mycax, cax=cax)
+		cbar.ax.tick_params(colors=tc)
+
+		if temp_map == True:
+			cbar.set_label('T (K)',color=tc)  # horizontal colorbar
+		else:
+			cbar.set_label('Relative brightness',color=tc)  # horizontal colorbar
+
+	return ax
+
 def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False):
 
 	if theme == 'black':

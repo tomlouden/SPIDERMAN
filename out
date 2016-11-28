@@ -1,0 +1,11 @@
+running install
+running build
+running build_py
+copying spiderman/plot.py -> build/lib.linux-x86_64-3.5/spiderman
+running build_ext
+running install_lib
+copying build/lib.linux-x86_64-3.5/spiderman/plot.py -> /home/tom/anaconda3/lib/python3.5/site-packages/spiderman
+byte-compiling /home/tom/anaconda3/lib/python3.5/site-packages/spiderman/plot.py to plot.cpython-35.pyc
+running install_egg_info
+Removing /home/tom/anaconda3/lib/python3.5/site-packages/spiderman_package-0.3.1-py3.5.egg-info
+Writing /home/tom/anaconda3/lib/python3.5/site-packages/spiderman_package-0.3.1-py3.5.egg-info

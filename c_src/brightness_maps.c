@@ -3,7 +3,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-double Uniform_b(double p_bright){
+double Hotspot_b(double la, double lo,double p_bright){
+    double lambda0 = 0;
+    double long0 = 0;
+
+//    double dist = pow(pow(r1,2) + pow(r2,2) - 2*r1*r2*( sin(lo)*sin(long0)*cos(la - lambda0) + cos(lo)*cos(long0)) ,0.5);
+//    double dist = acos( sin(la)*sin(lambda0) + cos(lo - long0)*cos(la)*cos(lambda0)) ;
+    double dist = acos( sin(lo)*sin(long0) + cos(la - lambda0)*cos(lo)*cos(long0)) ;
+
+    if(dist < 1){
+        return 10;
+    }
+
+    return 1;
+}
+
+double Hotspot_T(double la, double lo,double p_bright){
+    return p_bright/M_PI;
+}
+
+double Uniform_b(double la, double lo,double p_bright){
     return p_bright/M_PI;
 }
 

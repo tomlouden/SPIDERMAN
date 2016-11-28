@@ -68,6 +68,18 @@ class ModelParams(object):
 			self.redist = None              # fraction of incident energy redistributed to the night-side
 			self.T_s = None
 
+		elif brightness_model == 'hotspot_b':
+			self.brightness_type= 7 # Integer model identifer
+			self.insol = None               # insolation in W/m^2
+			self.T_s = None
+			self.thermal= False			# Is this a thermal distribution?
+
+		elif brightness_model == 'hotspot_t':
+			self.brightness_type= 8 # Integer model identifer
+			self.insol = None               # insolation in W/m^2
+			self.T_s = None
+			self.thermal= True			# Is this a thermal distribution?
+
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
 			quit()
@@ -135,6 +147,24 @@ class ModelParams(object):
 				print('should be',brightness_param_names)
 				quit()
 
+		if (self.brightness_type == 7):
+			brightness_param_names = ['T_s','l1','l2','insol']
+			try:
+				brightness_params = [self.T_s, self.l1, self.l2, self.insol]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
+
+		if (self.brightness_type == 8):
+			brightness_param_names = ['T_s','l1','l2','insol']
+			try:
+				brightness_params = [self.T_s, self.l1, self.l2, self.insol]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
+
 		if any(b == None for b in brightness_params):
 			print('Brightness parameters incorrectly assigned')
 			print('should be',brightness_param_names)
@@ -150,6 +180,9 @@ class ModelParams(object):
 		substellar = _web.calc_substellar(self.phase,np.array(coords))
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
+
+	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
+		return splt.square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False)
 
 	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
 		if use_phase == True:

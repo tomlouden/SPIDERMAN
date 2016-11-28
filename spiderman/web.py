@@ -30,6 +30,11 @@ def generate_planet(spider_params,t,use_phase=False):
 	spider_params.calc_substellar(t)
 	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params))
 
+def call_map_model(spider_params,la,lo):
+	brightness_params = spider_params.format_bright_params()
+	_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params)
+	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params))
+
 def blocked(n_layers,x2,y2,r2):
 	return _web.blocked(n_layers,x2,y2,r2)
 
@@ -61,3 +66,4 @@ def lightcurve(t,spider_params,stellar_grid=False):
 def bb_grid(l1,l2,T_start,T_end,n_temps,n_segments):
 	temps, fluxes, deriv = _web.bb_grid(l1,l2,T_start,T_end,n_temps,n_segments)
 	return np.array(temps), np.array(fluxes), np.array(deriv)
+

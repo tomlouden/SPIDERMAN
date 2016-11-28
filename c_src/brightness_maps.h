@@ -1,3 +1,5 @@
+double Hotspot_b(double la, double lo,double p_bright);
+double Hotspot_T(double la, double lo,double p_bright);
 double Uniform_b(double p_bright);
 double Uniform_T(double T_bright);
 double Two_b(double la, double lo, double p_day, double p_night);

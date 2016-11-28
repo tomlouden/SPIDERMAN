@@ -37,6 +37,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args);
 static PyObject *web_calc_phase(PyObject *self, PyObject *args);
 static PyObject *web_calc_substellar(PyObject *self, PyObject *args);
 static PyObject *web_bb_grid(PyObject *self, PyObject *args);
+static PyObject *web_call_map_model(PyObject *self, PyObject *args);
 
 static PyMethodDef module_methods[] = {
     {"heron", web_heron, METH_VARARGS, web_docstring},
@@ -54,6 +55,7 @@ static PyMethodDef module_methods[] = {
     {"calc_phase", web_calc_phase, METH_VARARGS, quad_docstring},
     {"calc_substellar", web_calc_substellar, METH_VARARGS, quad_docstring},
     {"bb_grid", web_bb_grid, METH_VARARGS, quad_docstring},
+    {"call_map_model", web_call_map_model, METH_VARARGS, quad_docstring},
     {NULL, NULL, 0, NULL}
 };
 
@@ -507,11 +509,58 @@ static PyObject *web_bb_grid(PyObject *self, PyObject *args)
     /* Call the external C function to compute the area. */
     double **output = bb_grid(l1,l2,T_start,T_end,n_temps,n_segments);
 
-    printf("%f\n",output[0][0]);
+/*    printf("%f\n",output[0][0]); */
 
     PyObject *pylist = Convert_2d_Array(output,3,n_temps);
 
     free(output);
 
     return pylist;
+}
+
+static PyObject *web_call_map_model(PyObject *self, PyObject *args)
+{
+    int bright_type;
+    double la,lo;
+    PyObject *bright_obj;
+
+    /* Parse the input tuple */
+
+    if (!PyArg_ParseTuple(args, "ddiO", &la,&lo,&bright_type,&bright_obj))
+        return NULL;
+
+    PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (bright_array == NULL) {
+        Py_XDECREF(bright_array);
+        return NULL;
+    }
+
+    /* Get pointers to the data as C-types. */
+    double *brightness_params    = (double*)PyArray_DATA(bright_array);
+
+    /* NEED TO GENERATE THE GRID HERE */
+    double **bb_g;
+
+    double T_start =500;
+    double T_end =10000;
+    int n_temps=32;
+    int n_bb_seg=10;
+
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4){
+        double l1 = brightness_params[1];
+        double l2 = brightness_params[2];
+        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
+    }
+
+    double lambda0 = 0;
+    double phi0 = 0;
+
+    double point_b = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g);
+
+    /* Build the output tuple */
+
+    PyObject *ret = Py_BuildValue("d",point_b);
+
+    return ret;
+
 }
