@@ -15,6 +15,8 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
     double R = 1.0;
     int n_bb_seg = 10;
 
+    int make_grid = 1;
+
     if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8) {
         l1 = brightness_params[1];
         l2 = brightness_params[2];
@@ -42,70 +44,12 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
         free(coords);
 
-        if(brightness_model == 0){
-            double p_t_bright = Uniform_b(brightness_params[0]);
-            planet[k][16] = p_t_bright;
-            planet[k][17] = 0.0;
-        }
-        if(brightness_model == 1){
-            double point_T = Uniform_T(brightness_params[3]);
-            planet[k][17] = point_T;
-//            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
-            planet[k][16] = bb_interp(point_T, bb_g);
-        }
-        if(brightness_model == 2){
-            double p_day = brightness_params[0];
-            double p_night = brightness_params[1];
-            p_t_bright = Two_b(la,lo,p_day,p_night);
-            planet[k][16] = p_t_bright;
-            planet[k][17] = 0.0;
-        }
-        if(brightness_model == 3){
-            double p_day = brightness_params[3];
-            double p_night = brightness_params[4];
-            double point_T = p_night;
-            point_T = Two_T(la,lo,p_day,p_night);
-            planet[k][17] = point_T;
-//            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
-            planet[k][16] = bb_interp(point_T, bb_g);
-        }
+        double *vals = call_map_model(la,lo,lambda0,phi0,brightness_model,brightness_params,bb_g,make_grid,planet[k][10],planet[k][11],planet[k][13],planet[k][14]);
 
-        if(brightness_model == 4){
-            double xi =brightness_params[3];
-            double T_n =brightness_params[4];
-            double delta_T =brightness_params[5];
-            double point_T = zhang_2016(la,lo,xi,T_n,delta_T);
-            planet[k][17] = point_T;
-//            planet[k][16] = bb_flux(l1,l2,point_T,n_bb_seg);
-            planet[k][16] = bb_interp(point_T, bb_g);
-//            printf("%f %f %f\n",point_T,bb_flux(l1,l2,point_T,n_bb_seg),planet[k][16]);
-        }
-        if(brightness_model == 5){
-            double p_t_bright = spherical(la,lo,brightness_params);
-            planet[k][16] = p_t_bright;
-            planet[k][17] = 0.0;
-        }
-        if(brightness_model == 6){
-           double insol = brightness_params[3];
-           double albedo = brightness_params[4];
-           double redist = brightness_params[5];
-           double point_T = kreidberg_2016(la, lo, insol, albedo, redist);
-           planet[k][16] = bb_interp(point_T, bb_g); 
-           planet[k][17] = point_T;
-         }
-        if(brightness_model == 7){
-           double insol = brightness_params[3];
-           double point_b = Hotspot_b(la, lo, insol);
-           planet[k][16] = point_b; 
-           planet[k][17] = 0;
-         }
-        if(brightness_model == 8){
-           double insol = brightness_params[3];
-           printf("%f\n",insol);
-           double point_T = Hotspot_T(la, lo, insol);
-           planet[k][16] = bb_interp(point_T, bb_g); 
-           planet[k][17] = point_T;
-         }
+        planet[k][16] = vals[0]; 
+        planet[k][17] = vals[1];
+
+        free(vals);
 
         // limb darkening
 
@@ -116,9 +60,10 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
 }
 
-double call_map_model(double la,double lo,double lambda0, double phi0,int brightness_model,double *brightness_params,double **bb_g){
+double *call_map_model(double la,double lo,double lambda0, double phi0,int brightness_model,double *brightness_params,double **bb_g,int make_grid,double theta1, double theta2, double r1, double r2){
     double point_T,mu,p_t_bright,point_b;
     double l1,l2;
+    double *output;
 
     double R = 1.0;
     int n_bb_seg = 10;
@@ -167,18 +112,30 @@ double call_map_model(double la,double lo,double lambda0, double phi0,int bright
        point_b = bb_interp(point_T, bb_g); 
      }
     if(brightness_model == 7){
-        double insol = brightness_params[3];
-        point_b = Hotspot_b(la, lo, insol);
+        double la0 = brightness_params[3];
+        double lo0 = brightness_params[4];
+        double p_b = brightness_params[5];
+        double spot_b = brightness_params[6];
+        double size = brightness_params[7];
+        point_b = Hotspot_b(la, lo, la0,lo0,p_b,spot_b,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
      }
     if(brightness_model == 8){
-       double insol = brightness_params[3];
-       printf("%f\n",insol);
-       point_T = Hotspot_T(la, lo, insol);
-       point_b = bb_interp(point_T, bb_g); 
-     }
+        double la0 = brightness_params[3];
+        double lo0 = brightness_params[4];
+        double p_T = brightness_params[5];
+        double spot_T = brightness_params[6];
+        double size = brightness_params[7];
+        point_T = Hotspot_b(la, lo, la0,lo0,p_T,spot_T,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
+        point_b = bb_interp(point_T, bb_g); 
+    }
+
+    output = malloc(sizeof(double) * 2); // dynamic `array (size 2) of pointers to double`
 
 
-    return point_b;
+    output[0] = point_b;
+    output[1] = point_T;
+
+    return output;
 
 }
 

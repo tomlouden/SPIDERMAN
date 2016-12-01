@@ -1,28 +1,118 @@
 #include "math.h"
+#include "brightness_maps.h"
 #include "legendre_polynomial.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-double Hotspot_b(double la, double lo,double p_bright){
-    double lambda0 = 0;
-    double long0 = 0;
+double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double spot_b,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0){
 
-//    double dist = pow(pow(r1,2) + pow(r2,2) - 2*r1*r2*( sin(lo)*sin(long0)*cos(la - lambda0) + cos(lo)*cos(long0)) ,0.5);
-//    double dist = acos( sin(la)*sin(lambda0) + cos(lo - long0)*cos(la)*cos(lambda0)) ;
-    double dist = acos( sin(lo)*sin(long0) + cos(la - lambda0)*cos(lo)*cos(long0)) ;
+    double r_mid;
+    double theta_mid;
 
-    if(dist < 1){
-        return 10;
+    if(r1 == 0){
+        r_mid = 0;
+        theta_mid = 0;
+    }
+    else{
+        r_mid = (r1 + r2)/2;
+        theta_mid = (theta1 + theta2)/2;
     }
 
-    return 1;
+
+    if(make_grid == 1){
+
+        if(r1 !=0){
+            double d1  = great_circle(la0,lo0,lambda0,phi0,r1,theta1);
+            double d2  = great_circle(la0,lo0,lambda0,phi0,r2,theta1);
+            double d3  = great_circle(la0,lo0,lambda0,phi0,r1,theta2);
+            double d4  = great_circle(la0,lo0,lambda0,phi0,r2,theta2);
+
+            if((d1 > size*2) & (d2 > size*2) && (d3 > size*2) && (d4 > size*2)){
+                return p_b;
+            }
+            if((d1 < size) & (d2 < size*0.5) && (d3 < size*0.5) && (d4 < size*0.5)){
+                return spot_b;
+            }
+        }
+
+        int grid_len = 10;
+
+        double rdiff = (r2 - r1)/grid_len;
+        double thdiff = (theta2 - theta1)/grid_len;
+        double R_mid, theta_mid;
+        double mid_x, mid_y;
+
+        double total_b = 0.0;
+
+        for (int h = 0; h < grid_len; ++h) {
+            for (int k = 0; k < grid_len; ++k) {
+                theta_mid = theta1 + h*thdiff;
+                R_mid = r1 + k*rdiff;
+
+
+                mid_x = R_mid*cos(theta_mid);
+                mid_y = R_mid*sin(theta_mid);
+                double dist  = great_circle(la0,lo0,lambda0,phi0,R_mid,theta_mid);
+                if(dist < size){
+                    total_b = total_b + spot_b;
+                }
+                else{
+                    total_b = total_b + p_b;
+                }
+
+            }
+        }
+        total_b = total_b / pow(grid_len,2);
+        return total_b;
+
+    }
+
+    la0 = la0*M_PI/180;
+    lo0 = lo0*M_PI/180;
+    double dist = acos( sin(la)*sin(la0) + cos(lo - lo0)*cos(la)*cos(la0));
+    dist = dist*180/M_PI;
+    if(dist < size){
+        return spot_b;
+    }
+    else{
+        return p_b;
+    }
+
 }
 
-double Hotspot_T(double la, double lo,double p_bright){
-    return p_bright/M_PI;
+double great_circle(double la0,double lo0,double lambda0,double phi0,double r,double theta){
+
+    la0 = la0*M_PI/180;
+    lo0 = lo0*M_PI/180;
+
+    double x = r*cos(theta);
+    double y = r*sin(theta);
+    double *coords = cart_to_ortho(1.0, x, y, lambda0, phi0);
+    double la = coords[1];
+    double lo = -1*coords[0];
+
+
+    double dist = acos( sin(la)*sin(la0) + cos(lo - lo0)*cos(la)*cos(la0));
+    free(coords);
+
+    return dist*180/M_PI;
 }
 
-double Uniform_b(double la, double lo,double p_bright){
+double Hotspot_T(double la, double lo,double la0, double lo0,double p_T,double spot_T,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0){
+
+    la0 = la0*M_PI/180;
+    lo0 = lo0*M_PI/180;
+//    double dist = acos( sin(lo)*sin(long0) + cos(la - lambda0)*cos(lo)*cos(long0)) ;
+    double dist = acos( sin(la)*sin(la0) + cos(lo - lo0)*cos(la)*cos(la0)) ;
+
+    if(dist < size*M_PI/180){
+        return spot_T;
+    }
+
+    return p_T;
+}
+
+double Uniform_b(double p_bright){
     return p_bright/M_PI;
 }
 

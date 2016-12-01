@@ -148,18 +148,18 @@ class ModelParams(object):
 				quit()
 
 		if (self.brightness_type == 7):
-			brightness_param_names = ['T_s','l1','l2','insol']
+			brightness_param_names = ['T_s','l1','l2','la0','lo0','p_b','spot_b','size']
 			try:
-				brightness_params = [self.T_s, self.l1, self.l2, self.insol]
+				brightness_params = [self.T_s, self.l1, self.l2, self.la0, self.lo0, self.p_b, self.spot_b, self.size]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
 
 		if (self.brightness_type == 8):
-			brightness_param_names = ['T_s','l1','l2','insol']
+			brightness_param_names = ['T_s','l1','l2','la0','lo0','p_T','spot_T','size']
 			try:
-				brightness_params = [self.T_s, self.l1, self.l2, self.insol]
+				brightness_params = [self.T_s, self.l1, self.l2, self.la0, self.lo0, self.p_T, self.spot_T, self.size]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
@@ -181,8 +181,8 @@ class ModelParams(object):
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
 
-	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
-		return splt.square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False)
+	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False,nla=100,nlo=100):
+		return splt.square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False,nla=nla,nlo=nlo)
 
 	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
 		if use_phase == True:

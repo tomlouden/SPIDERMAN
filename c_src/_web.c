@@ -555,11 +555,13 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     double lambda0 = 0;
     double phi0 = 0;
 
-    double point_b = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g);
+    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0);
 
     /* Build the output tuple */
 
-    PyObject *ret = Py_BuildValue("d",point_b);
+    PyObject *ret = Py_BuildValue("[d,d]",vals[0],vals[1]);
+
+//    free(vals);
 
     return ret;
 

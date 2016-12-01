@@ -303,7 +303,7 @@ def square_plot(spider_params,ax=False,min_temp=False,max_temp=False,temp_map=Fa
 		row = []
 		for lo in los:
 			flux = sp.call_map_model(spider_params,la,lo)
-			row += [flux]
+			row += [flux[0]]
 		fluxes += [row]
 	fluxes = np.array(fluxes)
 
