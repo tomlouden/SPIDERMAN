@@ -11,3 +11,4 @@ dist/
 *.swp
 *.ipynb_checkpoints
 *~
+out
