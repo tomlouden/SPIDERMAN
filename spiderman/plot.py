@@ -424,6 +424,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	planet = sp.generate_planet(spider_params,t)
 
+
 	if temp_map == True:
 		b_i = 17
 	else:
@@ -434,11 +435,19 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 		min_temp = np.min(temps)
 		max_temp = np.max(temps)
 
-
 	dp = ((max_temp-min_temp)*min_bright)
 
+	if((max_temp - max_temp) < 1e-18):
+		dp = 0
+		min_temp = max_temp
+
 	for j in range (0,len(planet)):
-		val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
+
+		if dp == 0:
+			val = 1
+		else:
+			val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
+
 		c = mycmap(val)
 
 		n = planet[j]

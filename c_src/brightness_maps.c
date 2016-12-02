@@ -48,8 +48,6 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
             for (int k = 0; k < grid_len; ++k) {
                 theta_mid = theta1 + h*thdiff;
                 R_mid = r1 + k*rdiff;
-
-
                 mid_x = R_mid*cos(theta_mid);
                 mid_y = R_mid*sin(theta_mid);
                 double dist  = great_circle(la0,lo0,lambda0,phi0,R_mid,theta_mid);
@@ -62,7 +60,9 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
 
             }
         }
+
         total_b = total_b / pow(grid_len,2);
+
         return total_b;
 
     }
