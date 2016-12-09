@@ -70,13 +70,10 @@ class ModelParams(object):
 
 		elif brightness_model == 'hotspot_b':
 			self.brightness_type= 7 # Integer model identifer
-			self.insol = None               # insolation in W/m^2
-			self.T_s = None
 			self.thermal= False			# Is this a thermal distribution?
 
 		elif brightness_model == 'hotspot_t':
 			self.brightness_type= 8 # Integer model identifer
-			self.insol = None               # insolation in W/m^2
 			self.T_s = None
 			self.thermal= True			# Is this a thermal distribution?
 
@@ -148,9 +145,9 @@ class ModelParams(object):
 				quit()
 
 		if (self.brightness_type == 7):
-			brightness_param_names = ['T_s','l1','l2','la0','lo0','p_b','spot_b','size']
+			brightness_param_names = ['la0','lo0','p_b','spot_b','size']
 			try:
-				brightness_params = [self.T_s, self.l1, self.l2, self.la0, self.lo0, self.p_b, self.spot_b, self.size]
+				brightness_params = [self.la0, self.lo0, self.p_b, self.spot_b, self.size]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)

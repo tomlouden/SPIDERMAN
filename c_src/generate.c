@@ -112,11 +112,11 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
        point_b = bb_interp(point_T, bb_g); 
      }
     if(brightness_model == 7){
-        double la0 = brightness_params[3];
-        double lo0 = brightness_params[4];
-        double p_b = brightness_params[5];
-        double spot_b = brightness_params[6];
-        double size = brightness_params[7];
+        double la0 = brightness_params[0];
+        double lo0 = brightness_params[1];
+        double p_b = brightness_params[2];
+        double spot_b = brightness_params[3];
+        double size = brightness_params[4];
         point_b = Hotspot_b(la, lo, la0,lo0,p_b,spot_b,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
      }
     if(brightness_model == 8){
