@@ -19,40 +19,44 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
     }
 
 
-    if(make_grid == 1){
+    if(make_grid != 0){
 
-        if(r1 !=0){
+/*        if(r1 !=0){
             double d1  = great_circle(la0,lo0,lambda0,phi0,r1,theta1);
             double d2  = great_circle(la0,lo0,lambda0,phi0,r2,theta1);
             double d3  = great_circle(la0,lo0,lambda0,phi0,r1,theta2);
             double d4  = great_circle(la0,lo0,lambda0,phi0,r2,theta2);
 
             if((d1 > size*2) & (d2 > size*2) && (d3 > size*2) && (d4 > size*2)){
+                printf("EASY WAY OUT\n");
                 return p_b;
             }
             if((d1 < size) & (d2 < size*0.5) && (d3 < size*0.5) && (d4 < size*0.5)){
+                printf("EASY WAY OUT\n");
                 return spot_b;
             }
         }
-
-        int grid_len = 10;
+*/
+        int grid_len = make_grid;
 
         double rdiff = (r2 - r1)/grid_len;
         double thdiff = (theta2 - theta1)/grid_len;
         double R_mid, theta_mid;
-        double mid_x, mid_y;
+//        double mid_x, mid_y;
 
         double total_b = 0.0;
+
+        int inside = 0;
 
         for (int h = 0; h < grid_len; ++h) {
             for (int k = 0; k < grid_len; ++k) {
                 theta_mid = theta1 + h*thdiff;
                 R_mid = r1 + k*rdiff;
-                mid_x = R_mid*cos(theta_mid);
-                mid_y = R_mid*sin(theta_mid);
                 double dist  = great_circle(la0,lo0,lambda0,phi0,R_mid,theta_mid);
+
                 if(dist < size){
                     total_b = total_b + spot_b;
+                    inside = inside +1;
                 }
                 else{
                     total_b = total_b + p_b;
@@ -66,6 +70,8 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
         return total_b;
 
     }
+
+    printf("not making grid\n");
 
     la0 = la0*M_PI/180;
     lo0 = lo0*M_PI/180;

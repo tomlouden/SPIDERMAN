@@ -11,15 +11,20 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
     double point_T,mu,p_t_bright;
     double l1,l2,R_mid,theta_mid,mid_x,mid_y;
     double la, lo;
+    int make_grid;
 
     double R = 1.0;
     int n_bb_seg = 10;
 
-    int make_grid = 1;
+//    printf("bb_g 4 %f\n",bb_g[0][1]);
 
     if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8) {
         l1 = brightness_params[1];
         l2 = brightness_params[2];
+    }
+
+    if(brightness_model == 7 || brightness_model == 8) {
+        make_grid = brightness_params[3];
     }
 
     for (int k = 0; k < pow(n_layers,2); ++k) {
@@ -68,6 +73,8 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
     double R = 1.0;
     int n_bb_seg = 10;
 
+//    printf("bb_g %f\n",bb_g[0][1]);
+
     if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8) {
         l1 = brightness_params[1];
         l2 = brightness_params[2];
@@ -115,18 +122,20 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         double la0 = brightness_params[0];
         double lo0 = brightness_params[1];
         double p_b = brightness_params[2];
-        double spot_b = brightness_params[3];
-        double size = brightness_params[4];
+        double spot_b = brightness_params[4];
+        double size = brightness_params[5];
         point_b = Hotspot_b(la, lo, la0,lo0,p_b,spot_b,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
      }
     if(brightness_model == 8){
-        double la0 = brightness_params[3];
-        double lo0 = brightness_params[4];
-        double p_T = brightness_params[5];
-        double spot_T = brightness_params[6];
-        double size = brightness_params[7];
+        double la0 = brightness_params[4];
+        double lo0 = brightness_params[5];
+        double p_T = brightness_params[6];
+        double spot_T = brightness_params[7];
+        double size = brightness_params[8];
+        double b1 = bb_interp(p_T, bb_g); 
+        double b2 = bb_interp(spot_T, bb_g); 
         point_T = Hotspot_b(la, lo, la0,lo0,p_T,spot_T,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
-        point_b = bb_interp(point_T, bb_g); 
+        point_b = Hotspot_b(la, lo, la0,lo0,b1,b2,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
     }
 
     output = malloc(sizeof(double) * 2); // dynamic `array (size 2) of pointers to double`

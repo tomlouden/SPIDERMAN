@@ -279,6 +279,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
         return NULL;
 
     /* Call the external C function to compute the area. */
+
     double **planet_struct = generate_planet(n_layers);
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -297,7 +298,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     int n_temps=32;
     int n_bb_seg=10;
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4){
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 8){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);

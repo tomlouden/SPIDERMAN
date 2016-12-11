@@ -54,10 +54,12 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         star_bright = star_bright*M_PI*pow(r2,2);
 
     // also requires the precomputation of the blackbody interpolation grid
-
+        printf("%f %f %f %f %f %f\n",l1,l2,T_start,T_end,n_temps,n_bb_seg);
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
+//        printf("bb_g init %f\n",bb_g[0][1]);
 
     }
+//    printf("bb_g init 2 %f\n",bb_g[0][1]);
 
     free(coords);
 
@@ -82,6 +84,8 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         free(substellar);
 
         double *coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
+
+//        printf("bb_g 3 %f\n",bb_g[0][1]);
 
         map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g);
 
