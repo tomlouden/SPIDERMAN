@@ -2,6 +2,7 @@
 #include <numpy/arrayobject.h>
 #include "heron.h"
 #include "segment.h"
+#include "spline.h"
 #include "areas.h"
 #include "intersection.h"
 #include "generate.h"
@@ -270,12 +271,12 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args)
 
 static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 {
-    int n_layers,n_1,n_2,bright_type;
-    double lambda0,phi0,p_u1,p_u2;
-    PyObject *bright_obj;
+    int n_layers,n_1,n_2,bright_type,n_star;
+    double lambda0,phi0,p_u1,p_u2,rp;
+    PyObject *bright_obj,*teff_obj,*flux_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iddddiO", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj))
+    if (!PyArg_ParseTuple(args, "iddddiOOOid", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&rp))
         return NULL;
 
     /* Call the external C function to compute the area. */
@@ -290,21 +291,54 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     /* Get pointers to the data as C-types. */
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
 
+    PyObject *teff_array = PyArray_FROM_OTF(teff_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (teff_array == NULL) {
+        Py_XDECREF(teff_array);
+        return NULL;
+    }
+    double *stellar_teffs    = (double*)PyArray_DATA(teff_array);
+
+    PyObject *flux_array = PyArray_FROM_OTF(flux_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (flux_array == NULL) {
+        Py_XDECREF(flux_array);
+        return NULL;
+    }
+    double *stellar_fluxes    = (double*)PyArray_DATA(flux_array);
+
+
     /* NEED TO GENERATE THE GRID HERE */
     double **bb_g;
+    double *ypp;
 
-    double T_start =500;
+    double T_start =0;
     double T_end =10000;
-    int n_temps=32;
-    int n_bb_seg=10;
+    int n_temps=100;
+    int n_bb_seg=20;
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 8){
+    double star_bright = 1.0;
+
+    double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
+
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 8|| bright_type == 10){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
+        double star_T =brightness_params[0];
+        double ypval;
+        double yppval;
+
+//        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
+        ypp = spline_cubic_set( n_star, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
+
+        star_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
+        free(ypp);
+
+        star_bright = star_bright*M_PI*pow(r2,2);
+
+
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
     }
 
-    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g);
+    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_bright);
 
     /* Build the output tuple */
 
@@ -476,7 +510,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     double *star_teff    = (double*)PyArray_DATA(teff_array);
 
     PyObject *flux_array = PyArray_FROM_OTF(flux_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-    if (t_array == NULL) {
+    if (flux_array == NULL) {
         Py_XDECREF(flux_array);
         return NULL;
     }
@@ -542,10 +576,10 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     /* NEED TO GENERATE THE GRID HERE */
     double **bb_g;
 
-    double T_start =500;
-    double T_end =10000;
-    int n_temps=32;
-    int n_bb_seg=10;
+    double T_start =0;
+    double T_end =1000;
+    int n_temps=100;
+    int n_bb_seg=20;
 
     if(bright_type == 1 || bright_type == 3 || bright_type == 4){
         double l1 = brightness_params[1];
@@ -556,7 +590,9 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     double lambda0 = 0;
     double phi0 = 0;
 
-    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0);
+    double star_bright = 1.0;
+
+    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright);
 
     /* Build the output tuple */
 

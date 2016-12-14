@@ -239,3 +239,18 @@ double kreidberg_2016(double lat, double lon, double insol, double albedo, doubl
     }
     return T;
 }
+
+double lambertian(double lat, double lon, double insol, double albedo){
+    double b;
+
+//    printf("%f %f \n",insol,albedo);
+
+    if((-M_PI/2.0 <= lon) && (lon <= M_PI/2.0)){
+        b = albedo*insol*cos(lat)*cos(lon)/M_PI;
+    }
+    else{
+        b = 0.0;
+    }
+
+    return b;
+}

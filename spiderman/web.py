@@ -23,12 +23,25 @@ def circle_intersect(x1,y1,r1,x2,y2,r2):
 def line_intersect(x1,y1,x2,y2,r2):
 	return _web.line_intersect(x1,y1,x2,y2,r2)
 
-def generate_planet(spider_params,t,use_phase=False):
+def generate_planet(spider_params,t,use_phase=False,stellar_grid=False):
 	if use_phase == True:
 		t = spider_params.t0 + spider_params.per*t
 	brightness_params = spider_params.format_bright_params()
+
+	if spider_params.thermal == True:
+		if stellar_grid == False:
+			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2)
+			teffs = star_grid[0]
+			totals = star_grid[1]
+		else:
+			teffs = stellar_grid[0]
+			totals = stellar_grid[1]
+	else:
+		teffs = []
+		totals = []
+
 	spider_params.calc_substellar(t)
-	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params))
+	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals),spider_params.rp))
 
 def call_map_model(spider_params,la,lo):
 	brightness_params = spider_params.format_bright_params()

@@ -85,6 +85,14 @@ class ModelParams(object):
 			self.thermal= True			# Is this a thermal distribution?
 			self.grid_size = 10
 
+		elif brightness_model == 'lambertian':
+			self.brightness_type= 9 # Integer model identifer
+			self.thermal= False			# Is this a thermal distribution?
+
+		elif brightness_model == 'combine':
+			self.brightness_type= 10 # Integer model identifer
+			self.thermal= True			# Is this a thermal distribution?
+
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
 			quit()
@@ -176,6 +184,26 @@ class ModelParams(object):
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
+
+		elif (self.brightness_type == 9):
+			brightness_param_names = ['albedo']
+			ars = 1.0/self.a
+			try:
+				brightness_params = [self.albedo,ars]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
+		elif (self.brightness_type == 10):
+			brightness_param_names = ['T_s','l1','l2','xi','T_n','delta_T','albedo']
+			ars = 1.0/self.a
+			try:
+				brightness_params = [self.T_s,self.l1,self.l2,self.xi,self.T_n,self.delta_T,self.albedo,ars]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
+
 
 		elif any(b == None for b in brightness_params):
 			print('Brightness parameters incorrectly assigned')
