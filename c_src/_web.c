@@ -272,7 +272,7 @@ static PyObject *web_line_intersect(PyObject *self, PyObject *args)
 static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 {
     int n_layers,n_1,n_2,bright_type,n_star;
-    double lambda0,phi0,p_u1,p_u2,rp;
+    double lambda0,phi0,p_u1,p_u2,rp,star_surface_bright,star_bright;
     PyObject *bright_obj,*teff_obj,*flux_obj;
 
     /* Parse the input tuple */
@@ -315,9 +315,12 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     int n_temps=100;
     int n_bb_seg=20;
 
-    double star_bright = 1.0;
-
     double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
+
+
+    star_bright = 1.0;
+    star_surface_bright = star_bright/(M_PI*pow(r2,2));
+
 
     if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 8|| bright_type == 10){
         double l1 = brightness_params[1];
@@ -329,16 +332,16 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 //        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
         ypp = spline_cubic_set( n_star, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
 
-        star_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
+        star_surface_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
         free(ypp);
 
-        star_bright = star_bright*M_PI*pow(r2,2);
+        star_bright = star_surface_bright*M_PI*pow(r2,2);
 
 
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
     }
 
-    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_bright);
+    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright);
 
     /* Build the output tuple */
 
@@ -591,6 +594,8 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     double phi0 = 0;
 
     double star_bright = 1.0;
+
+    //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES!//
 
     double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright);
 
