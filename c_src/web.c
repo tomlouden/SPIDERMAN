@@ -64,10 +64,12 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     }
 //    printf("bb_g init 2 %f\n",bb_g[0][1]);
-
     free(coords);
 
     for (n = 0; n < n_points; n++) {
+
+//        printf("star bright %f\n",star_surface_bright);
+
 
         double *old_coords = separation_of_centers(t[n],tc,per,a,inc,ecc,omega,a_rs,r2);
 
