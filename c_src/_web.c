@@ -14,6 +14,10 @@
 #include "brightness_maps.h"
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 static char module_docstring[] =
     "This module is used to calcuate the areas of geometric shapes";
 static char web_docstring[] =

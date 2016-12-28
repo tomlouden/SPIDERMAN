@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars){
     int n,j;
     double phase,lambda0,phi0;

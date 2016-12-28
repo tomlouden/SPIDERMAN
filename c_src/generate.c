@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g,double star_bright){
     double point_T,mu,p_t_bright;
     double l1,l2,R_mid,theta_mid,mid_x,mid_y;
