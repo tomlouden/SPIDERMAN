@@ -12,7 +12,7 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars, int eclipse){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
@@ -104,7 +104,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_bright = p_bright + planet[j][16]*planet[j][15];
         }
 
-        if(coords[2] < 0){
+        if(coords[2] < 0 && eclipse == 1){
             p_blocked = blocked(planet,n_layers,coords[0],coords[1],r2);
         }
         else{
@@ -112,6 +112,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
             p_blocked = 0.0;
         }
         output[n] = (star_bright + p_bright - p_blocked)/star_bright;
+//        output[n] = p_bright/star_bright;
 
         free(coords);
     }

@@ -20,6 +20,7 @@ class ModelParams(object):
 		self.rp= None				# Planet radius as a fraction of stellar radius [-]
 		self.p_u1= None				# **PLANETARY** limb darkening coefficients [-]
 		self.p_u2= None				# **PLANETARY** limb darkening coefficients [-]
+		self.eclipse = True			# specifies whether to include the drop in flux due to the eclipse
 
 		if brightness_model == 'uniform brightness':
 			self.n_layers = 1		# The default resolution for the grid
