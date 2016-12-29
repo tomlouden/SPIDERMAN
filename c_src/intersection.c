@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 double *circle_intersect(double x1,double y1,double r1,double x2,double y2,double r2){
     double d,a,x_first,y_first,x_second,y_second,theta_first,theta_second;
     

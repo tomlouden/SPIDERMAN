@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 double *separation_of_centers(double t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double Ratio){
 	// based on equations in Winn 2010 (chapter of sara seager book same year)

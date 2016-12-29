@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 double *ortho_to_cart(double R, double lambda, double phi, double lambda0, double phi0){
 	double x,y,cosc;

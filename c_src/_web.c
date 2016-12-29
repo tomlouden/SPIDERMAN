@@ -14,6 +14,10 @@
 #include "brightness_maps.h"
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 static char module_docstring[] =
     "This module is used to calcuate the areas of geometric shapes";
 static char web_docstring[] =
@@ -478,12 +482,12 @@ static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
 
-    int n_layers, bright_type, n_star;
+    int n_layers, bright_type, n_star, eclipse;
     double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
     PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOi", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star))
+    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOii", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse))
         return NULL;
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -521,7 +525,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     /* Call the external C function to compute the area. */
 
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 

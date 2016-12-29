@@ -3,7 +3,7 @@ import numpy.distutils.misc_util
 import numpy as np
 
 _web = Extension("spiderman._web",["c_src/_web.c","c_src/heron.c","c_src/segment.c","c_src/areas.c","c_src/intersection.c","c_src/generate.c","c_src/blocked.c","c_src/util.c","c_src/pyutil.c","c_src/web.c","c_src/orthographic.c","c_src/ephemeris.c","c_src/blackbody.c","c_src/spline.c","c_src/brightness_maps.c","c_src/legendre_polynomial.c"
-])
+], extra_compile_args = ["-std=c99"])
 
 setup(	name='spiderman-package', 
 	version="0.3.1",

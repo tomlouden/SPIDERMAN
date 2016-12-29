@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 double two_inner_two_edges_a(double *c1,double *c2,double *e1,double *e2,double *e3,double *e4,double r_inner,double r_outer,double x2,double y2,double r2,double total_area){
     double a_1,a_2,a_3,a_4,a_5,a_6,area;
     double *first_c, *second_c;
