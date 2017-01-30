@@ -43,7 +43,8 @@ class ModelParams(object):
 			self.pb_n= None			# Relative planet brightness (Star is 1)
 
 			self.thermal= False			# Is this a thermal distribution?
-			self.grid_size = 10
+			if not (hasattr(self,'grid_size')):
+				self.grid_size = 10
 
 
 		elif brightness_model == 'two temperature':
@@ -52,7 +53,8 @@ class ModelParams(object):
 			self.pb_n= None			# Relative planet brightness (Star is 1)
 			self.T_s= None			# **STELLAR** effective temperature
 			self.thermal= True			# Is this a thermal distribution?
-			self.grid_size = 10
+			if not (hasattr(self,'grid_size')):
+				self.grid_size = 10
 
 		elif brightness_model == 'zhang':
 			self.brightness_type= 4	# Integer model identifier
@@ -77,14 +79,16 @@ class ModelParams(object):
 		elif brightness_model == 'hotspot_b':
 			self.brightness_type= 7 # Integer model identifer
 			self.thermal= False			# Is this a thermal distribution?
-			self.grid_size = 10
+			if not (hasattr(self,'grid_size')):
+				self.grid_size = 10
 
 
 		elif brightness_model == 'hotspot_t':
 			self.brightness_type= 8 # Integer model identifer
 			self.T_s = None
 			self.thermal= True			# Is this a thermal distribution?
-			self.grid_size = 10
+			if not (hasattr(self,'grid_size')):
+				self.grid_size = 10
 
 		elif brightness_model == 'lambertian':
 			self.brightness_type= 9 # Integer model identifer
@@ -120,7 +124,7 @@ class ModelParams(object):
 #			try:
 #				brightness_params = [self.pb_d,self.pb_n]
 
-			self.brightness_type = 7
+#			self.brightness_type = 7
 			try:
 				brightness_params = [0, 0, self.pb_n, self.grid_size,self.pb_d, 90]
 			except:
@@ -131,7 +135,7 @@ class ModelParams(object):
 			brightness_param_names = ['T_s','l1','l2','T_p_d','T_p_n']
 #			try:
 #				brightness_params = [self.T_s,self.l1,self.l2,self.T_p_d,self.T_p_n]
-			self.brightness_type = 8
+#			self.brightness_type = 8
 			try:
 				brightness_params = [self.T_s,self.l1, self.l2, self.grid_size, 0, 0, self.T_p_n, self.T_p_d, 90]
 			except:

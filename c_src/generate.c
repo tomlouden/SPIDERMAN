@@ -27,7 +27,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         l2 = brightness_params[2];
     }
 
-    if(brightness_model == 7 || brightness_model == 8) {
+    if(brightness_model == 2 || brightness_model == 3 || brightness_model == 7 || brightness_model == 8) {
         make_grid = brightness_params[3];
     }
 
@@ -92,18 +92,18 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         point_T = Uniform_T(brightness_params[3]);
         point_b = bb_interp(point_T, bb_g);
     }
-    if(brightness_model == 2){
-        double p_day = brightness_params[0];
-        double p_night = brightness_params[1];
-        point_b = Two_b(la,lo,p_day,p_night);
-    }
-    if(brightness_model == 3){
-        double p_day = brightness_params[3];
-        double p_night = brightness_params[4];
-        double point_T = p_night;
-        point_T = Two_T(la,lo,p_day,p_night);
-        point_b = bb_interp(point_T, bb_g);
-    }
+//    if(brightness_model == 2){
+//        double p_day = brightness_params[0];
+//        double p_night = brightness_params[1];
+//        point_b = Two_b(la,lo,p_day,p_night);
+//    }
+//    if(brightness_model == 3){
+//        double p_day = brightness_params[3];
+//        double p_night = brightness_params[4];
+//        double point_T = p_night;
+//        point_T = Two_T(la,lo,p_day,p_night);
+//        point_b = bb_interp(point_T, bb_g);
+//    }
 
     if(brightness_model == 4){
         double xi =brightness_params[3];
@@ -122,15 +122,16 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
        point_T = kreidberg_2016(la, lo, insol, albedo, redist);
        point_b = bb_interp(point_T, bb_g); 
      }
-    if(brightness_model == 7){
+    if(brightness_model == 2 || brightness_model == 7){
         double la0 = brightness_params[0];
         double lo0 = brightness_params[1];
         double p_b = brightness_params[2];
         double spot_b = brightness_params[4];
         double size = brightness_params[5];
+//        printf("%f %f %f %f %f\n",la0,lo0,p_b,spot_b,size);
         point_b = Hotspot_b(la, lo, la0,lo0,p_b,spot_b,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0);
      }
-    if(brightness_model == 8){
+    if(brightness_model == 3 || brightness_model == 8){
         double la0 = brightness_params[4];
         double lo0 = brightness_params[5];
         double p_T = brightness_params[6];
