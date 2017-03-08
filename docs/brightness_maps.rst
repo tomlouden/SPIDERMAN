@@ -6,8 +6,8 @@ Offset hotspot
 
 parameters:
 
- *la0* Offset of the center of the hotspot in the latitude direction (unit: Degrees)
- *lo0* Offset of the center of the hotspot in the latitude direction (unit: Degrees)
+	*la0* Offset of the center of the hotspot in the latitude direction (unit: Degrees)
+	*lo0* Offset of the center of the hotspot in the longitude direction (unit: Degrees)
 
 Notes:
 
