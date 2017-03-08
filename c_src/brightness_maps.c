@@ -8,10 +8,13 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double spot_b,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0){
+double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double spot_b,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0,double la_cen,double lo_cen){
 
     double r_mid;
     double theta_mid;
+
+    la0 = la0*M_PI/180;
+    lo0 = lo0*M_PI/180;
 
     if(r1 == 0){
         r_mid = 0;
@@ -24,6 +27,39 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
 
 
     if(make_grid != 0){
+
+//        printf("%f %f\n",la_cen,lo_cen);
+
+        double d1  = great_circle(la_cen,lo_cen,lambda0,phi0,r1,theta1);
+//        printf("CENTER TO INNER LINE %f\n",d1);
+        double d2  = great_circle(la_cen,lo_cen,lambda0,phi0,r2,theta1);
+//        printf("CENTER TO OUTER LINE %f\n",d2);
+//        printf("%f %f %f %f\n",la_cen,lo_cen,la0,lo0);
+        double d3 = 180.0*acos( sin(la_cen)*sin(la0) + cos(lo_cen - lo0)*cos(la_cen)*cos(la0))/M_PI;
+//        double d4 = sqrt( pow(d3-size,2) );
+
+        double r_sum1 = sqrt( pow(size + d1,2) );
+        double r_sum2 = sqrt( pow(size + d2,2) );
+
+        double r_diff1 = sqrt( pow(size - d1,2) );
+        double r_diff2 = sqrt( pow(size - d2,2) );
+
+        if((d3 < r_diff2) & (d2 < size)){
+//            printf("CIRCLE 2 INSIDE SPOT\n");
+            return spot_b;
+        }
+
+        if((d3 < r_diff1) & (size<d1)){
+//            printf("SPOT INSIDE CIRCLE 1\n");
+//            printf("%f %f %f\n",d4,d1,size);
+            return p_b;
+        }
+
+        if(d3 > r_sum2){
+//            printf("SPOT too far to intersect 1\n");
+            return p_b;
+        }
+
 
 /*        if(r1 !=0){
             double d1  = great_circle(la0,lo0,lambda0,phi0,r1,theta1);
@@ -71,14 +107,35 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
 
         total_b = total_b / pow(grid_len,2);
 
+        if((d3 < r_diff2) & (d2 < size)){
+            if((spot_b-total_b) > 0.0){
+            printf("CIRCLE 2 INSIDE SPOT %f %f %f\n",spot_b,total_b,spot_b-total_b);
+            }
+//            return spot_b;
+        }
+
+        if((d3 < r_diff1) & (size<d1)){
+            if((p_b-total_b) > 0.0){
+            printf("SPOT INSIDE CIRCLE 1 %f\n",p_b-total_b);
+            }
+//            printf("%f %f %f\n",d4,d1,size);
+//            return p_b;
+        }
+
+        if(d3 > r_sum2){
+            if((p_b-total_b) > 0.0){
+                printf("SPOT too far to intersect 1 %f\n",p_b-total_b);
+                }
+//            return p_b;
+        }
+
+
         return total_b;
 
     }
 
-    printf("not making grid\n");
+//    printf("not making grid\n");
 
-    la0 = la0*M_PI/180;
-    lo0 = lo0*M_PI/180;
     double dist = acos( sin(la)*sin(la0) + cos(lo - lo0)*cos(la)*cos(la0));
     dist = dist*180/M_PI;
     if(dist < size){
@@ -92,15 +149,17 @@ double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double s
 
 double great_circle(double la0,double lo0,double lambda0,double phi0,double r,double theta){
 
-    la0 = la0*M_PI/180;
-    lo0 = lo0*M_PI/180;
+//    la0 = la0*M_PI/180;
+//    lo0 = lo0*M_PI/180;
 
     double x = r*cos(theta);
     double y = r*sin(theta);
+//    printf("%f %f\n",x,y);
     double *coords = cart_to_ortho(1.0, x, y, lambda0, phi0);
     double la = coords[1];
     double lo = -1*coords[0];
 
+//    printf("%f %f %f %f\n",la0,lo0,la,lo);
 
     double dist = acos( sin(la)*sin(la0) + cos(lo - lo0)*cos(la)*cos(la0));
     free(coords);

@@ -588,7 +588,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     int n_temps=100;
     int n_bb_seg=20;
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4){
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 6 || bright_type == 8 || bright_type == 10 || bright_type == 11){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
@@ -601,7 +601,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
 
     //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES!//
 
-    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright);
+    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0);
 
     /* Build the output tuple */
 

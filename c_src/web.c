@@ -45,7 +45,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     star_surface_bright = star_bright/(M_PI*pow(r2,2));
 
     // brightness model 1 is the Xi 2016 model, requires a stellar temperature
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6 || brightness_model == 8|| brightness_model == 10){
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6 || brightness_model == 8|| brightness_model == 10|| brightness_model == 11){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         double star_T =brightness_params[0];
@@ -125,7 +125,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     free(coords);
     free(transit_coords);
 
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4  || brightness_model == 8|| brightness_model == 10){
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4  || brightness_model == 8|| brightness_model == 10 || brightness_model == 11){
         for (int j = 0; j < 4; ++j) {
           free(bb_g[j]);
         }

@@ -1,4 +1,4 @@
-double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double spot_b,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0);
+double Hotspot_b(double la, double lo,double la0, double lo0,double p_b,double spot_b,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0,double la_cen,double lo_cen);
 double Hotspot_T(double la, double lo,double la0, double lo0,double p_T,double spot_T,double size, int make_grid ,double theta1, double theta2, double r1, double r2, double lambda0, double phi0);
 double Uniform_b(double p_bright);
 double Uniform_T(double T_bright);
