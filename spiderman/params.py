@@ -98,6 +98,10 @@ class ModelParams(object):
 			self.brightness_type= 10 # Integer model identifer
 			self.thermal= True			# Is this a thermal distribution?
 
+		elif brightness_model == 'clouds':
+			self.brightness_type= 11 # Integer model identifer
+			self.thermal= True			# Is this a thermal distribution?
+
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
 			quit()
@@ -209,6 +213,14 @@ class ModelParams(object):
 				print('should be',brightness_param_names)
 				quit()
 
+		elif (self.brightness_type == 11):
+			brightness_param_names = ['T_s','l1','l2','xi','T_n','delta_T','cloud']
+			try:
+				brightness_params = [self.T_s,self.l1,self.l2,self.xi,self.T_n,self.delta_T,self.clouds]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
 
 		elif any(b == None for b in brightness_params):
 			print('Brightness parameters incorrectly assigned')
@@ -226,8 +238,8 @@ class ModelParams(object):
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
 
-	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False,nla=100,nlo=100):
-		return splt.square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),show_cax=True,theme='black',show_axes=False,nla=nla,nlo=nlo)
+	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),theme='white',show_axes=True,nla=100,nlo=100):
+		return splt.square_plot(self,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,mycmap=mycmap,show_cax=show_cax,theme=theme,show_axes=show_axes,nla=nla,nlo=nlo)
 
 	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
 		if use_phase == True:
