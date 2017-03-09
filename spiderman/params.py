@@ -266,7 +266,7 @@ class ModelParams(object):
 		return [np.min(temps),np.max(temps)]
 
 
-	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black'):
+	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white'):
 
 		if theme == 'black':
 			bg = 'black'
@@ -297,8 +297,13 @@ class ModelParams(object):
 
 #		divider = make_axes_locatable(fig)
 
-#		zero_temp = min_temp - dp
-		zero_temp = min_temp
+		min_val = (dp + min_temp-min_temp)/(dp + max_temp-min_temp)
+		max_val = (dp + max_temp-min_temp)/(dp + max_temp-min_temp)
+
+		zero_temp = min_temp - dp
+
+#		zero_temp = min_temp
+
 
 		if temp_map == True:
 			data = [np.linspace(zero_temp,max_temp,1000)]*2
