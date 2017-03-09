@@ -40,6 +40,7 @@ cont
 
 
 An example square plot:
+
 .. figure:: images/hotspot_t_square.png
     :width: 800px
     :align: center
@@ -47,6 +48,7 @@ An example square plot:
     :figclass: align-center
 
 An example four phase plot:
+
 .. figure:: images/hotspot_t_temp_map.png
     :width: 800px
     :align: center
@@ -54,6 +56,7 @@ An example four phase plot:
     :figclass: align-center
 
 The resulting lightcurves for several parameter values
+
 .. figure:: images/hotspot_t_change_offset.png
     :width: 800px
     :align: center
