@@ -2,7 +2,7 @@ Brightness maps
 =====================================
 
 Offset hotspot
-==============
+--------------------
 
 main parameters:
 
@@ -12,14 +12,26 @@ main parameters:
 	**lo0**
 		Offset of the center of the hotspot in the longitude direction (unit: Degrees)
 
-	**spot_b**
-		The surface brightness of the hotspot as a fraction of the surface brightness of the star, typically of order ~1e-4 for hot Jupiters (unitless)
-
 	**size**
 		The radius of the hotspot in degrees, i.e., 90 means the hotspot covers a whole hemisphere. (unit: degrees)
 
+The hotspot can either be specified as "hotspot_b", to directly specify the fractional brightness, in which case these parameters are used:
+
+	**spot_b**
+		The surface brightness of the hotspot as a fraction of the surface brightness of the star, typically of order ~1e-4 for hot Jupiters (unitless)
+
 	**p_b**
 		The surface brightness of the planet that is not in the hotspot as a fraction of the surface brightness of the star. This value will depend strongly on the physics of heat transport in the planets atmosphere and may be several orders of magnitude fainter than the spot (unitless)
+
+Or as "hotspot_t" to specify in terms of brightness temperature, in which case the following parameters are used instead. In this case the wavelength range to integrate over must be specified.
+
+	**spot_T**
+		The surface brightness of the hotspot as a fraction of the surface brightness of the star, typically of order ~1e-4 for hot Jupiters (unitless)
+
+	**p_T**
+		The brightness temperature of the planet that is not in the hotspot as a fraction of the surface brightness of the star. This value will depend strongly on the physics of heat transport in the planets atmosphere and may be several orders of magnitude fainter than the spot (unitless)
+
+
 
 optional parameters:
 
