@@ -4,13 +4,27 @@ Brightness maps
 Offset hotspot
 ==============
 
-parameters:
+main parameters:
 
 	**la0**
 		Offset of the center of the hotspot in the latitude direction (unit: Degrees)
 
 	**lo0**
 		Offset of the center of the hotspot in the longitude direction (unit: Degrees)
+
+	**spot_b**
+		The surface brightness of the hotspot as a fraction of the surface brightness of the star, typically of order ~1e-4 for hot Jupiters (unitless)
+
+	**size**
+		The radius of the hotspot in degrees, i.e., 90 means the hotspot covers a whole hemisphere. (unit: degrees)
+
+	**p_b**
+		The surface brightness of the planet that is not in the hotspot as a fraction of the surface brightness of the star. This value will depend strongly on the physics of heat transport in the planets atmosphere and may be several orders of magnitude fainter than the spot (unitless)
+
+optional parameters:
+
+	**grid_size**
+		This model has a sharp boundary, so can have quantization issues. Regions with sharp changes in brightness are for now integrated numerically instead of analytically, this sets the number of grid points to use in the integration along each direction, to the total number of additional function calls will be this value squared. Setting this too high can significantly slow the code down, however if it is too low fits may be numerically unstable. Use caution. This is a temporary fix and is intended to be removed in a future version (default: 10)
 
 Notes:
 
