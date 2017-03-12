@@ -424,7 +424,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 		max_temp = np.max(temps)
 
 	temps = planet[:,b_i]
-	print('min ',np.min(temps), 'max',np.max(temps))
+#	print('min ',np.min(temps), 'max',np.max(temps))
 
 	dp = ((max_temp-min_temp)*min_bright)
 
