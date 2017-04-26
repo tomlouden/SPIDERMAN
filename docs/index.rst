@@ -16,7 +16,7 @@ Contents:
    quickstart
    plotting
    brightness_maps
-   stella_models
+   stellar_models
    ack
 
 Release Notes
