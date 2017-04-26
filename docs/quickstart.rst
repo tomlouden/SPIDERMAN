@@ -49,6 +49,15 @@ Now set the parameters specific to the brightness model that we defined earlier:
 	spider_params.delta_T= 942  # Day-night temperature contrast
 	spider_params.T_s = 4500    # Temperature of the star
 
+Since this uses model spectra, it is necessary to specify the bandpass with these parameters:
+
+
+.. code-block:: python
+
+	spider_params.l1 = 1.1e-6	# The starting wavelength in meters
+	spider_params.l2 = 1.7e-6	# The ending wavelength in meters
+
+
 Now, define the times you wish the model to be evaluated at, let's do a single full orbit:
 
 .. code-block:: python
