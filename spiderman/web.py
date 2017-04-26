@@ -30,7 +30,7 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False):
 
 	if spider_params.thermal == True:
 		if stellar_grid == False:
-			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2)
+			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=4.5)
 			teffs = star_grid[0]
 			totals = star_grid[1]
 		else:
@@ -64,7 +64,7 @@ def lightcurve(t,spider_params,stellar_grid=False):
 
 	if spider_params.thermal == True:
 		if stellar_grid == False:
-			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2)
+			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=4.5)
 			teffs = star_grid[0]
 			totals = star_grid[1]
 		else:

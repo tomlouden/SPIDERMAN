@@ -397,7 +397,7 @@ class ModelParams(object):
 
 		if self.thermal == True:
 			if stellar_grid == False:
-				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2)
+				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
 				teffs = star_grid[0]
 				totals = star_grid[1]
 			else:

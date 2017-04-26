@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import spiderman
 
-def gen_grid(l1,l2):
+def gen_grid(l1,l2,logg=4.5):
 
-	logg = 4.5
 	z = -0.0
 
 	h =6.62607004e-34;
