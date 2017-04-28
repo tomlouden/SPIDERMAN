@@ -51,4 +51,4 @@ Where l1 and l2 are the begining and end of the spectral window in meters, and l
 
 	lc = spider_params.lightcurve(t,stellar_grid=stellar_grid)
 
-If a stellar grid is not provided spiderman will calculate it internally every time lightcurve is called - this will be significantly less efficient for long runs.
+If a stellar grid is not provided, spiderman will calculate it internally every time lightcurve is called - this will be significantly less efficient for long runs.
