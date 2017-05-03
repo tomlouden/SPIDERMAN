@@ -162,7 +162,12 @@ double *calc_substellar(double phase, double *coords){
         lambda0 = lambda0 + 2*M_PI;
     }
 
-    phi0 = atan(coords[1]/coords[2]);
+    if(coords[2] == 0){
+        phi0 = 0;
+    }
+    else{
+        phi0 = atan(coords[1]/coords[2]);
+    }
 
     output[0] = lambda0;
     output[1] = phi0;

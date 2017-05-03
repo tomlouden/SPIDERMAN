@@ -412,3 +412,91 @@ class ModelParams(object):
 
 		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),ec)
 		return np.array(out)
+
+	def eclipse_depth(self,phase=0.5,stellar_grid=False):
+
+		brightness_params = self.format_bright_params()
+
+		if self.thermal == True:
+			if stellar_grid == False:
+				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
+				teffs = star_grid[0]
+				totals = star_grid[1]
+			else:
+				teffs = stellar_grid[0]
+				totals = stellar_grid[1]
+		else:
+			teffs = []
+			totals = []
+
+		t = 0.0 + np.array([phase])
+
+		if(self.inc == None):
+			self.inc = 90.0
+
+		if(self.p_u1 == None):
+			self.p_u1 = 0.0
+
+		if(self.p_u2 == None):
+			self.p_u2 = 0.0
+
+		if(self.a == None):
+			self.a = 4.0
+
+		if(self.w == None):
+			self.w = 0.0
+
+		if(self.ecc == None):
+			self.ecc = 0.0
+
+
+		if(self.a_abs == None):
+			self.a_abs = 1.0
+
+		out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),1)[0]
+
+		return np.array(out)
+
+	def phase_brightness(self,phase,stellar_grid=False):
+
+		brightness_params = self.format_bright_params()
+
+		if self.thermal == True:
+			if stellar_grid == False:
+				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
+				teffs = star_grid[0]
+				totals = star_grid[1]
+			else:
+				teffs = stellar_grid[0]
+				totals = stellar_grid[1]
+		else:
+			teffs = []
+			totals = []
+
+		t = 0.0 + np.array([phase])
+
+		if(self.inc == None):
+			self.inc = 90.0
+
+		if(self.p_u1 == None):
+			self.p_u1 = 0.0
+
+		if(self.p_u2 == None):
+			self.p_u2 = 0.0
+
+		if(self.a == None):
+			self.a = 4.0
+
+		if(self.w == None):
+			self.w = 0.0
+
+		if(self.ecc == None):
+			self.ecc = 0.0
+
+
+		if(self.a_abs == None):
+			self.a_abs = 1.0
+
+		out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - 1.0
+
+		return np.array(out)
