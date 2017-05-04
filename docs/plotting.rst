@@ -14,6 +14,3 @@ Sometimes you don't want to bother with running a full orbital model, and just w
 This method only returns the *blocked light* relative to the stellar brightness at the specified phase, so for an example, if you were to specify a grazing transit you would not recieve the total flux of the dayside.
 
 If you do want the total flux of the planet from a specific phase, you can instead use the "phase_brightness" method. Using this method you could calulate an emission spectrum
-
-
-WRONG WRONG WRONG! "brightness_phase" should give some sort of absolute brightness measurement, not one relative to the star.
