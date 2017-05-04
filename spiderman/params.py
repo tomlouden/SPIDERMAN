@@ -457,9 +457,7 @@ class ModelParams(object):
 
 		return np.array(out)
 
-	def phase_brightness(self,phase,stellar_grid=False):
-
-		brightness_params = self.format_bright_params()
+	def phase_brightness(self,phases,stellar_grid=False):
 
 		if self.thermal == True:
 			if stellar_grid == False:
@@ -473,30 +471,40 @@ class ModelParams(object):
 			teffs = []
 			totals = []
 
-		t = 0.0 + np.array([phase])
+		if type(phases) is not list: phases = [phases]
 
-		if(self.inc == None):
-			self.inc = 90.0
+		brightness_params = self.format_bright_params()
 
-		if(self.p_u1 == None):
-			self.p_u1 = 0.0
+		out_list = []
+		for phase in phases:
 
-		if(self.p_u2 == None):
-			self.p_u2 = 0.0
+			t = 0.0 + np.array([phase])
 
-		if(self.a == None):
-			self.a = 4.0
+			if(self.inc == None):
+				self.inc = 90.0
 
-		if(self.w == None):
-			self.w = 0.0
+			if(self.p_u1 == None):
+				self.p_u1 = 0.0
 
-		if(self.ecc == None):
-			self.ecc = 0.0
+			if(self.p_u2 == None):
+				self.p_u2 = 0.0
+
+			if(self.a == None):
+				self.a = 4.0
+
+			if(self.w == None):
+				self.w = 0.0
+
+			if(self.ecc == None):
+				self.ecc = 0.0
 
 
-		if(self.a_abs == None):
-			self.a_abs = 1.0
+			if(self.a_abs == None):
+				self.a_abs = 1.0
 
-		out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - 1.0
+			out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - 1.0
+			out_list += [out]
+		if len(out_list) == 1:
+			return out_list[0]
 
-		return np.array(out)
+		return out_list
