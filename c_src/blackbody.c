@@ -84,7 +84,6 @@ double bb(double l, double T){
 	double h =6.62607004e-34;
 	double c =299792458.0;
 	double kb =1.38064852e-23;
-
 	double b = (2.0*h*pow(c,2)/pow(l,5))*(1.0/( exp( (h*c)/(l*kb*T) )- 1.0));
 
 	return b;

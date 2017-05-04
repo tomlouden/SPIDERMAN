@@ -457,13 +457,13 @@ class ModelParams(object):
 
 		return np.array(out)
 
-	def phase_brightness(self,phases,stellar_grid=False):
+	def phase_brightness(self,phases,stellar_grid=False,reflection=False,planet_radius=False):
 
 		if self.thermal == True:
 			if stellar_grid == False:
-				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
-				teffs = star_grid[0]
-				totals = star_grid[1]
+				stellar_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
+				teffs = stellar_grid[0]
+				totals = stellar_grid[1]
 			else:
 				teffs = stellar_grid[0]
 				totals = stellar_grid[1]
@@ -479,6 +479,12 @@ class ModelParams(object):
 		for phase in phases:
 
 			t = 0.0 + np.array([phase])
+
+			if(self.t0 == None):
+				self.t0 = 0.0
+
+			if(self.per == None):
+				self.per = 1.0
 
 			if(self.inc == None):
 				self.inc = 90.0
@@ -502,9 +508,29 @@ class ModelParams(object):
 			if(self.a_abs == None):
 				self.a_abs = 1.0
 
-			out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - 1.0
-			out_list += [out]
+
+			planet = sp.generate_planet(self,t,stellar_grid=stellar_grid)
+
+			brights = planet[:,16]
+			areas = planet[:,15]
+
+			min_bright = np.min(brights)
+			max_bright = np.max(brights)
+
+			if planet_radius == False:
+				out = np.sum(brights*areas)/np.pi
+			else:
+				out = np.sum(brights*areas)*planet_radius**2
+
+			out_list += [np.sum(brights*areas)/np.pi]
+
+#			out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - 1.0
+#			out_list += [out]
+
+
 		if len(out_list) == 1:
 			return out_list[0]
+
+#		returns the total flux of the planet at each phase in the defined bandpass in Watts / m^2 / sr
 
 		return out_list

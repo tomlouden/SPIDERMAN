@@ -599,7 +599,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
 
     double star_bright = 1.0;
 
-    //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES!//
+    //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES OR REFLECTION MODELS WON'T BE CORRECT!//
 
     double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0);
 
