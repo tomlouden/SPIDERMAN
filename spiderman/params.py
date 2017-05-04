@@ -457,6 +457,13 @@ class ModelParams(object):
 
 		return np.array(out)
 
+	def total_luminosity(self,planet_radius,stellar_grid=False,reflection=False):
+		# CHANGE THIS - shouldn't really use the output of get_planet because of limb darkening
+
+		p1,p2 = self.phase_brightness([0,0.5],stellar_grid=stellar_grid,reflection=reflection,planet_radius=planet_radius)
+		return(p1+p2)
+
+
 	def phase_brightness(self,phases,stellar_grid=False,reflection=False,planet_radius=False):
 
 		if self.thermal == True:
@@ -513,6 +520,13 @@ class ModelParams(object):
 
 			brights = planet[:,16]
 			areas = planet[:,15]
+			inner = planet[:,13]
+			outer = planet[:,14]
+
+			avg_dist = ((inner + outer)/2)*np.pi/2
+			avg_dist[0] = 0.0
+
+			norm = np.sqrt(np.cos(avg_dist))
 
 			min_bright = np.min(brights)
 			max_bright = np.max(brights)
@@ -520,9 +534,9 @@ class ModelParams(object):
 			if planet_radius == False:
 				out = np.sum(brights*areas)/np.pi
 			else:
-				out = np.sum(brights*areas)*planet_radius**2
+				out = np.sum(brights*areas/norm)*planet_radius**2
 
-			out_list += [np.sum(brights*areas)/np.pi]
+			out_list += [out]
 
 #			out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - 1.0
 #			out_list += [out]

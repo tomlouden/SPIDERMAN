@@ -249,9 +249,7 @@ double **generate_planet(int n_layers){
         int nslice = pow((i+1),2) - pow((i),2);
         double increment = 2.0*M_PI/nslice;
         // the starting point is arbitrary and doesn't matter.//
-        // But this looks cooler.//
 //        double theta = increment/2;
-// but it makes collision detection harder...
         double theta = 0.0;
         for (int j = 0; j < nslice; ++j) {
             
