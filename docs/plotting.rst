@@ -115,3 +115,5 @@ Finally, you can use the total_luminosity method to return the total band lumino
 	lum = spider_params.total_luminosity(10*6.9911e7)
 	print(lum)
 	>> 7.03802421799e+20
+
+.
