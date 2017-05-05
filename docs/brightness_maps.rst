@@ -4,6 +4,8 @@ Brightness maps
 Zhang and Showman 2017
 -----------------------
 
+A temperature map based on the equations given in the appendix of Zhang and Showman 2017 (http://adsabs.harvard.edu/abs/2017ApJ...836...73Z) This semi-physical model well reproduces the main features of hot Jupiter phase-curves - offset hotspots
+
 main parameters:
 
 	**xi**

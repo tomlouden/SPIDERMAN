@@ -1,6 +1,56 @@
 Plotting 
 ============
 
+Visualising the planet
+-----------------------
+
+Spiderman provides a few different ways to visualise the resulting brightness distribution on the planet, below are some examples, after the planet has been specified with "spider_params"
+
+The "plot_planet" method outputs the visible face of the planet at the specified time (t), using the same code that is used internally for calculating the model output. This can be a useful sanity check of what the model is doing.
+
+.. code-block:: python
+	spider_params.plot_planet(t)
+
+.. figure:: images/planet_map.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+By default the plot will be in a standard white theme suitable for inclusion in papers or printouts, alternatively a snazzy black theme more suited to powerpoint presentations can be selected for all spiderman plots by setting the "theme" keyword to black:
+
+.. code-block:: python
+	spider_params.plot_planet(t,theme=black)
+
+.. figure:: images/planet_map_black.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+Note that to save figures like this, you will have to let matplotlib know that you want to to output the figure with a black background, e.g.
+
+.. code-block:: python
+	plt.savefig('plot_name.pdf',facecolor='black')
+
+For brightness temperature based models like the Zhang model, you can also plot in temperature by setting "use_temp" to true
+
+.. code-block:: python
+	spider_params.plot_planet(t,theme=black,use_temp=True)
+
+.. figure:: images/planet_temp_map.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+To see the system in context, you can also output a "system plot" which shows the projected position of the planet to scale with the star. Again, this plot is constructed from the same code used internally for model calculation, so is a good way to check what's going on. Both plot_planet and plot_system can accept a phase instead of a time when the use_phase keyword is set to True
+
+.. code-block:: python
+	spider_params.system_plot(0.625,use_phase=True)
+
+
+
 Generating a simple spectrum
 -----------------------------
 

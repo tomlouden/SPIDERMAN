@@ -241,12 +241,12 @@ class ModelParams(object):
 	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),theme='white',show_axes=True,nla=100,nlo=100):
 		return splt.square_plot(self,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,mycmap=mycmap,show_cax=show_cax,theme=theme,show_axes=show_axes,nla=nla,nlo=nlo)
 
-	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
+	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white',show_axes=True):
 		if use_phase == True:
 			t = self.t0 + self.per*t
 		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,show_cax=show_cax,mycmap=mycmap,theme=theme,show_axes=show_axes)
 
-	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='black',show_axes=False):
+	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white',show_axes=False):
 		if use_phase == True:
 			t = self.t0 + self.per*t
 		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,show_cax=show_cax,mycmap=mycmap,theme=theme,show_axes=show_axes)
@@ -331,7 +331,7 @@ class ModelParams(object):
 
 		return fig
 
-	def plot_uncertainty(self,fs,min_temp=False,max_temp=False,temp_map=True,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.viridis_r,theme='black'):
+	def plot_uncertainty(self,fs,min_temp=False,max_temp=False,temp_map=True,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.viridis_r,theme='white'):
 
 		if theme == 'black':
 			bg = 'black'
