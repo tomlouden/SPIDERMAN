@@ -49,6 +49,13 @@ To see the system in context, you can also output a "system plot" which shows th
 .. code-block:: python
 	spider_params.system_plot(0.625,use_phase=True)
 
+.. figure:: images/planet_temp_map.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+end
 
 
 Generating a simple spectrum
@@ -166,4 +173,4 @@ Finally, you can use the total_luminosity method to return the total band lumino
 	print(lum)
 	>> 7.03802421799e+20
 
-.
+end.
