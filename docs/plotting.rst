@@ -150,6 +150,7 @@ Some caution must be used with this method, as it only returns the *blocked ligh
 If you do want the total flux of the planet from a specific phase, you can instead use the "phase_brightness" method. Using this method you can calulate the emission spectrum of the planet in *physical units* at the phase of your choosing, it is called in a similar way to eclipse_depth, but has an optional phase argument which can accept either a single phase value or a list. You can provide a planet radius to recieve the total band luminosity of the visible hemisphere in Watts, if this is not given then an average surface intensity will be returned.
 
 .. code-block:: python
+
 	mid_wvls = []
 	p1s = []
 	p2s = []
@@ -190,6 +191,7 @@ If you do want the total flux of the planet from a specific phase, you can inste
 Finally, you can use the total_luminosity method to return the total band luminosity of the planet in the model in Watts, a planet radius in meters is required:
 
 .. code-block:: python
+
 	spider_params.l1 = 1.1e-6
 	spider_params.l2 = 1.7e-6
 	lum = spider_params.total_luminosity(10*6.9911e7)
