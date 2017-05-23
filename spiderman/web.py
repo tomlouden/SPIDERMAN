@@ -76,7 +76,9 @@ def lightcurve(t,spider_params,stellar_grid=False,logg=4.5):
 		teffs = []
 		totals = []
 
-	return _web.lightcurve(spider_params.n_layers,t,spider_params.t0,spider_params.per,spider_params.a_abs,spider_params.inc,spider_params.ecc,spider_params.w,spider_params.a,spider_params.rp,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals), spider_params.eclipse)
+	out = _web.lightcurve(spider_params.n_layers,t,spider_params.t0,spider_params.per,spider_params.a_abs,spider_params.inc,spider_params.ecc,spider_params.w,spider_params.a,spider_params.rp,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals), spider_params.eclipse)
+
+	return np.array(out)
 
 def bb_grid(l1,l2,T_start,T_end,n_temps,n_segments):
 	temps, fluxes, deriv = _web.bb_grid(l1,l2,T_start,T_end,n_temps,n_segments)
