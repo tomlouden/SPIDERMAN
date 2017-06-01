@@ -1,5 +1,6 @@
 #include "math.h"
 #include "brightness_maps.h"
+#include "orthographic.h"
 #include "legendre_polynomial.h"
 #include <stdlib.h>
 #include <stdio.h>
