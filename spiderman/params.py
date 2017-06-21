@@ -21,6 +21,7 @@ class ModelParams(object):
 		self.p_u1= None				# **PLANETARY** limb darkening coefficients [-]
 		self.p_u2= None				# **PLANETARY** limb darkening coefficients [-]
 		self.eclipse = True			# specifies whether to include the drop in flux due to the eclipse
+		self.filter = False			# Can use an external response file.
 
 		if brightness_model == 'uniform brightness':
 			self.n_layers = 1		# The default resolution for the grid
@@ -386,32 +387,35 @@ class ModelParams(object):
 
 		return fig
 
-	def lightcurve(self,t,use_phase=False,stellar_grid=False,eclipse=True):
+	def lightcurve(self,t,stellar_grid=False,logg=4.5,use_phase=False):
 
-		if eclipse == True:
-			ec = 1
-		else:
-			ec=0
+		return sp.lightcurve(t,self,stellar_grid,logg,use_phase)
 
-		brightness_params = self.format_bright_params()
-
-		if self.thermal == True:
-			if stellar_grid == False:
-				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
-				teffs = star_grid[0]
-				totals = star_grid[1]
-			else:
-				teffs = stellar_grid[0]
-				totals = stellar_grid[1]
-		else:
-			teffs = []
-			totals = []
-
-		if use_phase == True:
-			t = self.t0 + self.per*t
-
-		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),ec)
-		return np.array(out)
+#		if eclipse == True:
+#			ec = 1
+#		else:
+#			ec=0
+#
+#		brightness_params = self.format_bright_params()
+#
+#		if self.thermal == True:
+#
+#			if stellar_grid == False:
+#				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter)
+#				teffs = star_grid[0]
+#				totals = star_grid[1]
+#			else:
+#				teffs = stellar_grid[0]
+#				totals = stellar_grid[1]
+#		else:
+#			teffs = []
+#			totals = []
+#
+#		if use_phase == True:
+#			t = self.t0 + self.per*t
+#
+#		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),ec)
+#		return np.array(out)
 
 	def eclipse_depth(self,phase=0.5,stellar_grid=False):
 
@@ -419,7 +423,7 @@ class ModelParams(object):
 
 		if self.thermal == True:
 			if stellar_grid == False:
-				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
+				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter)
 				teffs = star_grid[0]
 				totals = star_grid[1]
 			else:
@@ -468,7 +472,7 @@ class ModelParams(object):
 
 		if self.thermal == True:
 			if stellar_grid == False:
-				stellar_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5)
+				stellar_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter)
 				teffs = stellar_grid[0]
 				totals = stellar_grid[1]
 			else:

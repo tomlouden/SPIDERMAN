@@ -4,8 +4,9 @@ import fitsio
 import matplotlib.pyplot as plt
 import numpy as np
 import spiderman
+from scipy.interpolate import interp1d
 
-def gen_grid(l1,l2,logg=4.5):
+def gen_grid(l1,l2,logg=4.5,response=False):
 
 	z = -0.0
 
@@ -17,6 +18,10 @@ def gen_grid(l1,l2,logg=4.5):
 
 	warned = False
 
+	filter = False
+	if response != False:
+		filter = spiderman.get_filter(response)
+
 	totals = []
 	for teff in teffs:
 		if spiderman.rcParams.read == True:
@@ -27,19 +32,19 @@ def gen_grid(l1,l2,logg=4.5):
 				print('using stellar spectra in '+PHOENIX_DIR)
 
 			if ( ((l1 > np.min(wvl)) & (l1 < np.max(wvl))) & ((l2 > np.min(wvl)) & (l2 < np.max(wvl) )) ):
-				totals += [sum_flux(wvl,flux,l1,l2)]
+				totals += [sum_flux(wvl,flux,l1,l2,filter)]
 			else:
 				if warned == False:
 					print('wavelengths out of bound for stellar model, using blackbody approximation')
 				b_wvl = np.linspace(l1,l2,1000)
 				b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
-				totals += [sum_flux(b_wvl,b_flux,l1,l2)]
+				totals += [sum_flux(b_wvl,b_flux,l1,l2,filter)]
 		else:
 			if warned == False:
 				print('no stellar models provided, using blackbody approximation')
 			b_wvl = np.linspace(l1,l2,1000)
 			b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
-			totals += [sum_flux(b_wvl,b_flux,l1,l2)]
+			totals += [sum_flux(b_wvl,b_flux,l1,l2,filter)]
 		warned = True
 
 
@@ -48,7 +53,8 @@ def gen_grid(l1,l2,logg=4.5):
 
 	return [teffs, totals]
 
-def sum_flux(wvl,flux,l1,l2):
+def sum_flux(wvl,flux,l1,l2,filter=False):
+
 
 	mask = [(wvl > l1) & (wvl < l2)]
 
@@ -60,10 +66,16 @@ def sum_flux(wvl,flux,l1,l2):
 	wvl = wvl[mask]
 	flux = flux[mask]
 
+	if filter != False:
+		f = interp1d(filter[0],filter[1],kind='linear',bounds_error=True,axis=0)
+		r = f(wvl)
+	else:
+		r = np.array([1.0]*len(wvl))
+
 	total = 0.0
 
 	for i in range(0,len(wvl)):
-		total += flux[i]*diff[i]
+		total += r[i]*flux[i]*diff[i]
 	return total
 
 def get_phoenix_spectra(teff,logg,z):

@@ -12,7 +12,7 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars, int eclipse){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars, int eclipse,int use_filter, int n_wvls, double ** wvl_grid){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
@@ -26,10 +26,10 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     double c = 299792458.0;
     
-    int n_bb_seg = 20;
+    int n_bb_seg = 100; // number of blackbody segments in wavelength
     double T_start =0;
     double T_end =10000;
-    int n_temps=100;
+    int n_temps=100; // number of blackbody temperature segments
 
     double *output = malloc(sizeof(double) * n_points);
 
@@ -62,9 +62,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         star_bright = star_surface_bright*M_PI*pow(r2,2);
 
     // also requires the precomputation of the blackbody interpolation grid
-//        printf("%f %f %f %f %f %f\n",l1,l2,T_start,T_end,n_temps,n_bb_seg);
-        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
-//        printf("bb_g init %f\n",bb_g[0][1]);
+        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
 
     }
 //    printf("bb_g init 2 %f\n",bb_g[0][1]);

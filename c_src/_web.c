@@ -341,8 +341,19 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 
         star_bright = star_surface_bright*M_PI*pow(r2,2);
 
+        int use_filter = 0;
+        double **wvl_grid;
+        wvl_grid = malloc(sizeof(double) * 2); // dynamic `array (size 4) of pointers to int`
+        int n_wvls = 3;
+        for (int k = 0; k <2; ++k) {
+            wvl_grid[k] = malloc(sizeof(double) * n_wvls); // dynamic `array (size 4) of pointers to int`
+        }
+        for (int k = 0; k <n_wvls; ++k) {
+            wvl_grid[0][k] = 0.0;
+            wvl_grid[1][k] = 0.0;
+        }
 
-        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
+        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
     }
 
     map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright);
@@ -482,12 +493,12 @@ static PyObject *web_calc_substellar(PyObject *self, PyObject *args)
 static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 {
 
-    int n_layers, bright_type, n_star, eclipse;
+    int n_layers, bright_type, n_star, eclipse, n_wvls,use_filter;
     double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
-    PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj;
+    PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj, *response_obj, *wvl_obj;
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOii", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse))
+    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOiiOOii", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse,&wvl_obj,&response_obj,&n_wvls,&use_filter))
         return NULL;
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -523,9 +534,33 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     }
     double *star_flux    = (double*)PyArray_DATA(flux_array);
 
+    PyObject *wvl_array = PyArray_FROM_OTF(wvl_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (wvl_array == NULL) {
+        Py_XDECREF(wvl_array);
+        return NULL;
+    }
+    double *wvls    = (double*)PyArray_DATA(wvl_array);
+
+    PyObject *response_array = PyArray_FROM_OTF(response_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+    if (response_array == NULL) {
+        Py_XDECREF(response_array);
+        return NULL;
+    }
+    double *responses    = (double*)PyArray_DATA(response_array);
+
     /* Call the external C function to compute the area. */
 
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse);
+    double **wvl_grid;
+    wvl_grid = malloc(sizeof(double) * 2); // dynamic `array (size 4) of pointers to int`
+    for (int k = 0; k <2; ++k) {
+        wvl_grid[k] = malloc(sizeof(double) * n_wvls); // dynamic `array (size 4) of pointers to int`
+    }
+    for (int k = 0; k <n_wvls; ++k) {
+        wvl_grid[0][k] = wvls[k];
+        wvl_grid[1][k] = responses[k];
+    }
+
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse,use_filter,n_wvls,wvl_grid);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 
@@ -549,7 +584,19 @@ static PyObject *web_bb_grid(PyObject *self, PyObject *args)
         return NULL;
 
     /* Call the external C function to compute the area. */
-    double **output = bb_grid(l1,l2,T_start,T_end,n_temps,n_segments);
+    int use_filter = 0;
+    double **wvl_grid;
+    wvl_grid = malloc(sizeof(double) * 2); // dynamic `array (size 4) of pointers to int`
+    int n_wvls = 3;
+    for (int k = 0; k <2; ++k) {
+        wvl_grid[k] = malloc(sizeof(double) * n_wvls); // dynamic `array (size 4) of pointers to int`
+    }
+    for (int k = 0; k <n_wvls; ++k) {
+        wvl_grid[0][k] = 0.0;
+        wvl_grid[1][k] = 0.0;
+    }
+
+    double **output = bb_grid(l1,l2,T_start,T_end,n_temps,n_segments,use_filter,n_wvls,wvl_grid);
 
 /*    printf("%f\n",output[0][0]); */
 
@@ -588,10 +635,24 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     int n_temps=100;
     int n_bb_seg=20;
 
+    int use_filter = 0;
+
+    double **wvl_grid;
+    wvl_grid = malloc(sizeof(double) * 2); // dynamic `array (size 4) of pointers to int`
+    int n_wvls = 3;
+    for (int k = 0; k <2; ++k) {
+        wvl_grid[k] = malloc(sizeof(double) * n_wvls); // dynamic `array (size 4) of pointers to int`
+    }
+    for (int k = 0; k <n_wvls; ++k) {
+        wvl_grid[0][k] = 100.0;
+        wvl_grid[1][k] = 1.0;
+    }
+
+
     if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 6 || bright_type == 8 || bright_type == 10 || bright_type == 11){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
-        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg);
+        bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
     }
 
     double lambda0 = 0;

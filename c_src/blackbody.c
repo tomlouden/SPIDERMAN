@@ -26,7 +26,7 @@ double bb_interp(double tval, double **bb_g){
 
 }
 
-double **bb_grid(double l1, double l2, double T_start, double T_end,int n_temps,int n_segments){
+double **bb_grid(double l1, double l2, double T_start, double T_end,int n_temps,int n_segments,int use_filter, int n_wvls, double **wvl_g){
 	double T, i;
     double **grids;
  	double *ypp;
@@ -45,7 +45,7 @@ double **bb_grid(double l1, double l2, double T_start, double T_end,int n_temps,
     for (int k = 0; k <n_temps; ++k) {
     	T = T_start + k*i;
 		grids[0][k] = T;
-		grids[1][k] = bb_flux(l1,l2,T,n_segments);
+		grids[1][k] = bb_flux(l1,l2,T,n_segments,use_filter,n_wvls,wvl_g);
 	}
 
 	ypp = spline_cubic_set( n_temps, grids[0], grids[1], 0, 0, 0, 0 );
@@ -59,26 +59,62 @@ double **bb_grid(double l1, double l2, double T_start, double T_end,int n_temps,
     return grids;
 }
 
-double bb_flux(double l1, double l2, double T,int n_segments){
+double bb_flux(double l1, double l2, double T,int n_segments, int use_filter, int n_wvls, double **wvl_g){
 	double L=0;
 	double wvl_diff = l2-l1;
 	double wvl_int = wvl_diff/n_segments;
 	double l_lower = 0.0;
 	double l_upper = 0.0;
+	double l_mid = 0.0;
 	double bb_lower,bb_mid,bb_upper;
+	double filter_lower,filter_mid,filter_upper;
+ 	double *ypp;
+	double ypval;
+	double yppval;
+
+//	if(use_filter == 1){
+//		ypp = spline_cubic_set( n_wvls, wvl_g[0], wvl_g[1], 0, 0, 0, 0 );
+//	}
 
     for (int k = 0; k <n_segments; ++k) {
     	l_lower = (l1+k*wvl_int);
     	l_upper = (l1+(k+1)*wvl_int);
+    	l_mid = 0.5*(l_lower+l_upper);
+
     	bb_lower = bb(l_lower,T);
-    	bb_mid = bb(0.5*(l_lower+l_upper),T);
+    	bb_mid = bb(l_mid,T);
     	bb_upper = bb(l_upper,T);
 
-		L += simpson(bb_lower, bb_upper, bb_mid, l_lower, l_upper);
+    	if(use_filter == 1){
+	    	spline_linear_val( n_wvls, wvl_g[0], wvl_g[1], l_lower, &filter_lower, &yppval);
+	    	spline_linear_val( n_wvls, wvl_g[0], wvl_g[1], l_mid, &filter_mid, &yppval);
+	    	spline_linear_val( n_wvls, wvl_g[0], wvl_g[1], l_upper, &filter_upper, &yppval);
+	    }
+	    else{
+	    	filter_lower = 1.0;
+	    	filter_mid = 1.0;
+	    	filter_upper = 1.0;
+	    }
+//		printf("%f %f %f %f %f\n",l_lower*1e6,l_upper*1e6,filter_lower,filter_mid,filter_upper);
+
+
+		L += simpson(bb_lower*filter_lower, bb_upper*filter_upper, bb_mid*filter_mid, l_lower, l_upper);
 	}
+
+//	if(use_filter == 1){
+//		free(ypp);
+//	}
+
 
 	return L;
 }
+
+//	if filter != False:
+//		f = interp1d(filter[0],filter[1],kind='linear',bounds_error=True,axis=0)
+//		r = f(wvl)
+//	else:
+//		r = np.array([1.0]*len(wvl))
+
 
 double bb(double l, double T){
 	double h =6.62607004e-34;
