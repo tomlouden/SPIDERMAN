@@ -16,6 +16,7 @@ Contents:
    plotting
    brightness_maps
    stellar_models
+   instrument_response
    ack
 
 Release Notes
