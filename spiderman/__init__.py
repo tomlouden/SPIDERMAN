@@ -25,5 +25,6 @@ from spiderman.web import *
 from spiderman.plot import *
 from spiderman.test import *
 from spiderman.stellar_grid import *
+from spiderman.read_model import *
 
-__all__ = ["web","params","_web","plot","test","stellar_grid"]
+__all__ = ["web","params","_web","plot","test","stellar_grid","read_model"]
