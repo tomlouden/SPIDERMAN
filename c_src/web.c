@@ -12,7 +12,7 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars, int eclipse,int use_filter, int n_wvls, double ** wvl_grid){
+double *lightcurve(int n_layers, int n_points, double *t, double tc, double per, double a, double inc, double ecc, double omega, double a_rs, double rp,double u1, double u2,int brightness_model,double *brightness_params,double *stellar_teffs,double *stellar_fluxes,int nstars, int eclipse,int use_filter, int n_wvls, double **wvl_grid, double *lo_2d, double *la_2d, double **T_2d){
     int n,j;
     double phase,lambda0,phi0;
     double *coords;
@@ -45,7 +45,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     star_surface_bright = star_bright/(M_PI*pow(r2,2));
 
     // brightness model 1 is the Xi 2016 model, requires a stellar temperature
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6 || brightness_model == 8|| brightness_model == 10|| brightness_model == 11){
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6 || brightness_model == 8|| brightness_model == 10|| brightness_model == 11|| brightness_model == 12){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         double star_T =brightness_params[0];
@@ -95,7 +95,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
 //        printf("bb_g 3 %f\n",bb_g[0][1]);
 
-        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g,star_surface_bright);
+        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g,star_surface_bright,lo_2d,la_2d,T_2d);
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
@@ -123,7 +123,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     free(coords);
     free(transit_coords);
 
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4  || brightness_model == 8|| brightness_model == 10 || brightness_model == 11){
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6 || brightness_model == 8|| brightness_model == 10 || brightness_model == 11|| brightness_model == 12){
         for (int j = 0; j < 4; ++j) {
           free(bb_g[j]);
         }

@@ -1,6 +1,24 @@
 #include "util.h"
 # include <stdio.h>
 # include <time.h>
+# include "math.h"
+
+int find_minimum(double *a, double v, int n) {
+  int c, index;
+  double min;
+
+  min = pow((a[0] - v),2);
+  index = 0;
+ 
+  for (c = 1; c < n; c++) {
+    if ( pow((a[c] - v),2) < min) {
+       index = c;
+       min = pow((a[c] - v),2);
+    }
+  }
+ 
+  return index;
+}
 
 int compare_function(const void *a,const void *b) {
 	double *x = (double *) a;

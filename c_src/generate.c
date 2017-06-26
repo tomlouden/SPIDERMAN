@@ -4,6 +4,7 @@
 #include "blackbody.h"
 #include "brightness_maps.h"
 #include "math.h"
+#include "util.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -11,7 +12,7 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g,double star_bright){
+void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g,double star_bright, double *lo_2d, double *la_2d, double **T_2d){
     double point_T,mu,p_t_bright;
     double l1,l2,R_mid,theta_mid,mid_x,mid_y;
     double la, lo;
@@ -22,7 +23,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
 //    printf("bb_g 4 %f\n",bb_g[0][1]);
 
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8|| brightness_model == 10|| brightness_model == 11) {
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8|| brightness_model == 10|| brightness_model == 11|| brightness_model == 12) {
         l1 = brightness_params[1];
         l2 = brightness_params[2];
     }
@@ -60,7 +61,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
         free(coords);
 
-        double *vals = call_map_model(la,lo,lambda0,phi0,brightness_model,brightness_params,bb_g,make_grid,planet[k][10],planet[k][11],planet[k][13],planet[k][14],star_bright,la_cen,lo_cen);
+        double *vals = call_map_model(la,lo,lambda0,phi0,brightness_model,brightness_params,bb_g,make_grid,planet[k][10],planet[k][11],planet[k][13],planet[k][14],star_bright,la_cen,lo_cen,lo_2d,la_2d,T_2d);
 
         planet[k][16] = vals[0]; 
         planet[k][17] = vals[1];
@@ -77,7 +78,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
 }
 
-double *call_map_model(double la,double lo,double lambda0, double phi0,int brightness_model,double *brightness_params,double **bb_g,int make_grid,double theta1, double theta2, double r1, double r2, double star_bright,double la_cen,double lo_cen){
+double *call_map_model(double la,double lo,double lambda0, double phi0,int brightness_model,double *brightness_params,double **bb_g,int make_grid,double theta1, double theta2, double r1, double r2, double star_bright,double la_cen,double lo_cen, double *lo_2d, double *la_2d, double **T_2d){
     double point_T,mu,p_t_bright,point_b;
     double l1,l2;
     double *output;
@@ -87,10 +88,11 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
 
 //    printf("bb_g %f\n",bb_g[0][1]);
 
-    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8|| brightness_model == 10) {
+    if(brightness_model == 1 || brightness_model == 3 || brightness_model == 4 || brightness_model == 6|| brightness_model == 8|| brightness_model == 10|| brightness_model == 11|| brightness_model == 12) {
         l1 = brightness_params[1];
         l2 = brightness_params[2];
     }
+
 
     if(brightness_model == 0){
         point_b = Uniform_b(brightness_params[0]);
@@ -185,10 +187,22 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         if(pow(lo,2) > pow(M_PI/2.0,2)){
             point_b = point_b - clouds;
         }
-
-//        printf("%f %f %f\n",ars, star_bright,insol);
     }
 
+    if(brightness_model == 12){
+
+/*        printf("\n");
+        printf("%f\n",lo*180.0/M_PI);
+        printf("%i\n",find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3]));
+        printf("%f\n",lo_2d[find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3])]);
+        printf("\n");*/
+
+        point_T = T_2d[find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3])][find_minimum(la_2d, la*180.0/M_PI, (int) brightness_params[4])];
+
+        point_b = bb_interp(point_T, bb_g);
+        }
+
+//        printf("%f %f %f\n",ars, star_bright,insol);
     output = malloc(sizeof(double) * 2); // dynamic `array (size 2) of pointers to double`
 
 

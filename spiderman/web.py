@@ -42,7 +42,7 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5)
 
 	if spider_params.thermal == True:
 		if stellar_grid == False:
-			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=self.filter)
+			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter)
 			teffs = star_grid[0]
 			totals = star_grid[1]
 		else:
@@ -53,14 +53,13 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5)
 		totals = []
 
 	spider_params.calc_substellar(t)
-	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals),spider_params.rp))
+	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals),spider_params.rp,spider_params.grid[0],spider_params.grid[1],spider_params.grid[2]))
 
 def call_map_model(spider_params,la,lo):
 	# DEPRECATED - NOT CURRENTLY USED BY HIGHER LEVEL FUNCTIONS, NEEDS UPDATING
 
 	brightness_params = spider_params.format_bright_params()
-	_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params)
-	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params))
+	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params,spider_params.grid[0],spider_params.grid[1],spider_params.grid[2]))
 
 def blocked(n_layers,x2,y2,r2):
 	return _web.blocked(n_layers,x2,y2,r2)
@@ -101,7 +100,7 @@ def lightcurve(t,spider_params,stellar_grid=False,logg=4.5,use_phase=False):
 
 	n_wvls = len(filter[0])
 
-	out = _web.lightcurve(spider_params.n_layers,t,spider_params.t0,spider_params.per,spider_params.a_abs,spider_params.inc,spider_params.ecc,spider_params.w,spider_params.a,spider_params.rp,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals), spider_params.eclipse, filter[0], filter[1], n_wvls,use_filter)
+	out = _web.lightcurve(spider_params.n_layers,t,spider_params.t0,spider_params.per,spider_params.a_abs,spider_params.inc,spider_params.ecc,spider_params.w,spider_params.a,spider_params.rp,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals), spider_params.eclipse, filter[0], filter[1], n_wvls,use_filter,spider_params.grid[0],spider_params.grid[1],spider_params.grid[2])
 
 	return np.array(out)
 

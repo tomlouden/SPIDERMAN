@@ -278,16 +278,42 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     int n_layers,n_1,n_2,bright_type,n_star;
     double lambda0,phi0,p_u1,p_u2,rp,star_surface_bright,star_bright;
     PyObject *bright_obj,*teff_obj,*flux_obj;
+    PyObject *twod_lo_obj,*twod_la_obj,*twod_t_obj;
+    npy_intp* dims[4];
+    int typenum = NPY_DOUBLE;
+    double *twod_lo, *twod_la, **twod_t;
+
+    PyArray_Descr *descr = PyArray_DescrFromType(typenum);
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iddddiOOOid", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&rp))
+    if (!PyArg_ParseTuple(args, "iddddiOOOidOOO", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&rp,&twod_lo_obj,&twod_la_obj,&twod_t_obj))
         return NULL;
 
     /* Call the external C function to compute the area. */
 
+    if(bright_type == 12){
+
+        PyArray_AsCArray((PyObject **) &twod_t_obj, (void **) &twod_t, dims, 2, descr);
+
+        PyObject *twod_lo_array = PyArray_FROM_OTF(twod_lo_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (twod_lo_array == NULL) {
+            Py_XDECREF(twod_lo_array);
+            return NULL;
+        }
+        twod_lo    = (double*)PyArray_DATA(twod_lo_array);
+
+        PyObject *twod_la_array = PyArray_FROM_OTF(twod_la_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (twod_la_array == NULL) {
+            Py_XDECREF(twod_la_array);
+            return NULL;
+        }
+        twod_la    = (double*)PyArray_DATA(twod_la_array);
+    }
+
     double **planet_struct = generate_planet(n_layers);
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+//    PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_OBJECT, NPY_IN_ARRAY);
     if (bright_array == NULL) {
         Py_XDECREF(bright_array);
         return NULL;
@@ -326,7 +352,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     star_surface_bright = star_bright/(M_PI*pow(r2,2));
 
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 8|| bright_type == 10){
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4|| bright_type == 6 ||  bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         double star_T =brightness_params[0];
@@ -356,7 +382,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
     }
 
-    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright);
+    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright,twod_lo,twod_la,twod_t);
 
     /* Build the output tuple */
 
@@ -496,17 +522,44 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     int n_layers, bright_type, n_star, eclipse, n_wvls,use_filter;
     double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
     PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj, *response_obj, *wvl_obj;
-
+    PyObject *twod_lo_obj,*twod_la_obj,*twod_t_obj;
+    double **twod_t, *twod_lo, *twod_la;
+    npy_intp* dims[4];
+    
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOiiOOii", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse,&wvl_obj,&response_obj,&n_wvls,&use_filter))
+    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOiiOOiiOOO", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse,&wvl_obj,&response_obj,&n_wvls,&use_filter,&twod_lo_obj,&twod_la_obj,&twod_t_obj))
         return NULL;
+
+    int typenum = NPY_DOUBLE;
+    PyArray_Descr *descr = PyArray_DescrFromType(typenum);
+
+
+    // keep an eye on this... don't want memory leaks giving you a headache, may be necessary to do some sort of memory operation on this (INCREF?)
+
+    if(bright_type == 12){
+
+        PyArray_AsCArray((PyObject **) &twod_t_obj, (void **) &twod_t, dims, 2, descr);
+
+        PyObject *twod_lo_array = PyArray_FROM_OTF(twod_lo_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (twod_lo_array == NULL) {
+            Py_XDECREF(twod_lo_array);
+            return NULL;
+        }
+        twod_lo    = (double*)PyArray_DATA(twod_lo_array);
+
+        PyObject *twod_la_array = PyArray_FROM_OTF(twod_la_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (twod_la_array == NULL) {
+            Py_XDECREF(twod_la_array);
+            return NULL;
+        }
+        twod_la    = (double*)PyArray_DATA(twod_la_array);
+    }
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
     if (bright_array == NULL) {
         Py_XDECREF(bright_array);
         return NULL;
     }
-    /* Get pointers to the data as C-types. */
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
 
     PyObject *t_array = PyArray_FROM_OTF(t_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -560,7 +613,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
         wvl_grid[1][k] = responses[k];
     }
 
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse,use_filter,n_wvls,wvl_grid);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse,use_filter,n_wvls,wvl_grid,twod_lo,twod_la,twod_t);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 
@@ -612,20 +665,49 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     int bright_type;
     double la,lo;
     PyObject *bright_obj;
+    PyObject *twod_lo_obj,*twod_la_obj,*twod_t_obj;
+    double **twod_t, *twod_lo, *twod_la;
+    npy_intp* dims[4];
+
+    int typenum = NPY_DOUBLE;
+    PyArray_Descr *descr = PyArray_DescrFromType(typenum);
 
     /* Parse the input tuple */
 
-    if (!PyArg_ParseTuple(args, "ddiO", &la,&lo,&bright_type,&bright_obj))
+    if (!PyArg_ParseTuple(args, "ddiOOOO", &la,&lo,&bright_type,&bright_obj,&twod_lo_obj,&twod_la_obj,&twod_t_obj))
         return NULL;
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+//    PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_OBJECT, NPY_IN_ARRAY);
     if (bright_array == NULL) {
         Py_XDECREF(bright_array);
         return NULL;
     }
 
+
     /* Get pointers to the data as C-types. */
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
+
+
+    if(bright_type == 12){
+
+        PyArray_AsCArray((PyObject **) &twod_t_obj, (void **) &twod_t, dims, 2, descr);
+
+        PyObject *twod_lo_array = PyArray_FROM_OTF(twod_lo_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (twod_lo_array == NULL) {
+            Py_XDECREF(twod_lo_array);
+            return NULL;
+        }
+        twod_lo    = (double*)PyArray_DATA(twod_lo_array);
+
+        PyObject *twod_la_array = PyArray_FROM_OTF(twod_la_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (twod_la_array == NULL) {
+            Py_XDECREF(twod_la_array);
+            return NULL;
+        }
+        twod_la    = (double*)PyArray_DATA(twod_la_array);
+    }
+
 
     /* NEED TO GENERATE THE GRID HERE */
     double **bb_g;
@@ -649,7 +731,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     }
 
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 6 || bright_type == 8 || bright_type == 10 || bright_type == 11){
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 6 || bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
@@ -662,7 +744,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
 
     //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES OR REFLECTION MODELS WON'T BE CORRECT!//
 
-    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0);
+    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0,twod_lo,twod_la,twod_t);
 
     /* Build the output tuple */
 
