@@ -5,6 +5,7 @@
 #include "blackbody.h"
 #include "spline.h"
 #include "web.h"
+#include "bicubic.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -21,6 +22,11 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     double star_surface_bright;
     double **bb_g;
     double *ypp;
+    double **y1_grid;
+    double **y2_grid;
+    double **y12_grid;
+
+
 
     double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
 
@@ -68,6 +74,23 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 //    printf("bb_g init 2 %f\n",bb_g[0][1]);
     free(coords);
 
+    if(brightness_model == 12){
+        y1_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        y2_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y2_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        y12_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y12_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[3],(int) brightness_params[4]);
+    }
+
+
     for (n = 0; n < n_points; n++) {
 
 //        printf("star bright %f\n",star_surface_bright);
@@ -95,7 +118,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
 //        printf("bb_g 3 %f\n",bb_g[0][1]);
 
-        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g,star_surface_bright,lo_2d,la_2d,T_2d);
+        map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g,star_surface_bright,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
         p_bright = 0.0;
         for (j = 0; j < pow(n_layers,2); j++) {
@@ -128,6 +151,18 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
           free(bb_g[j]);
         }
         free(bb_g);
+    }
+
+    if(brightness_model == 12){
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          free(y1_grid[i]);
+          free(y2_grid[i]);
+          free(y12_grid[i]);
+          // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
+        }
+        free(y1_grid);
+        free(y2_grid);
+        free(y12_grid);
     }
 
     return output;

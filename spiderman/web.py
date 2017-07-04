@@ -40,7 +40,8 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5)
 		t = spider_params.t0 + spider_params.per*t
 	brightness_params = spider_params.format_bright_params()
 
-	if spider_params.thermal == True:
+#	if spider_params.thermal == True:
+	if ((spider_params.brightness_type == 9) or (spider_params.brightness_type == 10)):
 		if stellar_grid == False:
 			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter)
 			teffs = star_grid[0]
@@ -51,6 +52,9 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5)
 	else:
 		teffs = []
 		totals = []
+
+	teffs = []
+	totals = []
 
 	spider_params.calc_substellar(t)
 	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals),spider_params.rp,spider_params.grid[0],spider_params.grid[1],spider_params.grid[2]))

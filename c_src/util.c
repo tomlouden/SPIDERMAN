@@ -20,6 +20,44 @@ int find_minimum(double *a, double v, int n) {
   return index;
 }
 
+void find_top_two(double *a, double v, int n, int *out) {
+  int c, index1,index2;
+  double min;
+
+  min = pow((a[0] - v),2);
+  index1 = 0;
+  index2 = 0;
+ 
+  for (c = 1; c < n; c++) {
+    if ( pow((a[c] - v),2) < min) {
+       index1 = c;
+       min = pow((a[c] - v),2);
+    }
+  }
+
+  min = pow((a[0] - v),2);
+  for (c = 1; c < n; c++) {
+    if ( pow((a[c] - v),2) < min) {
+      if(c != index1){
+       index2 = c;
+       min = pow((a[c] - v),2);
+      }
+    }
+  }
+
+  if (index1 > index2){
+    out[0] = index2;
+    out[1] = index1;
+  }
+  else{
+    out[0] = index1;
+    out[1] = index2;
+  }
+
+
+
+}
+
 int compare_function(const void *a,const void *b) {
 	double *x = (double *) a;
 	double *y = (double *) b;

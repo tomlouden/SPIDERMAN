@@ -22,8 +22,7 @@ class ModelParams(object):
 		self.p_u2= None				# **PLANETARY** limb darkening coefficients [-]
 		self.eclipse = True			# specifies whether to include the drop in flux due to the eclipse
 		self.filter = False			# Can use an external response file.
-
-#		self.grid = [[],[],[[]]]			# needed in case the "direct read" method is wanted
+		self.grid = [[],[],[[]]]			# needed in case the "direct read" method is wanted
 
 		if brightness_model == 'uniform brightness':
 			self.n_layers = 1		# The default resolution for the grid

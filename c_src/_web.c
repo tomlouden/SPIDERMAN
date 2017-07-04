@@ -12,6 +12,7 @@
 #include "pyutil.h"
 #include "blackbody.h"
 #include "brightness_maps.h"
+#include "bicubic.h"
 #include <stdio.h>
 
 #ifndef M_PI
@@ -278,36 +279,39 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     int n_layers,n_1,n_2,bright_type,n_star;
     double lambda0,phi0,p_u1,p_u2,rp,star_surface_bright,star_bright;
     PyObject *bright_obj,*teff_obj,*flux_obj;
-    PyObject *twod_lo_obj,*twod_la_obj,*twod_t_obj;
+    PyObject *lo_2d_obj,*la_2d_obj,*T_2d_obj;
     npy_intp* dims[4];
     int typenum = NPY_DOUBLE;
-    double *twod_lo, *twod_la, **twod_t;
+    double *lo_2d, *la_2d, **T_2d;
+    double **y1_grid;
+    double **y2_grid;
+    double **y12_grid;
 
     PyArray_Descr *descr = PyArray_DescrFromType(typenum);
 
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iddddiOOOidOOO", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&rp,&twod_lo_obj,&twod_la_obj,&twod_t_obj))
+    if (!PyArg_ParseTuple(args, "iddddiOOOidOOO", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&rp,&lo_2d_obj,&la_2d_obj,&T_2d_obj))
         return NULL;
 
     /* Call the external C function to compute the area. */
 
     if(bright_type == 12){
 
-        PyArray_AsCArray((PyObject **) &twod_t_obj, (void **) &twod_t, dims, 2, descr);
+        PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
-        PyObject *twod_lo_array = PyArray_FROM_OTF(twod_lo_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-        if (twod_lo_array == NULL) {
-            Py_XDECREF(twod_lo_array);
+        PyObject *lo_2d_array = PyArray_FROM_OTF(lo_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (lo_2d_array == NULL) {
+            Py_XDECREF(lo_2d_array);
             return NULL;
         }
-        twod_lo    = (double*)PyArray_DATA(twod_lo_array);
+        lo_2d    = (double*)PyArray_DATA(lo_2d_array);
 
-        PyObject *twod_la_array = PyArray_FROM_OTF(twod_la_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-        if (twod_la_array == NULL) {
-            Py_XDECREF(twod_la_array);
+        PyObject *la_2d_array = PyArray_FROM_OTF(la_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (la_2d_array == NULL) {
+            Py_XDECREF(la_2d_array);
             return NULL;
         }
-        twod_la    = (double*)PyArray_DATA(twod_la_array);
+        la_2d    = (double*)PyArray_DATA(la_2d_array);
     }
 
     double **planet_struct = generate_planet(n_layers);
@@ -347,27 +351,19 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 
     double r2 = 1.0/rp; //invert planet radius ratio - planets always have radius 1 in this code
 
+    double l1, l2;
 
     star_bright = 1.0;
     star_surface_bright = star_bright/(M_PI*pow(r2,2));
 
 
     if(bright_type == 1 || bright_type == 3 || bright_type == 4|| bright_type == 6 ||  bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12){
-        double l1 = brightness_params[1];
-        double l2 = brightness_params[2];
-        double star_T =brightness_params[0];
-        double ypval;
-        double yppval;
+        l1 = brightness_params[1];
+        l2 = brightness_params[2];
 
-//        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
-        ypp = spline_cubic_set( n_star, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
-
-        star_surface_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
-        free(ypp);
-
-        star_bright = star_surface_bright*M_PI*pow(r2,2);
-
+        // the filter defaults to off when generating maps - it is assumed the user wants to see how the planet "actually" is. Perhaps this should be user defined.
         int use_filter = 0;
+
         double **wvl_grid;
         wvl_grid = malloc(sizeof(double) * 2); // dynamic `array (size 4) of pointers to int`
         int n_wvls = 3;
@@ -380,9 +376,56 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
         }
 
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
+        // better check at some point that bb_g is not causing a memory leak?
     }
 
-    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright,twod_lo,twod_la,twod_t);
+    if(bright_type == 9 || bright_type == 10){
+        l1 = brightness_params[1];
+        l2 = brightness_params[2];
+        double star_T =brightness_params[0];
+        double ypval;
+        double yppval;
+
+//        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
+        ypp = spline_cubic_set( n_star, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
+
+        star_surface_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
+        free(ypp);
+
+        star_bright = star_surface_bright*M_PI*pow(r2,2);
+    }
+
+
+    if(bright_type == 12){
+        y1_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        y2_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y2_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        y12_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y12_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[3],(int) brightness_params[4]);
+    }
+
+
+    map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
+
+    if(bright_type == 12){
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          free(y1_grid[i]);
+          free(y2_grid[i]);
+          free(y12_grid[i]);
+          // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
+        }
+        free(y1_grid);
+        free(y2_grid);
+        free(y12_grid);
+    }
 
     /* Build the output tuple */
 
@@ -522,12 +565,12 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     int n_layers, bright_type, n_star, eclipse, n_wvls,use_filter;
     double tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2;
     PyObject *t_obj,*bright_obj,*teff_obj,*flux_obj, *response_obj, *wvl_obj;
-    PyObject *twod_lo_obj,*twod_la_obj,*twod_t_obj;
-    double **twod_t, *twod_lo, *twod_la;
+    PyObject *lo_2d_obj,*la_2d_obj,*T_2d_obj;
+    double **T_2d, *lo_2d, *la_2d;
     npy_intp* dims[4];
     
     /* Parse the input tuple */
-    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOiiOOiiOOO", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse,&wvl_obj,&response_obj,&n_wvls,&use_filter,&twod_lo_obj,&twod_la_obj,&twod_t_obj))
+    if (!PyArg_ParseTuple(args, "iOddddddddddiOOOiiOOiiOOO", &n_layers,&t_obj,&tc,&per,&a,&inc,&ecc,&omega,&a_rs,&rp,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&eclipse,&wvl_obj,&response_obj,&n_wvls,&use_filter,&lo_2d_obj,&la_2d_obj,&T_2d_obj))
         return NULL;
 
     int typenum = NPY_DOUBLE;
@@ -538,21 +581,21 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     if(bright_type == 12){
 
-        PyArray_AsCArray((PyObject **) &twod_t_obj, (void **) &twod_t, dims, 2, descr);
+        PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
-        PyObject *twod_lo_array = PyArray_FROM_OTF(twod_lo_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-        if (twod_lo_array == NULL) {
-            Py_XDECREF(twod_lo_array);
+        PyObject *lo_2d_array = PyArray_FROM_OTF(lo_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (lo_2d_array == NULL) {
+            Py_XDECREF(lo_2d_array);
             return NULL;
         }
-        twod_lo    = (double*)PyArray_DATA(twod_lo_array);
+        lo_2d    = (double*)PyArray_DATA(lo_2d_array);
 
-        PyObject *twod_la_array = PyArray_FROM_OTF(twod_la_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-        if (twod_la_array == NULL) {
-            Py_XDECREF(twod_la_array);
+        PyObject *la_2d_array = PyArray_FROM_OTF(la_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (la_2d_array == NULL) {
+            Py_XDECREF(la_2d_array);
             return NULL;
         }
-        twod_la    = (double*)PyArray_DATA(twod_la_array);
+        la_2d    = (double*)PyArray_DATA(la_2d_array);
     }
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -613,7 +656,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
         wvl_grid[1][k] = responses[k];
     }
 
-    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse,use_filter,n_wvls,wvl_grid,twod_lo,twod_la,twod_t);
+    double *output = lightcurve(n_layers,N,t2,tc,per,a,inc,ecc,omega,a_rs,rp,p_u1,p_u2,bright_type,brightness_params,star_teff,star_flux,n_star, eclipse,use_filter,n_wvls,wvl_grid,lo_2d,la_2d,T_2d);
 
     PyObject *pylist = Convert_Big_Array(output,N);
 
@@ -665,16 +708,19 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     int bright_type;
     double la,lo;
     PyObject *bright_obj;
-    PyObject *twod_lo_obj,*twod_la_obj,*twod_t_obj;
-    double **twod_t, *twod_lo, *twod_la;
+    PyObject *lo_2d_obj,*la_2d_obj,*T_2d_obj;
+    double **T_2d, *lo_2d, *la_2d;
     npy_intp* dims[4];
+    double **y1_grid;
+    double **y2_grid;
+    double **y12_grid;
 
     int typenum = NPY_DOUBLE;
     PyArray_Descr *descr = PyArray_DescrFromType(typenum);
 
     /* Parse the input tuple */
 
-    if (!PyArg_ParseTuple(args, "ddiOOOO", &la,&lo,&bright_type,&bright_obj,&twod_lo_obj,&twod_la_obj,&twod_t_obj))
+    if (!PyArg_ParseTuple(args, "ddiOOOO", &la,&lo,&bright_type,&bright_obj,&lo_2d_obj,&la_2d_obj,&T_2d_obj))
         return NULL;
 
     PyObject *bright_array = PyArray_FROM_OTF(bright_obj, NPY_DOUBLE, NPY_IN_ARRAY);
@@ -691,23 +737,22 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
 
     if(bright_type == 12){
 
-        PyArray_AsCArray((PyObject **) &twod_t_obj, (void **) &twod_t, dims, 2, descr);
+        PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
-        PyObject *twod_lo_array = PyArray_FROM_OTF(twod_lo_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-        if (twod_lo_array == NULL) {
-            Py_XDECREF(twod_lo_array);
+        PyObject *lo_2d_array = PyArray_FROM_OTF(lo_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (lo_2d_array == NULL) {
+            Py_XDECREF(lo_2d_array);
             return NULL;
         }
-        twod_lo    = (double*)PyArray_DATA(twod_lo_array);
+        lo_2d    = (double*)PyArray_DATA(lo_2d_array);
 
-        PyObject *twod_la_array = PyArray_FROM_OTF(twod_la_obj, NPY_DOUBLE, NPY_IN_ARRAY);
-        if (twod_la_array == NULL) {
-            Py_XDECREF(twod_la_array);
+        PyObject *la_2d_array = PyArray_FROM_OTF(la_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (la_2d_array == NULL) {
+            Py_XDECREF(la_2d_array);
             return NULL;
         }
-        twod_la    = (double*)PyArray_DATA(twod_la_array);
+        la_2d    = (double*)PyArray_DATA(la_2d_array);
     }
-
 
     /* NEED TO GENERATE THE GRID HERE */
     double **bb_g;
@@ -737,6 +782,25 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
     }
 
+    if(bright_type == 12){
+
+        PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
+
+        PyObject *lo_2d_array = PyArray_FROM_OTF(lo_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (lo_2d_array == NULL) {
+            Py_XDECREF(lo_2d_array);
+            return NULL;
+        }
+        lo_2d    = (double*)PyArray_DATA(lo_2d_array);
+
+        PyObject *la_2d_array = PyArray_FROM_OTF(la_2d_obj, NPY_DOUBLE, NPY_IN_ARRAY);
+        if (la_2d_array == NULL) {
+            Py_XDECREF(la_2d_array);
+            return NULL;
+        }
+        la_2d    = (double*)PyArray_DATA(la_2d_array);
+    }
+
     double lambda0 = 0;
     double phi0 = 0;
 
@@ -744,13 +808,41 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
 
     //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES OR REFLECTION MODELS WON'T BE CORRECT!//
 
-    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0,twod_lo,twod_la,twod_t);
+    if(bright_type == 12){
+        y1_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        y2_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y2_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        y12_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          y12_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
+        }
+        bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[3],(int) brightness_params[4]);
+    }
+
+    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
     /* Build the output tuple */
 
     PyObject *ret = Py_BuildValue("[d,d]",vals[0],vals[1]);
 
 //    free(vals);
+
+    if(bright_type == 12){
+        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          free(y1_grid[i]);
+          free(y2_grid[i]);
+          free(y12_grid[i]);
+          // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
+        }
+        free(y1_grid);
+        free(y2_grid);
+        free(y12_grid);
+    }
 
     return ret;
 

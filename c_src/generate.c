@@ -5,6 +5,8 @@
 #include "brightness_maps.h"
 #include "math.h"
 #include "util.h"
+#include "bicubic.h"
+#include "nrutil.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -12,7 +14,7 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g,double star_bright, double *lo_2d, double *la_2d, double **T_2d){
+void map_model(double **planet,int n_layers,double lambda0, double phi0, double u1, double u2,int brightness_model,double *brightness_params,double **bb_g,double star_bright, double *lo_2d, double *la_2d, double **T_2d, double **y1_grid, double **y2_grid, double **y12_grid){
     double point_T,mu,p_t_bright;
     double l1,l2,R_mid,theta_mid,mid_x,mid_y;
     double la, lo;
@@ -61,7 +63,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
         free(coords);
 
-        double *vals = call_map_model(la,lo,lambda0,phi0,brightness_model,brightness_params,bb_g,make_grid,planet[k][10],planet[k][11],planet[k][13],planet[k][14],star_bright,la_cen,lo_cen,lo_2d,la_2d,T_2d);
+        double *vals = call_map_model(la,lo,lambda0,phi0,brightness_model,brightness_params,bb_g,make_grid,planet[k][10],planet[k][11],planet[k][13],planet[k][14],star_bright,la_cen,lo_cen,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
         planet[k][16] = vals[0]; 
         planet[k][17] = vals[1];
@@ -78,7 +80,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
 }
 
-double *call_map_model(double la,double lo,double lambda0, double phi0,int brightness_model,double *brightness_params,double **bb_g,int make_grid,double theta1, double theta2, double r1, double r2, double star_bright,double la_cen,double lo_cen, double *lo_2d, double *la_2d, double **T_2d){
+double *call_map_model(double la,double lo,double lambda0, double phi0,int brightness_model,double *brightness_params,double **bb_g,int make_grid,double theta1, double theta2, double r1, double r2, double star_bright,double la_cen,double lo_cen, double *lo_2d, double *la_2d, double **T_2d, double **y1_grid, double **y2_grid, double **y12_grid){
     double point_T,mu,p_t_bright,point_b;
     double l1,l2;
     double *output;
@@ -197,9 +199,75 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         printf("%f\n",lo_2d[find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3])]);
         printf("\n");*/
 
-        point_T = T_2d[find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3])][find_minimum(la_2d, la*180.0/M_PI, (int) brightness_params[4])];
+        int *out1;
+        out1 = malloc(sizeof(int) * 2);
+
+        int *out2;
+        out2 = malloc(sizeof(int) * 2);
+
+        find_top_two(lo_2d, lo*180.0/M_PI, (int) brightness_params[3], out1);
+
+//        printf("before second %i\n",(int) brightness_params[4]);
+        find_top_two(la_2d, la*180.0/M_PI, (int) brightness_params[4], out2);
+
+//        printf("positions %i %i %i %i\n",out1[0],out1[1],out2[0],out2[1]);
+//        printf("positions %f %f %f %f\n",lo_2d[out1[0]],lo_2d[out1[1]],la_2d[out2[0]],la_2d[out2[1]]);
+
+        float *ansy, *ansy1, *ansy2;
+
+        ansy = malloc(sizeof(float) * 1);
+        ansy1 = malloc(sizeof(float) * 1);
+        ansy2 = malloc(sizeof(float) * 1);
+
+
+        float *y,*y1,*y2,*y12;
+        y = malloc(sizeof(float) * 5);
+        y1 = malloc(sizeof(float) * 5);
+        y2 = malloc(sizeof(float) * 5);
+        y12 = malloc(sizeof(float) * 5);
+
+        y[1] = T_2d[out1[0]][out2[0]];
+        y[2] = T_2d[out1[1]][out2[0]];
+        y[3] = T_2d[out1[1]][out2[1]];
+        y[4] = T_2d[out1[0]][out2[1]];
+
+        y1[1] = y1_grid[out1[0]][out2[0]];
+        y1[2] = y1_grid[out1[1]][out2[0]];
+        y1[3] = y1_grid[out1[1]][out2[1]];
+        y1[4] = y1_grid[out1[0]][out2[1]];
+
+        y2[1] = y2_grid[out1[0]][out2[0]];
+        y2[2] = y2_grid[out1[1]][out2[0]];
+        y2[3] = y2_grid[out1[1]][out2[1]];
+        y2[4] = y2_grid[out1[0]][out2[1]];
+
+        y12[1] = y12_grid[out1[0]][out2[0]];
+        y12[2] = y12_grid[out1[1]][out2[0]];
+        y12[3] = y12_grid[out1[1]][out2[1]];
+        y12[4] = y12_grid[out1[0]][out2[1]];
+
+        bcuint(y, y1, y2, y12, lo_2d[out1[0]],lo_2d[out1[1]], la_2d[out2[0]], la_2d[out2[1]], lo*180.0/M_PI, la*180.0/M_PI, ansy, ansy1, ansy2);
+
+        point_T = *ansy;
+//        point_T = T_2d[find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3])][find_minimum(la_2d, la*180.0/M_PI, (int) brightness_params[4])];
+
+//        printf("%f %f\n",*ansy,point_T);
+
 
         point_b = bb_interp(point_T, bb_g);
+
+        free(out1);
+        free(out2);
+
+        free(y);
+        free(y1);
+        free(y2);
+        free(y12);
+
+        free(ansy);
+        free(ansy1);
+        free(ansy2);
+
         }
 
 //        printf("%f %f %f\n",ars, star_bright,insol);
