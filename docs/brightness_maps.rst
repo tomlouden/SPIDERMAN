@@ -4,38 +4,59 @@ Brightness maps
 Spherical Harmonics
 -----------------------
 
-A spherical harmonics model, the user can specify the co-eficients for as many terms as desired. Spherical harmonics models are useful, since they do not make any physical assumptions about the distribution you wish to recover, so are not model dependent. It can be useful to check the results of a physically motivated model against the results of a spherical harmonic fit.
+A spherical harmonics model, the user can specify the co-eficients for as many terms as desired. Spherical harmonics models are useful, since they do not make any physical assumptions about the distribution you wish to recover. It can be useful to check the results of a physically motivated model against the results of a spherical harmonic fit.
 
 main parameters:
 
-    **xi**
-        Ratio of radiative to advective timescale (unit: Unitless)
+    **degree**
+        The maximum degree of Harmonic you want to consider (You won't typically want more than 2)
 
-    **T_n**
-        Temperature of the nightside of the planet (unit: Kelvin)
+    **la0**
+        Offset of the center of the co-ordinte centre from the substellar point in the latitude direction (unit: Degrees)
 
-    **delta_T**
-        Day-night temperature contrast (unit: Kelvin)
+    **lo0**
+        Offset of the center of the co-ordinte centre from the substellar point in the longitude direction (unit: Degrees)
 
-An example square plot:
+    **sph**
+        A list of the co-efficients for the harmonic terms, there *must* be the appropriate number (degree squared), and arranged in the correct order: [l0, l1 m-1, l1 m0, l1 m1, l2 m-2, l2 m-1, l2 m0, l2 m1, l2 m2..... etc]. These parameters
 
-.. figure:: images/zhang_t_square.png
+Warning: There is nothing implicit in this spherical harmonics implementation to prevent negative surface fluxes! It is suggested that care is taken when specifying priors to prevent unphysical results.
+
+An example square plot using a two degree spherical harmonic using the l0 m0 and l1 m1 terms only - this is a simple dipole, and can represent a day/night side difference:
+
+.. figure:: images/spherical_b_square_1.png
     :width: 800px
     :align: center
     :alt: alternate text
     :figclass: align-center
 
-An example four phase plot:
+This time the hotspot is offset by adding the l1 m-1 term. (the same effect can also be achieved by changing the la0 and lo0 parameters, but never try to fit for both simultaneously, as it's degenerate!):
 
-.. figure:: images/zhang_t_temp_map.png
+.. figure:: images/spherical_b_square_2.png
     :width: 800px
     :align: center
     :alt: alternate text
     :figclass: align-center
 
-The resulting lightcurves for several parameter values
+Now, with a higher order term added, l2 m0, to concentrate flux towards the equator.
 
-.. figure:: images/zhang_change_eta.png
+.. figure:: images/spherical_b_square_3.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+An example four phase plot with this distribution:
+
+.. figure:: images/spherical_bright_map.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+The resulting lightcurves for the three example distributions:
+
+.. figure:: images/spherical_change_j.png
     :width: 800px
     :align: center
     :alt: alternate text

@@ -161,15 +161,15 @@ class ModelParams(object):
 				print('should be',brightness_param_names)
 				quit()
 		elif (self.brightness_type == 5):
-			brightness_param_names = ['orders','sph','la_o','lo_o']
+			brightness_param_names = ['degree','sph','la0','lo0']
 			try:
-				brightness_params = [self.orders,self.la_o,self.lo_o] + self.sph
+				brightness_params = [self.degree,self.la0,self.lo0] + self.sph
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
-#			total_modes = (self.orders * (self.orders +1))/2.0
-			total_modes = (self.orders)**2
+#			total_modes = (self.degree * (self.degree +1))/2.0
+			total_modes = (self.degree)**2
 			if len(self.sph) != total_modes:
 				print('You have not specified the correct number of mode coefficients!')
 				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
