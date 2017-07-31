@@ -126,15 +126,17 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         point_b = bb_interp(point_T, bb_g);
     }
     if(brightness_model == 5){
-        double point_b = spherical(la,lo,brightness_params);
+        point_b = spherical(la,lo,brightness_params);
     }
+
     if(brightness_model == 6){
        double insol = brightness_params[3];
        double albedo = brightness_params[4];
        double redist = brightness_params[5];
        point_T = kreidberg_2016(la, lo, insol, albedo, redist);
        point_b = bb_interp(point_T, bb_g); 
-     }
+    }
+
     if(brightness_model == 2 || brightness_model == 7){
         double la0 = brightness_params[0];
         double lo0 = brightness_params[1];

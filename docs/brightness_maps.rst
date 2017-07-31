@@ -1,6 +1,47 @@
 Brightness maps
 =====================================
 
+Spherical Harmonics
+-----------------------
+
+A spherical harmonics model, the user can specify the co-eficients for as many terms as desired. Spherical harmonics models are useful, since they do not make any physical assumptions about the distribution you wish to recover, so are not model dependent. It can be useful to check the results of a physically motivated model against the results of a spherical harmonic fit.
+
+main parameters:
+
+    **xi**
+        Ratio of radiative to advective timescale (unit: Unitless)
+
+    **T_n**
+        Temperature of the nightside of the planet (unit: Kelvin)
+
+    **delta_T**
+        Day-night temperature contrast (unit: Kelvin)
+
+An example square plot:
+
+.. figure:: images/zhang_t_square.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+An example four phase plot:
+
+.. figure:: images/zhang_t_temp_map.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+The resulting lightcurves for several parameter values
+
+.. figure:: images/zhang_change_eta.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+
 Zhang and Showman 2017
 -----------------------
 

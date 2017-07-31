@@ -168,7 +168,8 @@ class ModelParams(object):
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
-			total_modes = (self.orders * (self.orders +1))/2.0
+#			total_modes = (self.orders * (self.orders +1))/2.0
+			total_modes = (self.orders)**2
 			if len(self.sph) != total_modes:
 				print('You have not specified the correct number of mode coefficients!')
 				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
@@ -304,9 +305,10 @@ class ModelParams(object):
 			blims2 = self.get_lims(0.25,temp_map=temp_map,use_phase=True)
 			blims3 = self.get_lims(0.5,temp_map=temp_map,use_phase=True)
 			blims4 = self.get_lims(0.75,temp_map=temp_map,use_phase=True)
-
 			min_temp = np.min(np.array([blims1,blims2,blims3,blims4]))
 			max_temp = np.max(np.array([blims1,blims2,blims3,blims4]))
+			if min_temp == 0.0:
+				min_temp = 1e-19
 
 		dp = ((max_temp-min_temp)*min_bright)
 

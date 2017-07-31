@@ -264,8 +264,8 @@ double spherical(double lat, double lon, double *a){
     double *fx2_vec;
     double theta = (M_PI/2.0) - (lat+a[1]);
     double phi = M_PI + (lon+a[2]);
-
     int orders = a[0];
+    int avoid_neg = 0; // This should probably be a user setting.
 
     int k = 3;
 
@@ -274,17 +274,26 @@ double spherical(double lat, double lon, double *a){
     double val = 0.0;
     for (int l = 0; l < (orders); ++l) {
 
-      for (int m = 0; m < (l+1); ++m) {
-        fx2_vec = pm_polynomial_value(1,l,m,x_vec);
+      for (int m = -1*l; m < (l+1); ++m) {
+        fx2_vec = pm_polynomial_value(1,l,pow(pow(m,2),0.5),x_vec);
         fx2 = fx2_vec[l];
         free(fx2_vec);
 
-        val = val + a[k]*cos(m*phi)*fx2;
+        if(m >= 0){
+            val = val + a[k]*cos(m*phi)*fx2;
+        }
+        else{
+            val = val + a[k]*cos((m*phi) + (M_PI/(2*m) ))*fx2;
+        }
 
         k = k +1;
       }
     }
-    return pow(val,2);
+
+    if(avoid_neg == 1){
+        return pow(pow(val,2),0.5)/M_PI;
+    }
+    return val/M_PI;
 }
 
 double kreidberg_2016(double lat, double lon, double insol, double albedo, double redist){
