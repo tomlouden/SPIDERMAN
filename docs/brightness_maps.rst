@@ -89,7 +89,7 @@ An example square plot:
 
 An example four phase plot:
 
-.. figure:: images/zhang_t_temp_map.png
+.. figure:: images/zhang_temp_map.png
     :width: 800px
     :align: center
     :alt: alternate text
