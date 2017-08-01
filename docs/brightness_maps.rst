@@ -4,7 +4,7 @@ Brightness maps
 Spherical Harmonics
 -----------------------
 
-A spherical harmonics model, the user can specify the co-eficients for as many terms as desired. Spherical harmonics models are useful, since they do not make any physical assumptions about the distribution you wish to recover. It can be useful to check the results of a physically motivated model against the results of a spherical harmonic fit.
+A spherical harmonics model, the user can specify the co-eficients for as many terms as desired. Spherical harmonics models are useful, since they do not make any physical assumptions about the distribution you wish to recover. It can be useful to check the results of a physically motivated model against the results of a spherical harmonic fit. Called with "spherical".
 
 main parameters:
 
@@ -66,7 +66,7 @@ The resulting lightcurves for the three example distributions:
 Zhang and Showman 2017
 -----------------------
 
-A temperature map based on the equations given in the appendix of Zhang and Showman 2017 (http://adsabs.harvard.edu/abs/2017ApJ...836...73Z) This semi-physical model well reproduces the main features of hot Jupiter phase-curves - offset hotspots
+A temperature map based on the equations given in the appendix of Zhang and Showman 2017 (http://adsabs.harvard.edu/abs/2017ApJ...836...73Z) This semi-physical model well reproduces the main features of hot Jupiter phase-curves - offset hotspots. Called with "zhang"
 
 main parameters:
 

@@ -12,3 +12,5 @@ dist/
 *.ipynb_checkpoints
 *~
 out
+dist/*
+dist
