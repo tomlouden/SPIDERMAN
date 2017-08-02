@@ -104,9 +104,13 @@ class ModelParams(object):
 			self.brightness_type= 11 # Integer model identifer
 			self.thermal= True			# Is this a thermal distribution?
 
-		elif brightness_model == 'direct':
+		elif brightness_model == 'direct_T':
 			self.brightness_type= 12 # Integer model identifer
 			self.thermal= True			# Is this a thermal distribution?
+
+		elif brightness_model == 'direct_b':
+			self.brightness_type= 13 # Integer model identifer
+			self.thermal= False			# Is this a thermal distribution?
 
 		else:
 			print('Brightness model "'+str(brightness_model)+'" not recognised!')
@@ -241,6 +245,17 @@ class ModelParams(object):
 				print('should be',brightness_param_names)
 				quit()
 
+		elif (self.brightness_type == 13):
+			brightness_param_names = ['grid']
+			n_lo = len(self.grid[0])
+			n_la = len(self.grid[1])
+
+			try:
+				brightness_params = [n_lo,n_la]
+			except:
+				print('Brightness parameters incorrectly assigned')
+				print('should be',brightness_param_names)
+				quit()
 
 
 		elif any(b == None for b in brightness_params):
