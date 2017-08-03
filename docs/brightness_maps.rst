@@ -247,7 +247,7 @@ How to use "format_grid":
 
 Where lo, la and flux are the longitude, latitude and flux values, which can either be given as 2d arrays or a flattened list. The dimensions **must** match.
 
-This method allows you to test any arbitrary brightness distribution, so, for example, here is a map of SPIDERMAN-1b
+This method allows you to test any arbitrary brightness distribution, so, for example, here is a map of "SPIDERMAN-1b"
 
 An example four phase plot:
 
