@@ -220,3 +220,55 @@ The resulting lightcurves for several parameter values
     :align: center
     :alt: alternate text
     :figclass: align-center
+
+Forward model
+--------------------
+
+SPIDERMAN also has the capability to take the results of forward models and project them onto a planet, to quickly generate a phase curve and secondary eclipse from your favourite model output. SPIDERMAN uses bicubic interpolation to produce smooth and neat looking results from coursely sampled grids.
+
+main parameters:
+
+This model is called as either "direct_b", in which case the brightness grid is expected to be specified *relative to the brightness of the star*, or as "direct_T", in which case the grid is expected as brightness temperatures and stellar Temperature and filter details will also be needed. The call parameters are:
+
+    **grid**
+        A list containing the longitude and latitude axis (in degrees) and a 2d array of flux/temperature. SPIDERMAN has a tool (format_grid) to generate this grid in the correct format.
+
+How to use "format_grid":
+
+.. code-block:: python
+    
+    import spiderman as sp
+    spider_params = sp.ModelParams(brightness_model="direct_b")
+
+    ### specify orbital parameters ###
+
+    spider_params.grid = sp.format_grid(lo,la,flux)
+
+
+Where lo, la and flux are the longitude, latitude and flux values, which can either be given as 2d arrays or a flattened list. The dimensions **must** match.
+
+This method allows you to test any arbitrary brightness distribution, so, for example, here is a map of SPIDERMAN-1b
+
+An example four phase plot:
+
+.. figure:: images/direct_bright_map.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+An example square plot:
+
+.. figure:: images/direct_b_square.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center
+
+And the resulting phasecurveL
+
+.. figure:: images/direct_lightcurve.png
+    :width: 800px
+    :align: center
+    :alt: alternate text
+    :figclass: align-center

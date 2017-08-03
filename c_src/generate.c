@@ -193,7 +193,7 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         }
     }
 
-    if(brightness_model == 12){
+    if(brightness_model == 12 || brightness_model == 13){
 
 /*        printf("\n");
         printf("%f\n",lo*180.0/M_PI);
@@ -207,10 +207,21 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         int *out2;
         out2 = malloc(sizeof(int) * 2);
 
-        find_top_two(lo_2d, lo*180.0/M_PI, (int) brightness_params[3], out1);
+        int nlo, nla;
+
+        if(brightness_model == 12){
+            nlo = brightness_params[3];
+            nla = brightness_params[4];
+        }
+        if(brightness_model == 13){
+            nlo = brightness_params[0];
+            nla = brightness_params[1];
+        }
+
+        find_top_two(lo_2d, lo*180.0/M_PI, (int) nlo, out1);
 
 //        printf("before second %i\n",(int) brightness_params[4]);
-        find_top_two(la_2d, la*180.0/M_PI, (int) brightness_params[4], out2);
+        find_top_two(la_2d, la*180.0/M_PI, (int) nla, out2);
 
 //        printf("positions %i %i %i %i\n",out1[0],out1[1],out2[0],out2[1]);
 //        printf("positions %f %f %f %f\n",lo_2d[out1[0]],lo_2d[out1[1]],la_2d[out2[0]],la_2d[out2[1]]);
@@ -220,7 +231,6 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         ansy = malloc(sizeof(float) * 1);
         ansy1 = malloc(sizeof(float) * 1);
         ansy2 = malloc(sizeof(float) * 1);
-
 
         float *y,*y1,*y2,*y12;
         y = malloc(sizeof(float) * 5);
@@ -248,15 +258,17 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         y12[3] = y12_grid[out1[1]][out2[1]];
         y12[4] = y12_grid[out1[0]][out2[1]];
 
+
         bcuint(y, y1, y2, y12, lo_2d[out1[0]],lo_2d[out1[1]], la_2d[out2[0]], la_2d[out2[1]], lo*180.0/M_PI, la*180.0/M_PI, ansy, ansy1, ansy2);
 
-        point_T = *ansy;
-//        point_T = T_2d[find_minimum(lo_2d, lo*180.0/M_PI, (int) brightness_params[3])][find_minimum(la_2d, la*180.0/M_PI, (int) brightness_params[4])];
+        if(brightness_model == 12){
+            point_T = *ansy;
+            point_b = bb_interp(point_T, bb_g);
+        }
+        if(brightness_model == 13){
+            point_b = *ansy;
+        }
 
-//        printf("%f %f\n",*ansy,point_T);
-
-
-        point_b = bb_interp(point_T, bb_g);
 
         free(out1);
         free(out2);

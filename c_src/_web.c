@@ -295,7 +295,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 
     /* Call the external C function to compute the area. */
 
-    if(bright_type == 12){
+    if(bright_type == 12 || bright_type == 13){
 
         PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
@@ -412,11 +412,35 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
         bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[3],(int) brightness_params[4]);
     }
 
+    if(bright_type == 13){
+        y1_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        y2_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y2_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        y12_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y12_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[0],(int) brightness_params[1]);
+    }
 
     map_model(planet_struct,n_layers,lambda0,phi0,p_u1,p_u2,bright_type,brightness_params,bb_g,star_surface_bright,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
-    if(bright_type == 12){
-        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+    int li;
+    if(bright_type == 12 || bright_type == 13){
+
+        if(bright_type == 12){
+            li = brightness_params[3];
+        }
+        if(bright_type == 13){
+            li = brightness_params[0];
+        }
+
+        for (int i = 0; i < (int) li; ++i) {
           free(y1_grid[i]);
           free(y2_grid[i]);
           free(y12_grid[i]);
@@ -425,6 +449,14 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
         free(y1_grid);
         free(y2_grid);
         free(y12_grid);
+
+        free(T_2d[0]);
+        free(T_2d);
+        Py_DECREF(lo_2d);
+        Py_DECREF(la_2d);
+        Py_DECREF(lo_2d_obj);
+        Py_DECREF(la_2d_obj);
+
     }
 
     /* Build the output tuple */
@@ -579,7 +611,7 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     // keep an eye on this... don't want memory leaks giving you a headache, may be necessary to do some sort of memory operation on this (INCREF?)
 
-    if(bright_type == 12){
+    if(bright_type == 12 || bright_type == 13){
 
         PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
@@ -660,6 +692,17 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
 
     PyObject *pylist = Convert_Big_Array(output,N);
 
+    if(bright_type == 12 || bright_type == 13){
+
+        free(T_2d[0]);
+        free(T_2d);
+        Py_DECREF(lo_2d);
+        Py_DECREF(la_2d);
+        Py_DECREF(lo_2d_obj);
+        Py_DECREF(la_2d_obj);
+
+    }
+
     /* Clean up. */
     free(output);
     Py_DECREF(t_array);
@@ -735,7 +778,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     double *brightness_params    = (double*)PyArray_DATA(bright_array);
 
 
-    if(bright_type == 12){
+    if(bright_type == 12 || bright_type == 13){
 
         PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
@@ -782,7 +825,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);
     }
 
-    if(bright_type == 12){
+    if(bright_type == 12 || bright_type == 13){
 
         PyArray_AsCArray((PyObject **) &T_2d_obj, (void **) &T_2d, dims, 2, descr);
 
@@ -824,16 +867,42 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
         bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[3],(int) brightness_params[4]);
     }
 
+    if(bright_type == 13){
+        y1_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        y2_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y2_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        y12_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y12_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[0],(int) brightness_params[1]);
+    }
+
     double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
     /* Build the output tuple */
 
     PyObject *ret = Py_BuildValue("[d,d]",vals[0],vals[1]);
+//    PyObject *ret = Py_BuildValue("[d,d]",0,0);
 
 //    free(vals);
 
-    if(bright_type == 12){
-        for (int i = 0; i < (int) brightness_params[3]; ++i) {
+    int li;
+    if(bright_type == 12 || bright_type == 13){
+
+        if(bright_type == 12){
+            li = brightness_params[3];
+        }
+        if(bright_type == 13){
+            li = brightness_params[0];
+        }
+
+        for (int i = 0; i < (int) li; ++i) {
           free(y1_grid[i]);
           free(y2_grid[i]);
           free(y12_grid[i]);
@@ -842,8 +911,20 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
         free(y1_grid);
         free(y2_grid);
         free(y12_grid);
+
+        free(T_2d[0]);
+        free(T_2d);
+        Py_DECREF(T_2d_obj);
+        Py_DECREF(lo_2d);
+        Py_DECREF(la_2d);
+        Py_DECREF(lo_2d_obj);
+        Py_DECREF(la_2d_obj);
+
     }
 
+
+    Py_DECREF(bright_obj);
+    Py_DECREF(bright_array);
     return ret;
 
 }

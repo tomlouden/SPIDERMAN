@@ -90,6 +90,22 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
         bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[3],(int) brightness_params[4]);
     }
 
+    if(brightness_model == 13){
+        y1_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        y2_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y2_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        y12_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
+          y12_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
+        }
+        bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[0],(int) brightness_params[1]);
+    }
+
 
     for (n = 0; n < n_points; n++) {
 
@@ -155,6 +171,18 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
     if(brightness_model == 12){
         for (int i = 0; i < (int) brightness_params[3]; ++i) {
+          free(y1_grid[i]);
+          free(y2_grid[i]);
+          free(y12_grid[i]);
+          // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
+        }
+        free(y1_grid);
+        free(y2_grid);
+        free(y12_grid);
+    }
+
+    if(brightness_model == 13){
+        for (int i = 0; i < (int) brightness_params[0]; ++i) {
           free(y1_grid[i]);
           free(y2_grid[i]);
           free(y12_grid[i]);

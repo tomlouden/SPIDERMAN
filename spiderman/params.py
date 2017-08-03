@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 class ModelParams(object):
 
-	def __init__(self,brightness_model='xi'):
+	def __init__(self,brightness_model='zhang'):
 
 		self.n_layers = 5			# The default resolution for the grid
 
@@ -289,6 +289,10 @@ class ModelParams(object):
 
 	def get_lims(self,t,temp_map=False,use_phase=False):
 		if use_phase == True:
+			if self.t0 == None:
+				self.t0 = 0.0
+			if self.per == None:
+				self.per = 1.0
 			t = self.t0 + self.per*t
 
 		planet = sp.generate_planet(self,t)

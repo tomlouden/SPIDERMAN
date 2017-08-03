@@ -39,8 +39,10 @@ void find_top_two(double *a, double v, int n, int *out) {
   for (c = 1; c < n; c++) {
     if ( pow((a[c] - v),2) < min) {
       if(c != index1){
-       index2 = c;
-       min = pow((a[c] - v),2);
+        if(a[c] != a[index1]){
+         index2 = c;
+         min = pow((a[c] - v),2);
+        }
       }
     }
   }
@@ -49,11 +51,10 @@ void find_top_two(double *a, double v, int n, int *out) {
     out[0] = index2;
     out[1] = index1;
   }
-  else{
+  else {
     out[0] = index1;
     out[1] = index2;
   }
-
 
 
 }
