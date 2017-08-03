@@ -6,3 +6,4 @@ int i4_max ( int i1, int i2 );
 int i4_min ( int i1, int i2 );
 void r8vec_print ( int n, double a[], char *title );
 void timestamp ( void );
+int factorial (int n);

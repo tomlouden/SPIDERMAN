@@ -3,6 +3,16 @@
 # include <time.h>
 # include "math.h"
 
+ 
+int factorial(int n) {
+  int c, fact = 1;
+
+  for (c = 1; c <= n; c++)
+    fact = fact * c; 
+
+  return fact;
+}
+
 int find_minimum(double *a, double v, int n) {
   int c, index;
   double min;

@@ -1,4 +1,5 @@
 #include "math.h"
+#include "util.h"
 #include "brightness_maps.h"
 #include "orthographic.h"
 #include "legendre_polynomial.h"
@@ -266,6 +267,7 @@ double spherical(double lat, double lon, double *a){
     double phi = M_PI + (lon+a[2]);
     int orders = a[0];
     int avoid_neg = 0; // This should probably be a user setting.
+    double norm;
 
     int k = 3;
 
@@ -279,11 +281,13 @@ double spherical(double lat, double lon, double *a){
         fx2 = fx2_vec[l];
         free(fx2_vec);
 
+        norm = pow((2*l + 1)*factorial(l-m)/factorial(l+m),0.5);
+
         if(m >= 0){
-            val = val + a[k]*cos(m*phi)*fx2;
+            val = val + a[k]*norm*cos(m*phi)*fx2;
         }
         else{
-            val = val + a[k]*cos((m*phi) + (M_PI/(2*m) ))*fx2;
+            val = val + a[k]*norm*cos((m*phi) + (M_PI/(2*m) ))*fx2;
         }
 
         k = k +1;
