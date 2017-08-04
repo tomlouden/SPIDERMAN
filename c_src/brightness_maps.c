@@ -281,13 +281,17 @@ double spherical(double lat, double lon, double *a){
         fx2 = fx2_vec[l];
         free(fx2_vec);
 
-        norm = pow((2*l + 1)*factorial(l-m)/factorial(l+m),0.5);
-
-        if(m >= 0){
-            val = val + a[k]*norm*cos(m*phi)*fx2;
+        if(m > 0){
+            norm = pow(2*(2*l + 1)*factorial(l-m)/factorial(l+m),0.5);
+            val = val + a[k]*norm*fx2*cos(m*phi);
         }
-        else{
-            val = val + a[k]*norm*cos((m*phi) + (M_PI/(2*m) ))*fx2;
+        else if (m < 0){
+            norm = pow(2*(2*l + 1)*factorial(l-m)/factorial(l+m),0.5);
+            val = val + a[k]*norm*fx2*sin(pow(pow(m,2),0.5)*phi);
+        }
+        else if (m == 0){
+            norm = pow((2*l + 1),0.5);
+            val = val + a[k]*norm*fx2;
         }
 
         k = k +1;
