@@ -4,6 +4,7 @@
 #include "intersection.h"
 #include "math.h"
 #include "areas.h"
+#include "heron.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -782,14 +783,30 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
                 c4[0]=inner_cross[2];
                 c4[1]=inner_cross[3];
 
-                double a_1 = find_segment_area(c1,c2,x2,y2,r2);
-                double a_2 = find_segment_area(c1,c2,0,0,planet[k][14]);
+//                double a_1 = find_segment_area(c1,c2,x2,y2,r2);
+//                double a_2 = find_segment_area(c1,c2,0,0,planet[k][14]);
 
-                double a_3 = find_segment_area(c3,c4,x2,y2,r2);
-                double a_4 = find_segment_area(c3,c4,0,0,planet[k][13]);
+//                double a_3 = find_segment_area(c3,c4,x2,y2,r2);
+//                double a_4 = find_segment_area(c3,c4,0,0,planet[k][13]);
+//                double aa = a_1 + a_2 - (a_3 + a_4);
 
-                double aa = a_1 + a_2 - (a_3 + a_4);
+                double a_1 = find_quad_area(c1,c2,c3,c4);
+                double a_4 = find_segment_area(c1,c2,0,0,planet[k][14]);
+                double a_5 = find_segment_area(c3,c4,0,0,planet[k][13]);
 
+                double er1 = sqrt(pow(c1[0]-c3[0],2) + pow(c1[1]-c3[1],2));
+                double er2 = sqrt(pow(c1[0]-c4[0],2) + pow(c1[1]-c4[1],2));
+
+                double a_2 = find_segment_area(c1,c3,x2,y2,r2);
+                double a_3 = find_segment_area(c2,c4,x2,y2,r2);
+
+                if(er2 < er1){
+                    a_2 = find_segment_area(c1,c4,x2,y2,r2);
+                    a_3 = find_segment_area(c2,c3,x2,y2,r2);
+                }
+
+
+                double aa = a_1 + a_2 + a_3 + a_4 - a_5;
                 aa = aa*planet[k][16];
 
                 total_blocked = total_blocked + aa;
