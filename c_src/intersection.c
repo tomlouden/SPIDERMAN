@@ -46,8 +46,6 @@ double *circle_intersect(double x1,double y1,double r1,double x2,double y2,doubl
     coords[4] = theta_first;
     coords[5] = theta_second;
 
-//    printf("circle %f %f %f %f %f %f\n",coords[0],coords[1],coords[2],coords[3],coords[4],coords[5]);
-
     return coords;
 }
 

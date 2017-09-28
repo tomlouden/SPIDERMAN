@@ -11,8 +11,8 @@
 double find_segment_area(double *c1x, double *c2x,double x2,double y2,double r2){
     double area,theta1,theta2,theta;
 
-    theta1 = acos((c1x[0] - x2)/r2);
-    theta2 = acos((c2x[0] - x2)/r2);
+//    theta1 = acos((c1x[0] - x2)/r2);
+//    theta2 = acos((c2x[0] - x2)/r2);
 
     theta1 = atan2(c1x[1]-y2,c1x[0]-x2);
     theta2 = atan2(c2x[1]-y2,c2x[0]-x2);
@@ -88,7 +88,15 @@ double find_circles_region(double x1, double y1, double r1, double x2, double y2
     // if there is no collision, and the circles are closer than their 
     // radii, then the whole of the smaller circle is covered.
     if(isnan(cross_points1[0])){
-        double central_cross = M_PI*pow(r1,2);
+
+        double central_cross = 0.0;
+        if(r1 > r2){
+            central_cross = M_PI*pow(r2,2);
+        }
+        if(r2 >= r1){
+            central_cross = M_PI*pow(r1,2);
+        }
+
         free(cross_points1);
         free(cross_points2);
         return central_cross;

@@ -274,8 +274,8 @@ class ModelParams(object):
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
 
-	def square_plot(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),theme='white',show_axes=True,nla=100,nlo=100):
-		return splt.square_plot(self,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,mycmap=mycmap,show_cax=show_cax,theme=theme,show_axes=show_axes,nla=nla,nlo=nlo)
+	def plot_square(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),theme='white',show_axes=True,nla=100,nlo=100):
+		return splt.plot_square(self,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,mycmap=mycmap,show_cax=show_cax,theme=theme,show_axes=show_axes,nla=nla,nlo=nlo)
 
 	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white',show_axes=True):
 		if use_phase == True:
@@ -308,154 +308,16 @@ class ModelParams(object):
 
 	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white'):
 
-		if theme == 'black':
-			bg = 'black'
-			tc = ("#04d9ff")
-		else:
-			bg = 'white'
-			tc = 'black'
-
-		fig, axs = plt.subplots(2,2,figsize=(8/0.865,8),facecolor=bg)
-
-		# need a "get max" or "get min" function or something similar so the scale can be set properly
-
-		if max_temp == False:
-			blims1 = self.get_lims(0,temp_map=temp_map,use_phase=True)
-			blims2 = self.get_lims(0.25,temp_map=temp_map,use_phase=True)
-			blims3 = self.get_lims(0.5,temp_map=temp_map,use_phase=True)
-			blims4 = self.get_lims(0.75,temp_map=temp_map,use_phase=True)
-			min_temp = np.min(np.array([blims1,blims2,blims3,blims4]))
-			max_temp = np.max(np.array([blims1,blims2,blims3,blims4]))
-			if min_temp == 0.0:
-				min_temp = 1e-19
-
-		dp = ((max_temp-min_temp)*min_bright)
-
-		self.plot_planet(0,use_phase=True,ax=axs[0,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-		self.plot_planet(0.25,use_phase=True,ax=axs[0,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-		self.plot_planet(0.5,use_phase=True,ax=axs[1,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-		self.plot_planet(0.75,use_phase=True,ax=axs[1,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-
-#		divider = make_axes_locatable(fig)
-
-		min_val = (dp + min_temp-min_temp)/(dp + max_temp-min_temp)
-		max_val = (dp + max_temp-min_temp)/(dp + max_temp-min_temp)
-
-		zero_temp = min_temp - dp
-
-#		zero_temp = min_temp
-
-
-		if temp_map == True:
-			data = [np.linspace(zero_temp,max_temp,1000)]*2
-		else:
-			data = [np.linspace(zero_temp/max_temp,max_temp/max_temp,1000)]*2
-		fake, fake_ax = plt.subplots()
-		mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
-		plt.close(fake)
-
-		fig.subplots_adjust(right=0.80)
-		cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-
-		if show_cax == True:
-#			cax = divider.append_axes("right", size="20%", pad=0.05)
-		#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
-			cbar = plt.colorbar(mycax, cax=cbar_ax)
-			cbar.ax.tick_params(colors=tc)
-
-			if temp_map == True:
-				cbar.set_label('T (K)',color=tc)  # horizontal colorbar
-			else:
-				cbar.set_label('Relative brightness',color=tc)  # horizontal colorbar
-
-		fig.subplots_adjust(wspace=0, hspace=0)
-
-		return fig
+		return splt.plot_quad(self,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,use_phase=use_phase,show_cax=show_cax,mycmap=mycmap,theme=theme)
 
 	def plot_uncertainty(self,fs,min_temp=False,max_temp=False,temp_map=True,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.viridis_r,theme='white'):
 
-		if theme == 'black':
-			bg = 'black'
-			tc = ("#04d9ff")
-		else:
-			bg = 'white'
-			tc = 'black'
-
-		fig, axs = plt.subplots(2,2,figsize=(8/0.865,8),facecolor=bg)
-
-		# need a "get max" or "get min" function or something similar so the scale can be set properly
-
-		fs = np.array(fs)
-
-		min_temp = np.min(fs)
-		max_temp = np.max(fs)
-
-		dp = ((max_temp-min_temp)*min_bright)
-
-		sp.plot_dist(self,fs[0],ax=axs[0,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-		sp.plot_dist(self,fs[1],ax=axs[0,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-		sp.plot_dist(self,fs[2],ax=axs[1,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-		sp.plot_dist(self,fs[3],ax=axs[1,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
-
-#		divider = make_axes_locatable(fig)
-
-#		zero_temp = min_temp - dp
-		zero_temp = min_temp
-
-		data = [np.linspace(zero_temp,max_temp,1000)]*2
-		fake, fake_ax = plt.subplots()
-		mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
-		plt.close(fake)
-
-		fig.subplots_adjust(right=0.80)
-		cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-
-		if show_cax == True:
-#			cax = divider.append_axes("right", size="20%", pad=0.05)
-		#	cbar = plt.colorbar(mycax, cax=cax,ticks=[1100,1300,1500,1700,1900])
-			cbar = plt.colorbar(mycax, cax=cbar_ax)
-			cbar.ax.tick_params(colors=tc)
-
-			cbar.ax.invert_yaxis()
-
-			if temp_map == True:
-				cbar.set_label(r'Temperature precision (\%)',color=tc)  # horizontal colorbar
-			else:
-				cbar.set_label(r'Flux precision (\%)',color=tc)  # horizontal colorbar
-
-		fig.subplots_adjust(wspace=0, hspace=0)
-
-		return fig
+		return splt.plot_uncertainty(self,fs,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,use_phase=use_phase,show_cax=show_cax,mycmap=mycmap,theme=theme)
 
 	def lightcurve(self,t,stellar_grid=False,logg=4.5,use_phase=False):
 
 		return sp.lightcurve(t,self,stellar_grid,logg,use_phase)
 
-#		if eclipse == True:
-#			ec = 1
-#		else:
-#			ec=0
-#
-#		brightness_params = self.format_bright_params()
-#
-#		if self.thermal == True:
-#
-#			if stellar_grid == False:
-#				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter)
-#				teffs = star_grid[0]
-#				totals = star_grid[1]
-#			else:
-#				teffs = stellar_grid[0]
-#				totals = stellar_grid[1]
-#		else:
-#			teffs = []
-#			totals = []
-#
-#		if use_phase == True:
-#			t = self.t0 + self.per*t
-#
-#		out = _web.lightcurve(self.n_layers,t,self.t0,self.per,self.a_abs,self.inc,self.ecc,self.w,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),ec)
-#		return np.array(out)
 
 	def eclipse_depth(self,phase=0.5,stellar_grid=False):
 

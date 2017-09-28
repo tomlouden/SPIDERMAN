@@ -2,6 +2,7 @@
 #include "segment.h"
 #include "areas.h"
 #include "math.h"
+#include "intersection.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -80,20 +81,29 @@ double two_inner_two_edges_b(double *c1,double *c2,double *e1,double *e2,double 
     return area;
 }
 
-double two_edges_a(double *e1,double *e2,double *e3,double *e4,double r_inner,double x2,double y2,double r2){
-    double a_1,a_2,a_3,area;
-
+double two_edges_a(double *e1,double *e2,double *e3,double *e4,double r_inner,double x2,double y2,double r2,double theta, double theta1, double theta2){
+    double a_1,a_2,a_3,a_4,a_5,a_6,a_7,a_8,area;
 
     // first the inner circle segment
     a_1 = find_segment_area(e3,e4,0,0,r_inner);
-
     // then the outer circle segment
     a_2 = find_segment_area(e1,e2,x2,y2,r2);
-
     // then the quadrilateral
 
-    a_3 = find_quad_area(e1,e2,e3,e4);
+    double theta_s = atan2(y2,x2);
+    if(theta_s<0){
+        theta_s = theta_s + 2*M_PI;
+    }
 
+    double r_of_c = sqrt(pow((e1[0] + e2[0])/2,2) + pow((e1[1] + e2[1])/2,2));
+    double r_of_s = sqrt(pow(x2,2) + pow(y2,2));
+
+
+    if((r_of_c < r_of_s) && (theta_s >= theta1) && (theta_s <= theta2)){
+        a_2 = M_PI*pow(r2,2) - a_2 ;
+    }
+
+    a_3 = find_quad_area(e1,e2,e3,e4);
     area = a_2 + a_3 - a_1;
 
     return area;
@@ -114,10 +124,6 @@ double two_edges_b(double *e1,double *e2,double *e3,double *e4,double r_outer,do
     a_3 = find_quad_area(e1,e2,e3,e4);
 
     area = a_1 + a_2 + a_3;
-
-//    printf("a1 %f a2 %f a3 %f\n",a_1,a_2,a_3);
-
-//    printf("area %f\n",area);
 
     return area;
 
@@ -150,10 +156,6 @@ double one_edge_two_inner_one_outer_a(double *outer1,double *edge1,double *edge2
     a_4 = find_triangle_area(outer1,e_inner,e_outer);
 
     area = (a_1-a_2) + a_3 + a_4;
-
-//    printf("a1 %f a2 %f a3 % a4 %f\n",a_1,a_2,a_3,a_4);
-
-//    printf("area %f\n",area);
 
     return area;
 
@@ -197,15 +199,6 @@ double one_edge_two_inner_one_outer_b(double *outer1,double *edge1,double *edge2
 
     // the inner segment
 
-/*    printf("triangle %f,%f\n",outer_far[0],outer_far[1]);
-    printf("triangle %f,%f\n",inner_far[0],inner_far[1]);
-    printf("triangle %f,%f\n",circle_far[0],circle_far[1]);
-
-    printf("square %f,%f\n",outer_near[0],outer_near[1]);
-    printf("square %f,%f\n",inner_near[0],inner_near[1]);
-    printf("square %f,%f\n",circle_near[0],circle_near[1]);
-    printf("square %f,%f\n",outer1[0],outer1[1]);*/
-
     /* the quadrilateral*/
     a_1 = find_quad_area(outer_near,outer1,inner_near,circle_near);
     a_2 = find_segment_area(outer1,circle_near,x2,y2,r2);
@@ -217,11 +210,7 @@ double one_edge_two_inner_one_outer_b(double *outer1,double *edge1,double *edge2
     a_6 = find_segment_area(circle_far,outer_far,x2,y2,r2);
     a_7 = find_segment_area(circle_far,inner_far,0,0,r_inner);
 
-//    printf("a1 %f a2 %f a3 %f a4 %f a5 %f a6 %f a7 %f\n",a_1,a_2,a_3,a_4,a_5,a_6,a_7);
-
     area = (a_1 + a_2 +a_3 - a_4) + (a_5+a_6-a_7);
-
-//   printf("area %f\n",area);
 
     return area;
 }
@@ -251,10 +240,6 @@ double one_edge_one_inner_a(double *c1,double *e1,double *e2,double r_inner,doub
 
     area = a_3 + a_2 -a_1;
 
-//    printf("a1 %f a2 %f a3 %f\n",a_1,a_2,a_3);
-
-//    printf("area %f\n",area);
-
     return area;
 
 }
@@ -283,10 +268,6 @@ double one_edge_one_inner_b(double *c1,double *e1,double *e2,double r_inner,doub
     a_3 = find_triangle_area(c1,e_inner,e_outer);
 
     area = t_area - (a_3 - (a_1 + a_2));
-
-//    printf("a1 %f a2 %f a3 %f\n",a_1,a_2,a_3);
-
-//    printf("t_area %f area %f\n",t_area,area);
 
     return area;
 
@@ -373,33 +354,22 @@ double one_in_one_out(double *c1,double *c2,double *e1,double *e2,double r_inner
     }
 
 
-//    printf("c_outer %f,%f, c_inner %f,%f\n",c_outer[0],c_outer[1],c_inner[0],c_inner[1]);
-//    printf("e_outer %f,%f, e_inner %f,%f\n",e_outer[0],e_outer[1],e_inner[0],e_inner[1]);
-
     /* segment of the large circle (star) first*/
 
     a_1 = find_segment_area(c_outer,c_inner,x2,y2,r2);
 
-//    printf("a_1 %f\n",a_1/M_PI);
-
     /* segment of the small circle (planet)*/
     a_2 = find_segment_area(c_outer,e_outer,0,0,r_outer);
-
-//    printf("a_2 %f\n",a_2/M_PI);
     
     /* the central quadrilateral*/
     a_3 = find_quad_area(c_inner,e_inner,c_outer,e_outer);
-
-//    printf("a_3 %f\n",a_3/M_PI);
     
     /* the overlap with the interior quad.*/
     a_4 = find_segment_area(c_inner,e_inner,0,0,r_inner);
     
-//    printf("a_4 %f\n",a_4/M_PI);
 
     area = a_1 + a_2 + a_3 + -1*a_4;
 
-//    printf("area %f\n",area/M_PI);
         
     return area;
 }

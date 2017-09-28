@@ -132,6 +132,13 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         double *coords = separation_of_centers(t[n]-phase_dt,tc,per,a,inc,ecc,omega,a_rs,r2);
 
+        double t_dist = sqrt(pow(coords[0],2) + pow(coords[1],2) + pow(coords[2],2));
+
+        if(t_dist < (r2+1)){
+            printf("IMPROPERLY SPECIFIED PARAMETERS, PLANET IS INSIDE STAR! ABORT!\n");
+            return output;
+        }
+
 //        printf("bb_g 3 %f\n",bb_g[0][1]);
 
         map_model(planet,n_layers,lambda0,phi0,u1,u2,brightness_model,brightness_params,bb_g,star_surface_bright,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
