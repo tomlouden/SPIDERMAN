@@ -76,6 +76,12 @@ double bb_flux(double l1, double l2, double T,int n_segments, int use_filter, in
 //		ypp = spline_cubic_set( n_wvls, wvl_g[0], wvl_g[1], 0, 0, 0, 0 );
 //	}
 
+	if(T< 0.0){
+		printf("CANNOT DO NEGATIVE TEMPERATURES!\n");
+		exit(0);
+	}	
+
+
     for (int k = 0; k <n_segments; ++k) {
     	l_lower = (l1+k*wvl_int);
     	l_upper = (l1+(k+1)*wvl_int);

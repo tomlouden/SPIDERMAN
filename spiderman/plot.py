@@ -91,8 +91,8 @@ def plot_quad(spider_params,min_temp=False,max_temp=False,temp_map=False,min_bri
 			blims2 = spider_params.get_lims(0.25,temp_map=temp_map,use_phase=True)
 			blims3 = spider_params.get_lims(0.5,temp_map=temp_map,use_phase=True)
 			blims4 = spider_params.get_lims(0.75,temp_map=temp_map,use_phase=True)
-			min_temp = np.min(np.array([blims1,blims2,blims3,blims4]))
-			max_temp = np.max(np.array([blims1,blims2,blims3,blims4]))
+			min_temp = 0.9*np.min(np.array([blims1,blims2,blims3,blims4]))
+			max_temp = 1.1*np.max(np.array([blims1,blims2,blims3,blims4]))
 			if min_temp == 0.0:
 				min_temp = 1e-19
 
@@ -105,18 +105,18 @@ def plot_quad(spider_params,min_temp=False,max_temp=False,temp_map=False,min_bri
 
 #		divider = make_axes_locatable(fig)
 
-		min_val = (dp + min_temp-min_temp)/(dp + max_temp-min_temp)
-		max_val = (dp + max_temp-min_temp)/(dp + max_temp-min_temp)
+#		min_val = (dp + min_temp-min_temp)/(dp + max_temp-min_temp)
+#		max_val = (dp + max_temp-min_temp)/(dp + max_temp-min_temp)
 
-		zero_temp = min_temp - dp
+#		zero_temp = min_temp - dp
 
-#		zero_temp = min_temp
+		zero_temp = min_temp
 
 
 		if temp_map == True:
 			data = [np.linspace(zero_temp,max_temp,1000)]*2
 		else:
-			data = [np.linspace(zero_temp/max_temp,max_temp/max_temp,1000)]*2
+			data = [np.linspace(min_temp / (0.5*(min_temp + max_temp)),max_temp / (0.5*(min_temp + max_temp)),1000)]*2
 		fake, fake_ax = plt.subplots()
 		mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
 		plt.close(fake)
@@ -431,6 +431,9 @@ def plot_square(spider_params,ax=False,min_temp=False,max_temp=False,temp_map=Fa
 		fluxes += [row]
 	fluxes = np.array(fluxes)
 
+	if temp_map == False:
+		fluxes = fluxes/np.max(fluxes)
+
 	lala, lolo = np.meshgrid(los,las)
 
 	plt.plot([0],[0],'x',color=('#0cff0c'),ms=10,mew=2)
@@ -543,11 +546,11 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 	if min_temp == False:
 		temps = planet[:,b_i]
-		min_temp = np.min(temps)
-		max_temp = np.max(temps)
+		min_temp = np.min(temps)*0.9
+		max_temp = np.max(temps)*1.1
 
 	temps = planet[:,b_i]
-#	print('min ',np.min(temps), 'max',np.max(temps))
+
 
 	dp = ((max_temp-min_temp)*min_bright)
 
@@ -559,12 +562,14 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	for j in range (0,len(planet)):
 
 
-		if dp == 0.0:
-			val = 1
-		else:
-			val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
+#		if dp == 0.0:
+#			val = 1
+#		else:
+#			val = (dp + planet[j][b_i]-min_temp)/(dp + max_temp-min_temp)
 
 #		print(val,(dp + planet[j][b_i]-min_temp),(dp + max_temp-min_temp))
+
+		val = (planet[j][b_i]-min_temp)/(max_temp-min_temp)
 
 		c = mycmap(val)
 

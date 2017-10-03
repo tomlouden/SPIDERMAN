@@ -357,7 +357,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     star_surface_bright = star_bright/(M_PI*pow(r2,2));
 
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4|| bright_type == 6 ||  bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12){
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4|| bright_type == 6 ||  bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12  || bright_type == 14){
         l1 = brightness_params[1];
         l2 = brightness_params[2];
 
@@ -819,7 +819,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     }
 
 
-    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 6 || bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12){
+    if(bright_type == 1 || bright_type == 3 || bright_type == 4 || bright_type == 6 || bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12  || bright_type == 14){
         double l1 = brightness_params[1];
         double l2 = brightness_params[2];
         bb_g = bb_grid(l1, l2, T_start, T_end,n_temps,n_bb_seg,use_filter, n_wvls, wvl_grid);

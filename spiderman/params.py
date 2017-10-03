@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 class ModelParams(object):
 
-	def __init__(self,brightness_model='zhang'):
+	def __init__(self,brightness_model='zhang',thermal=False):
 
 		self.n_layers = 5			# The default resolution for the grid
 
@@ -67,9 +67,12 @@ class ModelParams(object):
 			self.thermal= True			# Is this a thermal distribution?
 
 		elif brightness_model == 'spherical':
-			self.brightness_type= 5	# Integer model identifier
 			self.a= None			# Ratio between radiative and advective timescales
-			self.thermal= False			# Is this a thermal distribution?
+			self.thermal= thermal			# Is this a thermal distribution?
+			if thermal == True:
+				self.brightness_type= 14	# Integer model identifier
+			else:
+				self.brightness_type= 5	# Integer model identifier
 
 		elif brightness_model == 'kreidberg':
 			self.brightness_type= 6 # Integer model identifer
@@ -164,10 +167,22 @@ class ModelParams(object):
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
-		elif (self.brightness_type == 5):
+
+		elif (self.brightness_type == 5 or self.brightness_type == 14):
+
 			brightness_param_names = ['degree','sph','la0','lo0']
+			if self.brightness_type == 14:
+				brightness_param_names = ['T_s','l1','l2'] + brightness_param_names
+
+
+			brightness_params = [self.degree,self.la0,self.lo0] + self.sph
+			if self.brightness_type == 14:
+				brightness_params = [self.T_s,self.l1,self.l2] + brightness_params
+
 			try:
 				brightness_params = [self.degree,self.la0,self.lo0] + self.sph
+				if self.brightness_type == 14:
+					brightness_params = [self.T_s,self.l1,self.l2] + brightness_params
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
@@ -178,6 +193,7 @@ class ModelParams(object):
 				print('You have not specified the correct number of mode coefficients!')
 				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
 				quit()
+
 		elif (self.brightness_type == 6):
 			brightness_param_names = ['T_s','l1','l2','insol','albedo','redist']
 			try:

@@ -259,17 +259,21 @@ double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T)
     return T;
 }
 
-double spherical(double lat, double lon, double *a){
+double spherical(double lat, double lon, double *a, int therm_flag){
     double x_vec[1];
     double fx2;
     double *fx2_vec;
-    double theta = (M_PI/2.0) - (lat+a[1]);
-    double phi = M_PI + (lon+a[2]);
-    int orders = a[0];
     int avoid_neg = 0; // This should probably be a user setting.
     double norm;
 
     int k = 3;
+    if(therm_flag == 1){
+        k = 6;
+    }
+
+    double theta = (M_PI/2.0) - (lat+a[k-1]);
+    double phi = M_PI + (lon+a[k-2]);
+    int orders = a[k-3];
 
     x_vec[0] = cos(theta);
 
@@ -301,7 +305,7 @@ double spherical(double lat, double lon, double *a){
     if(avoid_neg == 1){
         return pow(pow(val,2),0.5)/M_PI;
     }
-    return val/M_PI;
+    return val;
 }
 
 double kreidberg_2016(double lat, double lon, double insol, double albedo, double redist){
