@@ -20,6 +20,12 @@ double bb_interp(double tval, double **bb_g){
 
 	n_segments = (int) bb_g[3][0];
 
+	if(tval< 0.0){
+		printf("Model requested a temperature of %f K!\n",tval);
+		printf("CANNOT DO NEGATIVE TEMPERATURES!\n");
+		exit(0);
+	}	
+
 	double yval = spline_cubic_val( n_segments, bb_g[0], bb_g[1], bb_g[2], tval, &ypval, &yppval);
 
 	return yval;
@@ -76,7 +82,9 @@ double bb_flux(double l1, double l2, double T,int n_segments, int use_filter, in
 //		ypp = spline_cubic_set( n_wvls, wvl_g[0], wvl_g[1], 0, 0, 0, 0 );
 //	}
 
+
 	if(T< 0.0){
+		printf("Model requested a temperature of %f K!\n",T);
 		printf("CANNOT DO NEGATIVE TEMPERATURES!\n");
 		exit(0);
 	}	
