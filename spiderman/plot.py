@@ -116,7 +116,7 @@ def plot_quad(spider_params,min_temp=False,max_temp=False,temp_map=False,min_bri
 		if temp_map == True:
 			data = [np.linspace(zero_temp,max_temp,1000)]*2
 		else:
-			data = [np.linspace(min_temp / (0.5*(min_temp + max_temp)),max_temp / (0.5*(min_temp + max_temp)),1000)]*2
+			data = [np.linspace(min_temp/max_temp,max_temp/max_temp,1000)]*2
 		fake, fake_ax = plt.subplots()
 		mycax = fake_ax.imshow(data, interpolation='none', cmap=mycmap)
 		plt.close(fake)
