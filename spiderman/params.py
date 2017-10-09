@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 class ModelParams(object):
 
-	def __init__(self,brightness_model='zhang',thermal=False):
+	def __init__(self,brightness_model='zhang',thermal=False, nearest=None):
 
 		self.n_layers = 5			# The default resolution for the grid
 
@@ -23,6 +23,8 @@ class ModelParams(object):
 		self.eclipse = True			# specifies whether to include the drop in flux due to the eclipse
 		self.filter = False			# Can use an external response file.
 		self.grid = [[],[],[[]]]			# needed in case the "direct read" method is wanted
+		self.nearest = nearest         # used for choosing which interpolation model to use - default is spline
+
 
 		if brightness_model == 'uniform brightness':
 			self.n_layers = 1		# The default resolution for the grid
@@ -248,14 +250,21 @@ class ModelParams(object):
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
 				quit()
-
 		elif (self.brightness_type == 12):
 			brightness_param_names = ['T_s','l1','l2','grid']
 			n_lo = len(self.grid[0])
 			n_la = len(self.grid[1])
 
+#			chooses whether to use a 2d spline or a nearest neighbor method. default is spline.
+			if self.nearest == None:
+				nearest = 0
+			elif self.nearest == True:
+				nearest = 1 
+			elif self.nearest == False:
+				nearest = 0
+
 			try:
-				brightness_params = [self.T_s,self.l1,self.l2,n_lo,n_la]
+				brightness_params = [self.T_s,self.l1,self.l2,n_lo,n_la,nearest]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
@@ -266,8 +275,16 @@ class ModelParams(object):
 			n_lo = len(self.grid[0])
 			n_la = len(self.grid[1])
 
+#			chooses whether to use a 2d spline or a nearest neighbor method. default is spline.
+			if self.nearest == None:
+				nearest = 0
+			elif self.nearest == True:
+				nearest = 1 
+			elif self.nearest == False:
+				nearest = 0
+
 			try:
-				brightness_params = [n_lo,n_la]
+				brightness_params = [n_lo,n_la,nearest]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)

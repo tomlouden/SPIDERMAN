@@ -65,7 +65,6 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
 
         double *vals = call_map_model(la,lo,lambda0,phi0,brightness_model,brightness_params,bb_g,make_grid,planet[k][10],planet[k][11],planet[k][13],planet[k][14],star_bright,la_cen,lo_cen,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
-
         planet[k][16] = vals[0]; 
         planet[k][17] = vals[1];
 //         printf("%f %f inside",planet[k][16],planet[k][17]);
@@ -77,6 +76,7 @@ void map_model(double **planet,int n_layers,double lambda0, double phi0, double 
         mu = sqrt(1 - pow(R_mid,2));
 
         planet[k][16] = planet[k][16]*(1 - u1*(1-mu) - u2*(pow(1-mu,2)));
+
     }
     free(center_coords);
 
@@ -216,15 +216,17 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         int *out2;
         out2 = malloc(sizeof(int) * 2);
 
-        int nlo, nla;
+        int nlo, nla, nearest;
 
         if(brightness_model == 12){
             nlo = brightness_params[3];
             nla = brightness_params[4];
+            nearest = brightness_params[5];
         }
         if(brightness_model == 13){
             nlo = brightness_params[0];
             nla = brightness_params[1];
+            nearest = brightness_params[2];
         }
 
         find_top_two(lo_2d, lo*180.0/M_PI, (int) nlo, out1);
@@ -232,7 +234,7 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
 //        printf("before second %i\n",(int) brightness_params[4]);
         find_top_two(la_2d, la*180.0/M_PI, (int) nla, out2);
 
-//        printf("positions %i %i %i %i\n",out1[0],out1[1],out2[0],out2[1]);
+//        printf("positions %i %i %i %i %i %i\n",out1[0],out1[1],out2[0],out2[1],nlo,nla);
 //        printf("positions %f %f %f %f\n",lo_2d[out1[0]],lo_2d[out1[1]],la_2d[out2[0]],la_2d[out2[1]]);
 
         float *ansy, *ansy1, *ansy2;
@@ -268,7 +270,14 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         y12[4] = y12_grid[out1[0]][out2[1]];
 
 
+//        printf("%f %f %f %f %f %f\n",lo_2d[out1[0]],lo_2d[out1[1]], la_2d[out2[0]], la_2d[out2[1]], lo*180.0/M_PI, la*180.0/M_PI);
         bcuint(y, y1, y2, y12, lo_2d[out1[0]],lo_2d[out1[1]], la_2d[out2[0]], la_2d[out2[1]], lo*180.0/M_PI, la*180.0/M_PI, ansy, ansy1, ansy2);
+
+        if (nearest == 1) {
+            int c_lo = find_minimum(lo_2d, lo*180.0/M_PI, (int) nlo);
+            int c_la = find_minimum(la_2d, la*180.0/M_PI, (int) nla);
+            *ansy = T_2d[c_lo][c_la];
+        }
 
         if(brightness_model == 12){
             point_T = *ansy;
@@ -277,7 +286,6 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         if(brightness_model == 13){
             point_b = *ansy;
         }
-
 
         free(out1);
         free(out2);

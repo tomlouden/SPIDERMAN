@@ -74,7 +74,10 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 //    printf("bb_g init 2 %f\n",bb_g[0][1]);
     free(coords);
 
+    int nearest = 0;
+
     if(brightness_model == 12){
+        nearest = brightness_params[5];
         y1_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
         for (int i = 0; i < (int) brightness_params[3]; ++i) {
           y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
@@ -91,6 +94,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
     }
 
     if(brightness_model == 13){
+        nearest = brightness_params[2];
         y1_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
         for (int i = 0; i < (int) brightness_params[0]; ++i) {
           y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);

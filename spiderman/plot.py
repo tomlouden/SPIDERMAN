@@ -98,6 +98,7 @@ def plot_quad(spider_params,min_temp=False,max_temp=False,temp_map=False,min_bri
 
 		dp = ((max_temp-min_temp)*min_bright)
 
+
 		spider_params.plot_planet(0,use_phase=True,ax=axs[0,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
 		spider_params.plot_planet(0.25,use_phase=True,ax=axs[0,1],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
 		spider_params.plot_planet(0.5,use_phase=True,ax=axs[1,0],show_cax=False,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,mycmap=mycmap,theme=theme,min_bright=min_bright)
@@ -535,9 +536,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 	else:
 		new_ax = False
 
-
 	planet = sp.generate_planet(spider_params,t)
-
 
 	if temp_map == True:
 		b_i = 17

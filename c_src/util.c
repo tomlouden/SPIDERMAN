@@ -31,22 +31,32 @@ int find_minimum(double *a, double v, int n) {
 }
 
 void find_top_two(double *a, double v, int n, int *out) {
-  int c, index1,index2;
+  int c, index1,index2,c_start;
   double min;
 
   min = pow((a[0] - v),2);
   index1 = 0;
   index2 = 0;
  
-  for (c = 1; c < n; c++) {
+  c_start = 0;
+  for (c = c_start; c < n; c++) {
     if ( pow((a[c] - v),2) < min) {
        index1 = c;
        min = pow((a[c] - v),2);
     }
   }
 
-  min = pow((a[0] - v),2);
-  for (c = 1; c < n; c++) {
+  if (index1 == 0) {
+    min = pow((a[1] - v),2);
+    c_start = 2;
+    index2 =1;
+  }
+  else{
+    min = pow((a[0] - v),2);
+    c_start = 1;
+  }
+
+  for (c = c_start; c < n; c++) {
     if ( pow((a[c] - v),2) < min) {
       if(c != index1){
         if(a[c] != a[index1]){

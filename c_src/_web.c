@@ -289,6 +289,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 
     PyArray_Descr *descr = PyArray_DescrFromType(typenum);
 
+
     /* Parse the input tuple */
     if (!PyArg_ParseTuple(args, "iddddiOOOidOOO", &n_layers,&lambda0,&phi0,&p_u1,&p_u2,&bright_type,&bright_obj,&teff_obj,&flux_obj,&n_star,&rp,&lo_2d_obj,&la_2d_obj,&T_2d_obj))
         return NULL;
@@ -396,7 +397,10 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     }
 
 
+    int nearest = 0;
+
     if(bright_type == 12){
+        nearest = brightness_params[5];
         y1_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
         for (int i = 0; i < (int) brightness_params[3]; ++i) {
           y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
@@ -413,6 +417,7 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     }
 
     if(bright_type == 13){
+        nearest = brightness_params[2];
         y1_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
         for (int i = 0; i < (int) brightness_params[0]; ++i) {
           y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);
@@ -851,7 +856,10 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
 
     //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES OR REFLECTION MODELS WON'T BE CORRECT!//
 
+    int nearest = 0;
+
     if(bright_type == 12){
+        nearest = brightness_params[5];
         y1_grid = malloc(sizeof(double) * (int) brightness_params[3]); // dynamic `array (size 4) of pointers to int`
         for (int i = 0; i < (int) brightness_params[3]; ++i) {
           y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[4]);
@@ -868,6 +876,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     }
 
     if(bright_type == 13){
+        nearest = brightness_params[2];
         y1_grid = malloc(sizeof(double) * (int) brightness_params[0]); // dynamic `array (size 4) of pointers to int`
         for (int i = 0; i < (int) brightness_params[0]; ++i) {
           y1_grid[i] = malloc(sizeof(double) * (int) brightness_params[1]);

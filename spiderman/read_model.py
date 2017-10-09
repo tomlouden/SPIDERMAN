@@ -47,10 +47,27 @@ def format_grid(longitude,latitude,temp):
 
 	LO, LA = np.unique(longitude),np.unique(latitude)
 	T = np.reshape(temp,(len(LO),len(LA)))
-	T = np.vstack((T[-5],T[-4],T[-3],T[-2],T[-1],T,T[0],T[1],T[2],T[3],T[4]))
-	LO = np.hstack((LO[-5:]-360,LO,LO[0:5]+360))
-	T = np.vstack((T[:,4],T[:,3],T[:,2],T[:,1],T[:,0],T.T,T[:,-1],T[:,-2],T[:,-3],T[:,-4],T[:,-5])).T
-	LA = np.hstack((-180 - LA[0:5][::-1],LA,180-LA[-5:][::-1]))
+
+	for i in range(0,len(LO)):
+		if LO[i] > 180:
+			LO[i] = LO[i] - 360
+		if LO[i] < -180:
+			LO[i] = LO[i] + 360
+
+	if len(LO) > 100:
+		T = np.vstack((T[-5],T[-4],T[-3],T[-2],T[-1],T,T[0],T[1],T[2],T[3],T[4]))
+		LO = np.hstack((LO[-5:]-360,LO,LO[0:5]+360))
+	else:
+		T = np.vstack((T[-1],T,T[0]))
+		LO = np.hstack((LO[-1:]-360,LO,LO[0:1]+360))
+
+	if len(LA) > 100:
+		T = np.vstack((T[:,4],T[:,3],T[:,2],T[:,1],T[:,0],T.T,T[:,-1],T[:,-2],T[:,-3],T[:,-4],T[:,-5])).T
+		LA = np.hstack((-180 - LA[0:5][::-1],LA,180-LA[-5:][::-1]))
+	else:
+		T = np.vstack((T[:,0],T.T,T[:,-1])).T
+		LA = np.hstack((-180 - LA[0:1][::-1],LA,180-LA[-1:][::-1]))
 
 	grid = np.array([LO,LA,T])
+
 	return grid
