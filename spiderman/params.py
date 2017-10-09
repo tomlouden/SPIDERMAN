@@ -375,7 +375,17 @@ class ModelParams(object):
 		if(self.a_abs == None):
 			self.a_abs = 1.0
 
-		out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0)[0] - _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),1)[0]
+		if self.filter != False:
+			use_filter = 1
+			filter = get_filter(self.filter)
+		else:
+			use_filter = 0
+			filter = [[],[]]
+
+		n_wvls = len(filter[0])
+
+
+		out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0, filter[0], filter[1], n_wvls,use_filter,self.grid[0],self.grid[1],self.grid[2])[0] - _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),1, filter[0], filter[1], n_wvls,use_filter,self.grid[0],self.grid[1],self.grid[2])[0]
 
 		return np.array(out)
 

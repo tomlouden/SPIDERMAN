@@ -136,6 +136,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 
         if(t_dist < (r2+1)){
             printf("IMPROPERLY SPECIFIED PARAMETERS, PLANET IS INSIDE STAR! ABORT!\n");
+            exit(0);
             return output;
         }
 
