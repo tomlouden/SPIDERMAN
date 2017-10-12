@@ -284,22 +284,24 @@ double spherical(double lat, double lon, double *a, int therm_flag){
         fx2_vec = pm_polynomial_value(1,l,pow(pow(m,2),0.5),x_vec);
         fx2 = fx2_vec[l];
         free(fx2_vec);
-
         if(m > 0){
-            norm = pow(2*(2*l + 1)*factorial(l-m)/factorial(l+m),0.5);
+            norm = pow(2.0*(2.0*l + 1.0)*factorial(l-m)/factorial(l+m),0.5);
             val = val + a[k]*norm*fx2*cos(m*phi);
         }
         else if (m < 0){
-            norm = pow(2*(2*l + 1)*factorial(l-m)/factorial(l+m),0.5);
+            norm = pow(2.0*(2.0*l + 1.0)*factorial(l-m)/factorial(l+m),0.5);
             val = val + a[k]*norm*fx2*sin(pow(pow(m,2),0.5)*phi);
         }
         else if (m == 0){
-            norm = pow((2*l + 1),0.5);
+            norm = pow((2.0*l + 1.0),0.5);
             val = val + a[k]*norm*fx2;
         }
 
+//        printf("%i m %i l %f val %f a[k] %f norm \n",m,l,val, a[k], norm);
+//        printf("%i %i %i %i %i\n",l-m,l+m,factorial(l-m), factorial(l+m),factorial(l-m)/factorial(l+m));
+
         k = k +1;
-      }
+          }
     }
 
     if(avoid_neg == 1){
