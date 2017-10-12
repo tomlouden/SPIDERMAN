@@ -307,7 +307,6 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
 //        printf("%f %f %f\n",ars, star_bright,insol);
     output = malloc(sizeof(double) * 2); // dynamic `array (size 2) of pointers to double`
 
-
     output[0] = point_b;
     output[1] = point_T;
 
