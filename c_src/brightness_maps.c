@@ -333,7 +333,8 @@ double lambertian(double lat, double lon, double insol, double albedo){
 //    printf("%f %f \n",insol,albedo);
 
     if((-M_PI/2.0 <= lon) && (lon <= M_PI/2.0)){
-        b = albedo*insol*cos(lat)*cos(lon)/2;
+//        b = albedo*insol*cos(lat)*cos(lon)/2;
+        b = albedo*insol*cos(lat)*cos(lon)*3.0/2.0;
 //        b = albedo*insol/M_PI;
     }
     else{

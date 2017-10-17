@@ -388,12 +388,13 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
         double yppval;
 
 //        star_bright = bb_flux(l1,l2,star_T,n_bb_seg);
-        ypp = spline_cubic_set( n_star, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
 
-        star_surface_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
-        free(ypp);
-
-        star_bright = star_surface_bright*M_PI*pow(r2,2);
+        if (star_T != 0){
+            ypp = spline_cubic_set( n_star, stellar_teffs, stellar_fluxes, 0, 0, 0, 0 );
+            star_surface_bright = spline_cubic_val( n_star, stellar_teffs, stellar_fluxes, ypp, star_T, &ypval, &yppval);
+            free(ypp);
+            star_bright = star_surface_bright*M_PI*pow(r2,2);
+        }
     }
 
 
@@ -853,6 +854,17 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
     double phi0 = 0;
 
     double star_bright = 1.0;
+    double star_surface_bright = 1.0;
+
+    if(bright_type == 9){
+        double r2 = brightness_params[5];
+        star_surface_bright = star_bright/(M_PI*pow(r2,2));
+    }
+    if(bright_type == 10){
+        double r2 = brightness_params[8];
+        star_surface_bright = star_bright/(M_PI*pow(r2,2));
+    }
+
 
     //NEED TO UPDATE THIS WITH CORRECT STAR BRIGHTNESS VALUES OR REFLECTION MODELS WON'T BE CORRECT!//
 
@@ -892,7 +904,7 @@ static PyObject *web_call_map_model(PyObject *self, PyObject *args)
         bcugrid(lo_2d, la_2d, T_2d, y1_grid, y2_grid, y12_grid, (int) brightness_params[0],(int) brightness_params[1]);
     }
 
-    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_bright,0.0,0.0,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
+    double *vals = call_map_model(la,lo,lambda0,phi0,bright_type,brightness_params,bb_g,0,0.0,0.0,0.0,0.0,star_surface_bright,0.0,0.0,lo_2d,la_2d,T_2d,y1_grid,y2_grid,y12_grid);
 
     /* Build the output tuple */
 

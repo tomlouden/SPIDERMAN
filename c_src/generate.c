@@ -168,9 +168,10 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         point_b = Hotspot_b(la, lo, la0,lo0,b1,b2,size,make_grid ,theta1,theta2,r1,r2,lambda0,phi0,la_cen,lo_cen);
     }
     else if(brightness_model == 9){
-        double albedo = brightness_params[0];
-        double ars = pow(brightness_params[1],2);
+        double albedo = brightness_params[3];
+        double ars = pow(brightness_params[4],2);
         double insol = ars*star_bright;
+//        printf("%f \n",insol*M_PI);
         point_b = lambertian(la,lo,insol,albedo);
     }
     else if(brightness_model == 10){
@@ -183,7 +184,6 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
         double albedo = brightness_params[6];
         double ars = pow(brightness_params[7],2);
         double insol = ars*star_bright;
-//        printf("%f %f %f\n",ars, star_bright,insol);
         point_b = point_b + lambertian(la,lo,insol,albedo);
     }
 

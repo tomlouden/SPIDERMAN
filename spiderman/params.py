@@ -4,8 +4,21 @@ import spiderman._web as _web
 import spiderman.plot as splt
 import matplotlib.pyplot as plt
 
-class ModelParams(object):
+class MultiModelParams(object):
+	def __init__(self,brightness_models=['zhang','lambertian'],**kwargs):
+			self.webs = []
+			for i in range(0,len(brightness_models)):
+				self.webs += [sp.ModelParams(brightness_models[i],**kwargs)]
 
+	def lightcurve(self,*args,**kwargs):
+		total = sp.lightcurve(*args,self.webs[0],**kwargs)
+		for i in range(1,len(self.webs)):
+			total += sp.lightcurve(*args,self.webs[i],**kwargs) - 1.0
+
+		return total
+
+
+class ModelParams(object):
 	def __init__(self,brightness_model='zhang',thermal=False, nearest=None):
 
 		self.n_layers = 5			# The default resolution for the grid
@@ -226,8 +239,15 @@ class ModelParams(object):
 		elif (self.brightness_type == 9):
 			brightness_param_names = ['albedo']
 			ars = 1.0/self.a
+			r2 = 1.0/self.rp
+
+			if not hasattr(self, 'T_s'):
+			    self.T_s = 0
+			    self.l1 = 0
+			    self.l2 = 0
+
 			try:
-				brightness_params = [self.albedo,ars]
+				brightness_params = [self.T_s,self.l1,self.l2,self.albedo,ars,r2]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
@@ -235,8 +255,9 @@ class ModelParams(object):
 		elif (self.brightness_type == 10):
 			brightness_param_names = ['T_s','l1','l2','xi','T_n','delta_T','albedo']
 			ars = 1.0/self.a
+			r2 = 1.0/self.rp
 			try:
-				brightness_params = [self.T_s,self.l1,self.l2,self.xi,self.T_n,self.delta_T,self.albedo,ars]
+				brightness_params = [self.T_s,self.l1,self.l2,self.xi,self.T_n,self.delta_T,self.albedo,ars,r2]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)
@@ -297,6 +318,24 @@ class ModelParams(object):
 			quit()
 		return brightness_params
 
+	def plot_square(self,*args,**kwargs):
+		return splt.plot_square(self,*args,**kwargs)
+
+	def plot_system(self,*args,**kwargs):
+		return splt.plot_system(self,*args,**kwargs)
+
+	def plot_planet(self,*args,**kwargs):
+		return splt.plot_planet(self,*args,**kwargs)
+
+	def plot_quad(self,*args,**kwargs):
+		return splt.plot_quad(self,*args,**kwargs)
+
+	def plot_uncertainty(self,*args,**kwargs):
+		return splt.plot_uncertainty(self,*args,**kwargs)
+
+	def lightcurve(self,*args,**kwargs):
+		return sp.lightcurve(*args,self,**kwargs)
+
 	def calc_phase(self,t):
 		self.phase = _web.calc_phase(t,self.t0,self.per)
 
@@ -306,19 +345,6 @@ class ModelParams(object):
 		substellar = _web.calc_substellar(self.phase,np.array(coords))
 		self.lambda0 = substellar[0]
 		self.phi0 = substellar[1]
-
-	def plot_square(self,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,show_cax=True,scale_planet=1.0,planet_cen=[0.0,0.0],mycmap=plt.get_cmap('inferno'),theme='white',show_axes=True,nla=100,nlo=100):
-		return splt.plot_square(self,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,mycmap=mycmap,show_cax=show_cax,theme=theme,show_axes=show_axes,nla=nla,nlo=nlo)
-
-	def plot_system(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white',show_axes=True):
-		if use_phase == True:
-			t = self.t0 + self.per*t
-		return splt.plot_system(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,show_cax=show_cax,mycmap=mycmap,theme=theme,show_axes=show_axes)
-
-	def plot_planet(self,t,ax=False,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white',show_axes=False):
-		if use_phase == True:
-			t = self.t0 + self.per*t
-		return splt.plot_planet(self,t,ax=ax,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,show_cax=show_cax,mycmap=mycmap,theme=theme,show_axes=show_axes)
 
 	def get_lims(self,t,temp_map=False,use_phase=False):
 		if use_phase == True:
@@ -337,20 +363,6 @@ class ModelParams(object):
 		temps = planet[:,b_i]
 
 		return [np.min(temps),np.max(temps)]
-
-
-	def plot_quad(self,min_temp=False,max_temp=False,temp_map=False,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.inferno,theme='white'):
-
-		return splt.plot_quad(self,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,use_phase=use_phase,show_cax=show_cax,mycmap=mycmap,theme=theme)
-
-	def plot_uncertainty(self,fs,min_temp=False,max_temp=False,temp_map=True,min_bright=0.2,scale_planet=1.0,planet_cen=[0.0,0.0],use_phase=False,show_cax=True,mycmap=plt.cm.viridis_r,theme='white'):
-
-		return splt.plot_uncertainty(self,fs,min_temp=min_temp,max_temp=max_temp,temp_map=temp_map,min_bright=min_bright,scale_planet=scale_planet,planet_cen=planet_cen,use_phase=use_phase,show_cax=show_cax,mycmap=mycmap,theme=theme)
-
-	def lightcurve(self,t,stellar_grid=False,logg=4.5,use_phase=False):
-
-		return sp.lightcurve(t,self,stellar_grid,logg,use_phase)
-
 
 	def eclipse_depth(self,phase=0.5,stellar_grid=False):
 
@@ -407,8 +419,6 @@ class ModelParams(object):
 		return np.array(out)
 
 	def total_luminosity(self,planet_radius,stellar_grid=False,reflection=False):
-		# CHANGE THIS - shouldn't really use the output of get_planet because of limb darkening
-
 		p1,p2 = self.phase_brightness([0,0.5],stellar_grid=stellar_grid,reflection=reflection,planet_radius=planet_radius)
 		return(p1+p2)
 

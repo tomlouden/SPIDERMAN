@@ -164,6 +164,7 @@ double *lightcurve(int n_layers, int n_points, double *t, double tc, double per,
 //        output[n] = p_bright/star_bright;
 
         free(coords);
+
     }
 
     int n_segments = pow(n_layers,2);

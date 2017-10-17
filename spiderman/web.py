@@ -40,24 +40,28 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5)
 		t = spider_params.t0 + spider_params.per*t
 	brightness_params = spider_params.format_bright_params()
 
-#	if spider_params.thermal == True:
-	if ((spider_params.brightness_type == 9) or (spider_params.brightness_type == 10)):
-		if stellar_grid == False:
-			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter)
-			teffs = star_grid[0]
-			totals = star_grid[1]
+
+	if spider_params.thermal == True:
+		if ((spider_params.brightness_type == 9) or (spider_params.brightness_type == 10)):
+			if stellar_grid == False:
+				star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter)
+				teffs = star_grid[0]
+				totals = star_grid[1]
+			else:
+				teffs = stellar_grid[0]
+				totals = stellar_grid[1]
 		else:
-			teffs = stellar_grid[0]
-			totals = stellar_grid[1]
+			teffs = []
+			totals = []
 	else:
 		teffs = []
 		totals = []
 
-#	teffs = []
-#	totals = []
+	n_star = len(totals)
 
 	spider_params.calc_substellar(t)
-	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals),spider_params.rp,spider_params.grid[0].copy(),spider_params.grid[1].copy(),spider_params.grid[2].copy()))
+
+	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,n_star,spider_params.rp,spider_params.grid[0].copy(),spider_params.grid[1].copy(),spider_params.grid[2].copy()))
 
 def call_map_model(spider_params,la,lo):
 	# DEPRECATED - NOT CURRENTLY USED BY HIGHER LEVEL FUNCTIONS, NEEDS UPDATING
