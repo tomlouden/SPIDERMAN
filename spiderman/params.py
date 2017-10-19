@@ -10,10 +10,10 @@ class MultiModelParams(object):
 			for i in range(0,len(brightness_models)):
 				self.webs += [sp.ModelParams(brightness_models[i],**kwargs)]
 
-	def lightcurve(self,*args,**kwargs):
-		total = sp.lightcurve(*args,self.webs[0],**kwargs)
+	def lightcurve(self,t,**kwargs):
+		total = sp.lightcurve(t,self.webs[0],**kwargs)
 		for i in range(1,len(self.webs)):
-			total += sp.lightcurve(*args,self.webs[i],**kwargs) - 1.0
+			total += sp.lightcurve(t,self.webs[i],**kwargs) - 1.0
 
 		return total
 
@@ -333,8 +333,8 @@ class ModelParams(object):
 	def plot_uncertainty(self,*args,**kwargs):
 		return splt.plot_uncertainty(self,*args,**kwargs)
 
-	def lightcurve(self,*args,**kwargs):
-		return sp.lightcurve(*args,self,**kwargs)
+	def lightcurve(self,t,**kwargs):
+		return sp.lightcurve(t,self,**kwargs)
 
 	def calc_phase(self,t):
 		self.phase = _web.calc_phase(t,self.t0,self.per)

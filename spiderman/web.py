@@ -61,13 +61,13 @@ def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5)
 
 	spider_params.calc_substellar(t)
 
-	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,n_star,spider_params.rp,spider_params.grid[0].copy(),spider_params.grid[1].copy(),spider_params.grid[2].copy()))
+	return np.array(_web.generate_planet(spider_params.n_layers,spider_params.lambda0,spider_params.phi0,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,n_star,spider_params.rp,list(spider_params.grid[0]),list(spider_params.grid[1]),list(spider_params.grid[2])))
 
 def call_map_model(spider_params,la,lo):
 	# DEPRECATED - NOT CURRENTLY USED BY HIGHER LEVEL FUNCTIONS, NEEDS UPDATING
 
 	brightness_params = spider_params.format_bright_params()
-	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params,spider_params.grid[0].copy(),spider_params.grid[1].copy(),spider_params.grid[2].copy()))
+	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params,list(spider_params.grid[0]),list(spider_params.grid),list(spider_params.grid[2])))
 
 def blocked(n_layers,x2,y2,r2):
 	return _web.blocked(n_layers,x2,y2,r2)
@@ -108,7 +108,7 @@ def lightcurve(t,spider_params,stellar_grid=False,logg=4.5,use_phase=False):
 
 	n_wvls = len(filter[0])
 
-	out = _web.lightcurve(spider_params.n_layers,t,spider_params.t0,spider_params.per,spider_params.a_abs,spider_params.inc,spider_params.ecc,spider_params.w,spider_params.a,spider_params.rp,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals), spider_params.eclipse, filter[0], filter[1], n_wvls,use_filter,spider_params.grid[0].copy(),spider_params.grid[1].copy(),spider_params.grid[2].copy())
+	out = _web.lightcurve(spider_params.n_layers,t,spider_params.t0,spider_params.per,spider_params.a_abs,spider_params.inc,spider_params.ecc,spider_params.w,spider_params.a,spider_params.rp,spider_params.p_u1,spider_params.p_u2,spider_params.brightness_type,brightness_params,teffs,totals,len(totals), spider_params.eclipse, filter[0], filter[1], n_wvls,use_filter,list(spider_params.grid[0]),list(spider_params.grid[1]),list(spider_params.grid[2]))
 
 	return np.array(out)
 
