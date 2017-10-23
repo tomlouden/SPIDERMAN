@@ -3,6 +3,8 @@ import spiderman as sp
 import spiderman._web as _web
 import spiderman.plot as splt
 import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+import math
 
 class MultiModelParams(object):
 	def __init__(self,brightness_models=['zhang','lambertian'],**kwargs):
@@ -417,6 +419,87 @@ class ModelParams(object):
 		out = _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),0, filter[0], filter[1], n_wvls,use_filter,self.grid[0],self.grid[1],self.grid[2])[0] - _web.lightcurve(self.n_layers,t,0.0,1.0,self.a_abs,self.inc,0.0,0.0,self.a,self.rp,self.p_u1,self.p_u2,self.brightness_type,brightness_params,teffs,totals,len(totals),1, filter[0], filter[1], n_wvls,use_filter,self.grid[0],self.grid[1],self.grid[2])[0]
 
 		return np.array(out)
+
+	def avg_day(self,**kwargs):
+		return self.avg_region([-np.pi/2,np.pi/2],[-np.pi/2,np.pi/2],**kwargs)
+
+	def avg_night(self,**kwargs):
+		return self.avg_region([-np.pi/2,np.pi/2],[-np.pi/2 - np.pi,np.pi/2  - np.pi],**kwargs)
+
+	def avg_planet(self,**kwargs):
+		return self.avg_region([-np.pi/2,np.pi/2],[-np.pi,np.pi],**kwargs)
+
+	def avg_region(self,la_lim,lo_lim,nla=100,nlo=100,stellar_grid=False,reflection=False,temp_map=True):
+
+		las = np.linspace(la_lim[0],la_lim[1],nla)
+		los = np.linspace(lo_lim[0],lo_lim[1],nlo)
+
+		for i in range(0,len(los)):
+			if los[i] > np.pi:
+				los[i] -= 2*np.pi
+			if los[i] < -np.pi:
+				los[i] += 2*np.pi
+
+		tot_flux = 0.0
+		tot_weight = 0.0
+
+		for la in las:
+			weight = np.cos(la)
+			for lo in los:
+				flux = sp.call_map_model(self,la,lo)
+				if temp_map == False:
+					tot_flux += weight*flux[0]
+				else:
+					tot_flux += weight*flux[1]
+				tot_weight += weight
+		avg = tot_flux/tot_weight
+
+		return avg
+
+	def max_temp(self,**kwargs):
+		return(self.find_temp([0.1,0.0],-1,**kwargs))
+
+	def min_temp(self,**kwargs):
+		return(self.find_temp([0.1,np.pi],1,**kwargs))
+
+	def find_temp(self,p0,sign,stellar_grid=False,reflection=False,temp_map=True):
+
+		out = minimize(self.find_func,p0,method='L-BFGS-B',bounds=((-np.pi/2,np.pi/2),(None,None)),args=(sign,temp_map))
+
+		p = out['x']
+
+		if p[1] > np.pi:
+			revs = math.ceil(abs(p[1]/(2*np.pi)))
+			p[1] -= revs*2*np.pi
+		if p[1] < -np.pi:
+			revs = (math.ceil(abs(p[1]/(2*np.pi))))-1
+			p[1] += revs*2*np.pi
+
+		flux = sp.call_map_model(self,p[0],p[1])
+
+		if temp_map == True:
+			f = flux[1]
+		else:
+			f = flux[0]
+
+		return(f,out['x']*180/np.pi)
+
+	def find_func(self,x,sign,temp_map):
+
+		if x[1] > np.pi:
+			revs = math.ceil(abs(x[1]/(2*np.pi)))
+			x[1] -= revs*2*np.pi
+		if x[1] < -np.pi:
+			revs = (math.ceil(abs(x[1]/(2*np.pi))))-1
+			x[1] += revs*2*np.pi
+
+		flux = sp.call_map_model(self,x[0],x[1])
+
+		if temp_map == True:
+			return sign*flux[1]
+		else:
+			return sign*flux[0]
+
 
 	def total_luminosity(self,planet_radius,stellar_grid=False,reflection=False):
 		p1,p2 = self.phase_brightness([0,0.5],stellar_grid=stellar_grid,reflection=reflection,planet_radius=planet_radius)

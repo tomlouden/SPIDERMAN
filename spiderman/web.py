@@ -7,8 +7,11 @@ def get_filter(response):
 	filter_responses = []
 	for line in open(response,'r'):
 		l = line.strip('\n').split(' ')
-		filter_wvls += [float(l[0])]
-		filter_responses += [float(l[1])]
+		wvl = float(l[0])
+		filter_wvls += [wvl]
+		# dividing by the factor of wvl makes the response proportional 
+		# to units of energy density instead of photon number
+		filter_responses += [float(l[1]) / wvl]
 	filter_wvls = np.array(filter_wvls)
 	filter_responses = np.array(filter_responses)
 	filter = [filter_wvls,filter_responses]
