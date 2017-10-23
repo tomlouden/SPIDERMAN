@@ -5,8 +5,8 @@ When calculating broadband phase curves, either for observations through a filte
 
 .. code-block:: python
 
-	spider_params.filter = 'myfilter.txt'		# The stellar effective temperature in K
+	spider_params.filter = 'myfilter.txt'
 
-This filter file must be a plain text file that consists of two columns, the wavelength in metres and the corresponding instument response value (typically a number between 0 and 1). The code will then convolve the given filter function with the fluxes when calculating physical models with grids of blackbodies or stellar model spectra. Spiderman will linearly interpolate between the provided wavelength points. 
+This filter file must be a plain text file that consists of two columns, the wavelength in metres and the corresponding instument response value (typically a number between 0 and 1) and must be in units of counts per photon. The code will then convolve the given filter function with the fluxes when calculating physical models with grids of blackbodies or stellar model spectra. Spiderman will linearly interpolate between the provided wavelength points. 
 
 If the filter function is too course, or if it contains a very sharply varying response then the results may not be accurate. In these cases it may be necessary to modify the "n_bb_seg" parameter in the lightcurve function, for which the default is 100.
