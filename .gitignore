@@ -12,5 +12,6 @@ dist/
 *.ipynb_checkpoints
 *~
 out
+.pypirc
 dist/*
 dist
