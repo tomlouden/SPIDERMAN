@@ -11,7 +11,7 @@ def get_filter(response):
 		filter_wvls += [wvl]
 		# dividing by the factor of wvl makes the response proportional 
 		# to units of energy density instead of photon number
-		filter_responses += [float(l[1]) * wvl]
+		filter_responses += [float(l[1]) / wvl]
 	filter_wvls = np.array(filter_wvls)
 	filter_responses = np.array(filter_responses)
 	filter = [filter_wvls,filter_responses]
