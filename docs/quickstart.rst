@@ -57,6 +57,7 @@ Since this uses model spectra, it is necessary to specify the bandpass with thes
 	spider_params.l1 = 1.1e-6	# The starting wavelength in meters
 	spider_params.l2 = 1.7e-6	# The ending wavelength in meters
 
+.. warning:: SPIDERMAN calculates ratios in flux density assuming a response function that is uniform in *energy flux*. If you want a response uniform in photon counts you must define a instrument response function (see Instrument Response section).
 
 Now, define the times you wish the model to be evaluated at, let's do a single full orbit:
 
