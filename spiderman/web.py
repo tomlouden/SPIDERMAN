@@ -74,7 +74,7 @@ def call_map_model(spider_params,la,lo):
 	# DEPRECATED - NOT CURRENTLY USED BY HIGHER LEVEL FUNCTIONS, NEEDS UPDATING
 
 	brightness_params = spider_params.format_bright_params()
-	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params,copoy.copy(spider_params.grid[0]),copy.copy(spider_params.grid),copy.copy(spider_params.grid[2])))
+	return np.array(_web.call_map_model(la,lo,spider_params.brightness_type,brightness_params,copy.copy(spider_params.grid[0]),copy.copy(spider_params.grid),copy.copy(spider_params.grid[2])))
 
 def blocked(n_layers,x2,y2,r2):
 	return _web.blocked(n_layers,x2,y2,r2)
