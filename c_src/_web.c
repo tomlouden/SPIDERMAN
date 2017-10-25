@@ -340,7 +340,6 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
     }
     double *stellar_fluxes    = (double*)PyArray_DATA(flux_array);
 
-
     /* NEED TO GENERATE THE GRID HERE */
     double **bb_g;
     double *ypp;
@@ -356,7 +355,6 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
 
     star_bright = 1.0;
     star_surface_bright = star_bright/(M_PI*pow(r2,2));
-
 
     if(bright_type == 1 || bright_type == 3 || bright_type == 4|| bright_type == 6 ||  bright_type == 8 || bright_type == 10 || bright_type == 11 || bright_type == 12  || bright_type == 14){
         l1 = brightness_params[1];
@@ -396,7 +394,6 @@ static PyObject *web_generate_planet(PyObject *self, PyObject *args)
             star_bright = star_surface_bright*M_PI*pow(r2,2);
         }
     }
-
 
     int nearest = 0;
 

@@ -331,6 +331,7 @@ double **generate_planet(int n_layers){
       // each i-th pointer is now pointing to dynamic array (size 10) of actual int values
     }
 
+
     central = M_PI*pow((1.0/n_layers),2);
 
     s_r = (1.0/n_layers);
