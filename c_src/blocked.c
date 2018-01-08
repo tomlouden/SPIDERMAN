@@ -19,8 +19,6 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
     double total_blocked=0.0;
     double **crosses;
 
-    printf("blocked starting\n");
-
     // planet parameters
 
     x1 = 0;
@@ -1020,11 +1018,110 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
             }
 
+            else if(((n_inner == 2) && (n_outer == 2) && (n_first == 0) && (n_second == 2)) || ((n_inner == 2) && (n_outer == 2) && (n_first == 2) && (n_second == 0))){
+
+                double e1[2];
+                double e2[2];
+                double e3[2];
+                double e4[2];
+
+                double oc1[2];
+                double oc2[2];
+                double ic1[2];
+                double ic2[2];
+                double fc1[2];
+                double fc2[2];
+                double sc1[2];
+                double sc2[2];
+
+                double lx1[2];
+                double lx2[2];
+
+                if(n_first == 2){
+                	if(first_line[4] < first_line[5]){
+	                    lx1[0] = first_line[0];
+	                    lx1[1] = first_line[1];
+	                    lx2[0] = first_line[2];
+	                    lx2[1] = first_line[3];
+	                }
+	                else{
+	                    lx2[0] = first_line[0];
+	                    lx2[1] = first_line[1];
+	                    lx1[0] = first_line[2];
+	                    lx1[1] = first_line[3];
+	                   }
+                }
+                else if(n_second == 2){
+                	if(second_line[4] < second_line[5]){
+	                    lx1[0] = second_line[0];
+	                    lx1[1] = second_line[1];
+	                    lx2[0] = second_line[2];
+	                    lx2[1] = second_line[3];
+	                }
+	                else{
+	                    lx2[0] = second_line[0];
+	                    lx2[1] = second_line[1];
+	                    lx1[0] = second_line[2];
+	                    lx1[1] = second_line[3];
+	                   }
+                }
+                else{
+                    printf("SOMETHING WRONG\n");
+                    return 0;
+                }
+
+                double er1 = sqrt(pow(outer_cross[0]-lx2[0],2) + pow(outer_cross[1]-lx2[1],2));
+                double er2 = sqrt(pow(outer_cross[2]-lx2[0],2) + pow(outer_cross[3]-lx2[1],2));
+
+                if(er1 < er2){
+                    oc1[0]=outer_cross[0];
+                    oc1[1]=outer_cross[1];
+                    oc2[0]=outer_cross[2];
+                    oc2[1]=outer_cross[3];
+                }
+                else{
+                    oc1[0]=outer_cross[2];
+                    oc1[1]=outer_cross[3];
+                    oc2[0]=outer_cross[0];
+                    oc2[1]=outer_cross[1];
+                }
+
+                er1 = sqrt(pow(inner_cross[0]-lx1[0],2) + pow(inner_cross[1]-lx1[1],2));
+                er2 = sqrt(pow(inner_cross[2]-lx1[0],2) + pow(inner_cross[3]-lx1[1],2));
+
+                if(er1 < er2){
+                    ic1[0]=inner_cross[0];
+                    ic1[1]=inner_cross[1];
+                    ic2[0]=inner_cross[2];
+                    ic2[1]=inner_cross[3];
+                }
+                else{
+                    ic1[0]=inner_cross[2];
+                    ic1[1]=inner_cross[3];
+                    ic2[0]=inner_cross[0];
+                    ic2[1]=inner_cross[1];
+                }
+
+                double a_1 = find_quad_area(ic1,ic2,oc1,oc2);
+
+                double a_2 = find_segment_area(oc1,oc2,0.0,0.0,planet[k][14]);
+                double a_3 = find_segment_area(ic1,ic2,0.0,0.0,planet[k][13]);
+
+
+                double a_4 = find_segment_area(ic2,oc2,x2,y2,r2);
+                double a_5 = find_segment_area(ic1,oc1,x2,y2,r2);
+                double a_6 = find_segment_area(lx1,lx2,x2,y2,r2);
+
+                double area = (a_1 + a_2 - a_3 + a_4  + a_5 - a_6);
+
+                total_blocked = total_blocked + area*planet[k][16];
+
+
+            }
+
             else if(((n_inner == 1) && (n_outer == 2) && (n_first == 1) && (n_second == 0)) || ((n_inner == 1) && (n_outer == 2) && (n_first == 0) && (n_second == 1))){
 
                 // A case only relevent to small star cases.
-
-            	printf('hello');
 
                 double e1[2];
                 double e2[2];
@@ -1095,12 +1192,11 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
 
             else{
-                printf("UNKNOWN CASE\n");
-//                printf("NEW UNKNOWN CASE: n_first %i n_second %i n_inner %i n_outer %i \n", n_first, n_second, n_inner, n_outer);
+                printf("UNKNOWN CASE: n_first %i n_second %i n_inner %i n_outer %i \n", n_first, n_second, n_inner, n_outer);
                 return 0;
             }
 
-//			  DBUG
+//			  DEBUG
 //            double simple_fit = find_circles_region(x1,y1,planet[k][14],x2,y2,r2)/M_PI;
 
     //        printf("total_blocked %f\n",total_blocked);
