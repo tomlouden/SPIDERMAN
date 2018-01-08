@@ -1028,6 +1028,8 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
                 double e1[2];
                 double e2[2];
+                double c1[2];
+                double c2[2];
 
 
                 if(n_first == 1){
@@ -1071,16 +1073,16 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
                 double cd1 = sqrt(pow(outer_cross[0]-e2[0],2) + pow(outer_cross[1]-e2[1],2));
                 double cd2 = sqrt(pow(outer_cross[2]-e2[0],2) + pow(outer_cross[3]-e2[1],2));
                 if(cd1 < cd2){
-	                double c1[0]=outer_cross[0];
-	                double c1[1]=outer_cross[1];
-	                double c2[0]=outer_cross[2];
-	                double c2[1]=outer_cross[3];
+	                c1[0]=outer_cross[0];
+	                c1[1]=outer_cross[1];
+	                c2[0]=outer_cross[2];
+	                c2[1]=outer_cross[3];
                 }
                 else{
-	                double c2[0]=outer_cross[0];
-	                double c2[1]=outer_cross[1];
-	                double c1[0]=outer_cross[2];
-	                double c1[1]=outer_cross[3];
+	                c2[0]=outer_cross[0];
+	                c2[1]=outer_cross[1];
+	                c1[0]=outer_cross[2];
+	                c1[1]=outer_cross[3];
                 }
 
                 double aa = 0.0;
