@@ -30,7 +30,7 @@ double one_edge_two_outer_one_inner(double *c1,double *c2,double *c3, double *e1
     a_6 = find_segment_area(e2,c3,0,0,r_inner);
 
 
-    area = a_1 + a_2 +a_3 + a_4 + a_5 - a_6
+    area = a_1 + a_2 +a_3 + a_4 + a_5 - a_6;
 
     return area;
 
