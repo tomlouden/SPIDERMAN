@@ -1018,8 +1018,81 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
             }
 
+            else if(((n_inner == 1) && (n_outer == 2) && (n_first == 1) && (n_second == 0)) || ((n_inner == 1) && (n_outer == 2) && (n_first == 0) && (n_second == 1))){
+
+                // A case only relevent to small star cases.
+
+            	printf('hello');
+
+                double e1[2];
+                double e2[2];
+
+
+                if(n_first == 1){
+                    e1[0] = single_first[0];
+                    e1[1] = single_first[1];
+                }
+                else{
+                    e1[0] = single_second[0];
+                    e1[1] = single_second[1];
+                }
+
+
+                // which of the corner points is inside?
+                double er1 = sqrt(pow(planet[k][0]-x2,2) + pow(planet[k][1]-y2,2));
+                double er2 = sqrt(pow(planet[k][5]-x2,2) + pow(planet[k][6]-y2,2));
+                double er3 = sqrt(pow(planet[k][2]-x2,2) + pow(planet[k][3]-y2,2));
+                double er4 = sqrt(pow(planet[k][7]-x2,2) + pow(planet[k][8]-y2,2));
+                if(er1 < r2){
+                    e2[0] = planet[k][0];
+                    e2[1] = planet[k][1];
+                }
+                else if(er2 < r2){
+                    e2[0] = planet[k][5];
+                    e2[1] = planet[k][6];
+                }
+                else if(er3 < r2){
+                    e2[0] = planet[k][2];
+                    e2[1] = planet[k][3];
+                }
+                else if(er4 < r2){
+                    e2[0] = planet[k][7];
+                    e2[1] = planet[k][8];
+                }
+                else{
+                    printf("SOMETHING WRONG\n");
+                    return 0;
+                }
+
+                // sort the outer cross points so that c1 is the one closest to the covered corner
+
+                double cd1 = sqrt(pow(outer_cross[0]-e2[0],2) + pow(outer_cross[1]-e2[1],2));
+                double cd2 = sqrt(pow(outer_cross[2]-e2[0],2) + pow(outer_cross[3]-e2[1],2));
+                if(cd1 < cd2){
+	                c1[0]=outer_cross[0];
+	                c1[1]=outer_cross[1];
+	                c2[0]=outer_cross[2];
+	                c2[1]=outer_cross[3];
+                }
+                else{
+	                c2[0]=outer_cross[0];
+	                c2[1]=outer_cross[1];
+	                c1[0]=outer_cross[2];
+	                c1[1]=outer_cross[3];
+                }
+
+                double aa = 0.0;
+                aa = one_edge_two_outer_one_inner(c1,c2,single_inner,e1,e2,planet[k][13],planet[k][14],r2,x2,y2);
+
+                aa = aa*planet[k][16];
+
+                total_blocked = total_blocked + aa;
+            }
+
+
             else{
                 printf("UNKNOWN CASE\n");
+//                printf("NEW UNKNOWN CASE: n_first %i n_second %i n_inner %i n_outer %i \n", n_first, n_second, n_inner, n_outer);
                 return 0;
             }
 

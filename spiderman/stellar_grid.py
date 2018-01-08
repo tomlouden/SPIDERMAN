@@ -18,7 +18,7 @@ def gen_grid(l1,l2,logg=4.5,response=False):
 
 	warned = False
 
-	filter = False
+	filter = response
 	if response != False:
 		filter = spiderman.get_filter(response)
 

@@ -10,6 +10,33 @@
     #define M_PI 3.14159265358979323846
 #endif
 
+double one_edge_two_outer_one_inner(double *c1,double *c2,double *c3, double *e1,double *e2,double r_inner,double r_outer,double r2,double x2,double y2){
+    // e1 is the edge crossing point
+    // e2 is the covered corner
+    // c1 is the outer crossing point closest to e2
+    // c2 is the other outer crossing point
+    // c3 is the inner crossing point
+    double area;
+    double a_1, a_2, a_3;
+    double a_4, a_5, a_6;
+
+    a_1 = find_quad_area(c1,c2,c3,e2);
+    a_2 = find_triangle_area(e1,e2,c1);
+
+    a_3 = find_segment_area(c2,c3,x2,y2,r2);
+    a_4 = find_segment_area(e1,c1,x2,y2,r2);
+
+    a_5 = find_segment_area(c1,c2,0,0,r_outer);
+    a_6 = find_segment_area(e2,c3,0,0,r_inner);
+
+
+    area = a_1 + a_2 +a_3 + a_4 + a_5 - a_6
+
+    return area;
+
+
+}
+
 double two_inner_two_edges_a(double *c1,double *c2,double *e1,double *e2,double *e3,double *e4,double r_inner,double r_outer,double x2,double y2,double r2,double total_area){
     double a_1,a_2,a_3,a_4,a_5,a_6,area;
     double *first_c, *second_c;

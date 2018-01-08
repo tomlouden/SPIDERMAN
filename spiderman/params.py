@@ -93,10 +93,11 @@ class ModelParams(object):
 
 		elif brightness_model == 'kreidberg':
 			self.brightness_type= 6 # Integer model identifer
-			self.insol = None               # insolation in W/m^2
-			self.albedo = None              # albedo
-			self.redist = None              # fraction of incident energy redistributed to the night-side
-			self.T_s = None
+#			self.insol = None               # insolation in W/m^2
+#			self.albedo = None              # albedo
+#			self.redist = None              # fraction of incident energy redistributed to the night-side
+#			self.T_s = None
+			self.thermal = True
 
 		elif brightness_model == 'hotspot_b':
 			self.brightness_type= 7 # Integer model identifer
@@ -429,7 +430,7 @@ class ModelParams(object):
 	def avg_planet(self,**kwargs):
 		return self.avg_region([-np.pi/2,np.pi/2],[-np.pi,np.pi],**kwargs)
 
-	def avg_region(self,la_lim,lo_lim,nla=100,nlo=100,stellar_grid=False,reflection=False,temp_map=True):
+	def avg_region(self,la_lim,lo_lim,nla=100,nlo=100,stellar_grid=False,reflection=False,temp_map=True,pweight=1):
 
 		las = np.linspace(la_lim[0],la_lim[1],nla)
 		los = np.linspace(lo_lim[0],lo_lim[1],nlo)
@@ -450,9 +451,11 @@ class ModelParams(object):
 				if temp_map == False:
 					tot_flux += weight*flux[0]
 				else:
-					tot_flux += weight*flux[1]
+					tot_flux += weight*(flux[1]**pweight)
 				tot_weight += weight
 		avg = tot_flux/tot_weight
+
+		avg = avg**(1.0/pweight)
 
 		return avg
 
