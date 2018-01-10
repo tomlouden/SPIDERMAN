@@ -20,7 +20,7 @@ double one_edge_two_outer_one_inner(double *c1,double *c2,double *c3, double *e1
     double a_1, a_2, a_3;
     double a_4, a_5, a_6;
 
-    a_1 = find_quad_area(c1,c2,c3,e2);
+    a_1 = find_quad_area(e2,c3,c1,c2);
     a_2 = find_triangle_area(e1,e2,c1);
 
     a_3 = find_segment_area(c2,c3,x2,y2,r2);

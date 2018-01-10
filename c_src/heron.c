@@ -36,6 +36,9 @@ double find_triangle_area(double *a,double *b,double *c){
 double find_quad_area(double *a,double *b,double *c,double *d){
 	double cross_term,s1,s2,s3,s4,area1,area2,area;
 
+    // carefull when defining something with this function,
+    // a and d must be *opposite* corners for it to work
+
     cross_term = sqrt(pow(a[0]-d[0],2) + pow(a[1]-d[1],2));
     
     s1 = sqrt(pow(a[0]-b[0],2) + pow(a[1]-b[1],2));
