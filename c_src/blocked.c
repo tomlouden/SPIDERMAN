@@ -1192,7 +1192,7 @@ double blocked(double **planet, int n_layers, double x2, double y2, double r2){
 
 
             else{
-                printf("UNKNOWN CASE: n_first %i n_second %i n_inner %i n_outer %i \n", n_first, n_second, n_inner, n_outer);
+                printf("UNKNOWN CASE: n_first %i n_second %i n_inner %i n_outer %i star x %f star y %f star r %f \n", n_first, n_second, n_inner, n_outer, x2, y2, r2);
                 return 0;
             }
 
