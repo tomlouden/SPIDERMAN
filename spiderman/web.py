@@ -40,18 +40,15 @@ def circle_intersect(x1,y1,r1,x2,y2,r2):
 def line_intersect(x1,y1,x2,y2,r2):
 	return _web.line_intersect(x1,y1,x2,y2,r2)
 
-def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5):
-
-
+def generate_planet(spider_params,t,use_phase=False,stellar_grid=False,logg=4.5, stellar_model = "blackbody"):
 	if use_phase == True:
 		t = spider_params.t0 + spider_params.per*t
 	brightness_params = spider_params.format_bright_params()
 
-
 	if spider_params.thermal == True:
 		if ((spider_params.brightness_type == 9) or (spider_params.brightness_type == 10)):
 			if stellar_grid == False:
-				star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter)
+				star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter, stellar_model = stellar_model)
 				teffs = star_grid[0]
 				totals = star_grid[1]
 			else:
@@ -91,12 +88,11 @@ def lightcurve(t,spider_params,stellar_grid=False,logg=4.5,use_phase=False):
 	if use_phase == True:
 		t = spider_params.t0 + spider_params.per*t
 
-
 	brightness_params = spider_params.format_bright_params()
 
 	if spider_params.thermal == True:
 		if stellar_grid == False:
-			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter)
+			star_grid = sp.stellar_grid.gen_grid(spider_params.l1,spider_params.l2,logg=logg,response=spider_params.filter, stellar_model = spider_params.stellar_model)
 			teffs = star_grid[0]
 			totals = star_grid[1]
 		else:
