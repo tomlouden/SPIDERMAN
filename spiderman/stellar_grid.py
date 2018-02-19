@@ -6,13 +6,13 @@ import numpy as np
 import spiderman
 from scipy.interpolate import interp1d
 
-def gen_grid(l1,l2,logg=4.5,response=False):
-
+def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody"):
+        #options for stellar models are "blackbody", "PHOENIX", and "path_to_model"
 	z = -0.0
 
-	h =6.62607004e-34;
-	c =299792458.0;
-	kb =1.38064852e-23;
+	h =6.62607004e-34;          #m^2/kg/s
+	c =299792458.0;             #m/s
+	kb =1.38064852e-23;         #m^2 kg /s^2 K
 
 	teffs = [2500,3000,3500,4000,4500,5000,5500,6000,6500,7000]
 
@@ -24,7 +24,8 @@ def gen_grid(l1,l2,logg=4.5,response=False):
 
 	totals = []
 	for teff in teffs:
-		if spiderman.rcParams.read == True:
+		if stellar_model == "PHOENIX":
+                        if spiderman.rcParams.read == False: print('Add path to PHOENIX models to .spidermanrc file')
 			wvl, flux = get_phoenix_spectra(teff,logg,z)
 			PHOENIX_DIR = spiderman.rcParams['PHOENIX_DIR']
 
@@ -39,12 +40,26 @@ def gen_grid(l1,l2,logg=4.5,response=False):
 				b_wvl = np.linspace(l1,l2,1000)
 				b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
 				totals += [sum_flux(b_wvl,b_flux,l1,l2,filter)]
-		else:
+                elif stellar_model == "blackbody":
 			if warned == False:
 				print('no stellar models provided, using blackbody approximation')
 			b_wvl = np.linspace(l1,l2,1000)
-			b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
+                        b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));       #SI units: W/sr/m^3
 			totals += [sum_flux(b_wvl,b_flux,l1,l2,filter)]
+                else:
+                        if os.path.isfile(stellar_model):
+                            spectrum = np.genfromtxt(stellar_model)
+                            wvl, flux = spectrum[:,0], spectrum[:,1] 
+                        else: print "Model stellar spectrum file", stellar_model, "not found"
+
+			if ( ((l1 > np.min(wvl)) & (l1 < np.max(wvl))) & ((l2 > np.min(wvl)) & (l2 < np.max(wvl) )) ):
+				totals += [sum_flux(wvl,flux,l1,l2,filter)]
+			else:
+				if warned == False:
+					print('wavelengths out of bound for stellar model, using blackbody approximation')
+				b_wvl = np.linspace(l1,l2,1000)
+				b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
+				totals += [sum_flux(b_wvl,b_flux,l1,l2,filter)]
 		warned = True
 
 

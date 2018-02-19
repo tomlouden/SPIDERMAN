@@ -21,7 +21,7 @@ class MultiModelParams(object):
 
 
 class ModelParams(object):
-	def __init__(self,brightness_model='zhang',thermal=False, nearest=None):
+	def __init__(self,brightness_model='zhang',thermal=False, nearest=None, stellar_model = 'blackbody'):
 
 		self.n_layers = 5			# The default resolution for the grid
 
@@ -37,9 +37,9 @@ class ModelParams(object):
 		self.p_u2= None				# **PLANETARY** limb darkening coefficients [-]
 		self.eclipse = True			# specifies whether to include the drop in flux due to the eclipse
 		self.filter = False			# Can use an external response file.
+                self.stellar_model = stellar_model                # Specifies which stellar model to use (blackbody, PHOENIX, custom)
 		self.grid = [[],[],[[]]]			# needed in case the "direct read" method is wanted
 		self.nearest = nearest         # used for choosing which interpolation model to use - default is spline
-
 
 		if brightness_model == 'uniform brightness':
 			self.n_layers = 1		# The default resolution for the grid
@@ -373,7 +373,7 @@ class ModelParams(object):
 
 		if self.thermal == True:
 			if stellar_grid == False:
-				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter)
+				star_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter, stellar_model = self.stellar_model)
 				teffs = star_grid[0]
 				totals = star_grid[1]
 			else:
@@ -513,7 +513,7 @@ class ModelParams(object):
 
 		if self.thermal == True:
 			if stellar_grid == False:
-				stellar_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter)
+				stellar_grid = sp.stellar_grid.gen_grid(self.l1,self.l2,logg=4.5,response=self.filter, stellar_model = self.stellar_model)
 				teffs = stellar_grid[0]
 				totals = stellar_grid[1]
 			else:
