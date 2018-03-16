@@ -6,7 +6,7 @@ import numpy as np
 import spiderman
 from scipy.interpolate import interp1d
 
-def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody"):
+def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody", verbose=False):
         #options for stellar models are "blackbody", "PHOENIX", and "path_to_model"
 	z = -0.0
 
@@ -41,7 +41,7 @@ def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody"):
 				b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));
 				totals += [sum_flux(b_wvl,b_flux,l1,l2,filter)]
                 elif stellar_model == "blackbody":
-			if warned == False:
+			if warned == False and verbose:
 				print('no stellar models provided, using blackbody approximation')
 			b_wvl = np.linspace(l1,l2,1000)
                         b_flux = (2.0*h*(c**2)/(b_wvl**5))*(1.0/( np.exp( (h*c)/(b_wvl*kb*teff) )- 1.0));       #SI units: W/sr/m^3
