@@ -14,7 +14,7 @@ import numpy as np
 import spiderman
 from scipy.interpolate import interp1d
 
-def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody"):
+def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody", verbose=False):
         #options for stellar models are "blackbody", "PHOENIX", and "path_to_model"
     z = -0.0
 
