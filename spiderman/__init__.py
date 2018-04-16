@@ -10,7 +10,7 @@ class RcParams(object):
 			print('looking for spidermanrc file at '+param_file)
 			for line in open(param_file):
 				key = line.split(':')[0].replace(' ','')
-				cval = line.split(':')[1].replace(' ','')
+				cval = line.split(':')[1].replace(' ','').replace('\n','')
 				self.dict[key] = cval
 			RcParams.read = True
 		except:
