@@ -243,7 +243,7 @@ def plot_dist(spider_params,temps,ax=False,min_temp=False,max_temp=False,temp_ma
 		ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 
 
-	ax.set_axis_bgcolor(bg)
+	ax.set_facecolor(bg)
 
 	if show_axes == False:
 		ax.spines['bottom'].set_color(bg)
@@ -347,7 +347,7 @@ def plot_defined_planet(planet,ax=False,min_temp=False,max_temp=False,temp_map=F
 		ax.fill(np.ravel(xs), np.ravel(ys), edgecolor=c,color=c,zorder=2)
 
 
-	ax.set_axis_bgcolor(bg)
+	ax.set_facecolor(bg)
 
 	if show_axes == False:
 		ax.spines['bottom'].set_color(bg)
@@ -444,7 +444,7 @@ def plot_square(spider_params,ax=False,min_temp=False,max_temp=False,temp_map=Fa
 	ax.set_xlabel('longitude',color=tc)
 	ax.set_ylabel('latitude',color=tc)
 
-	ax.set_axis_bgcolor(bg)
+	ax.set_facecolor(bg)
 	if show_axes == False:
 		ax.spines['bottom'].set_color(bg)
 		ax.spines['left'].set_color(bg)
@@ -595,7 +595,7 @@ def plot_planet(spider_params,t,ax=False,min_temp=False,max_temp=False,temp_map=
 
 
 
-	ax.set_axis_bgcolor(bg)
+	ax.set_facecolor(bg)
 
 	if show_axes == False:
 		ax.spines['bottom'].set_color(bg)
@@ -838,7 +838,7 @@ def make_movie():
 		else:
 			s_zorder = 3
 
-		ax1.set_axis_bgcolor('black')
+		ax1.set_facecolor('black')
 
 		ax1.set_xlim(star_offset_pix+40*p_imrat,star_offset_pix+-40*p_imrat)
 		ax1.set_ylim(star_offset_pix+-10*p_imrat,star_offset_pix+10*p_imrat)
@@ -851,9 +851,9 @@ def make_movie():
 		patch = patches.Circle((200, 200), radius=200, transform=ax1.transData)
 		im.set_clip_path(patch)
 
-		ax1.set_axis_bgcolor('black')
-		ax2.set_axis_bgcolor('black')
-		ax3.set_axis_bgcolor('black')
+		ax1.set_facecolor('black')
+		ax2.set_facecolor('black')
+		ax3.set_facecolor('black')
 
 		ax1.spines['bottom'].set_color("black")
 		ax1.spines['left'].set_color("black")
