@@ -221,7 +221,7 @@ double zhang_2016(double lat, double lon, double xi, double T_n, double delta_T)
 
     double lambda_s = 0.;
 
-    if(xi < 0.01){
+    if(fabs(xi) < 0.01){
 	    if((-M_PI/2.0 <= lambda) && (lambda <= M_PI/2.0)){
 		T = T_n + delta_T*cos(phi)*cos(lambda_s)*cos(lambda-lambda_s);
 	    }
