@@ -1,3 +1,4 @@
+import setuptools
 from distutils.core import setup, Extension
 import numpy.distutils.misc_util
 import numpy as np
@@ -22,6 +23,7 @@ setup(	name='spiderman-package',
 		],
 	include_dirs = [np.get_include()],
 	install_requires = ['numpy'],
+	setup_requires=['wheel'],
 	ext_modules=[_web],
 	package_data = {'spiderman': ['art/*','test_data/*']},
 )

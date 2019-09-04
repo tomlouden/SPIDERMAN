@@ -1,0 +1,15 @@
+Metadata-Version: 1.1
+Name: spiderman-package
+Version: 1.0.0
+Summary: Fast secondary eclipse and phase curve modeling
+Home-page: https://github.com/tomlouden/spiderman
+Author: Tom Louden
+Author-email: t.louden@warwick.ac.uk
+License: ['GNU GPLv3']
+Download-URL: https://github.com/tomlouden/spiderman/tarball/0.9.2
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Classifier: Programming Language :: Python
