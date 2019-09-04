@@ -6,7 +6,7 @@ _web = Extension("spiderman._web",["c_src/_web.c","c_src/heron.c","c_src/segment
 ], extra_compile_args = ["-std=c99"])
 
 setup(	name='spiderman-package', 
-	version="0.9.3",
+	version="1.0.0",
 	author='Tom Louden',
 	author_email = 't.louden@warwick.ac.uk',
 	url = 'https://github.com/tomlouden/spiderman',
