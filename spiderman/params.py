@@ -91,12 +91,20 @@ class ModelParams(object):
 			else:
 				self.brightness_type= 5	# Integer model identifier
 
-		elif brightness_model == 'kreidberg':
-			self.brightness_type= 6 # Integer model identifer
-			self.insol = None               # insolation in W/m^2
-			self.albedo = None              # albedo
-			self.redist = None              # fraction of incident energy redistributed to the night-side
-			self.T_s = None
+                elif brightness_model == 'Louden':
+                        self.brightness_type= 6 # Integer model identifer
+                        self.insol = None               # insolation in W/m^2
+                        self.albedo = None              # albedo
+                        self.redist = None              # fraction of incident energy redistributed to the night-side
+                        self.T_s = None
+                        self.T_int = None
+
+#		elif brightness_model == 'kreidberg':
+#			self.brightness_type= 6 # Integer model identifer
+#			self.insol = None               # insolation in W/m^2
+#			self.albedo = None              # albedo
+#			self.redist = None              # fraction of incident energy redistributed to the night-side
+#			self.T_s = None
 
 		elif brightness_model == 'hotspot_b':
 			self.brightness_type= 7 # Integer model identifer
@@ -211,10 +219,19 @@ class ModelParams(object):
 				print('You gave '+str(int(len(self.sph)))+', there should be '+str(int(total_modes)))
 				quit()
 
+#                elif (self.brightness_type == 6):
+#                        brightness_param_names = ['T_s','l1','l2','insol','albedo','redist']
+#                        try:
+#                                brightness_params = [self.T_s, self.l1, self.l2, self.insol, self.albedo, self.redist]
+#                        except:
+#                                print('Brightness parameters incorrectly assigned')
+#                                print('should be',brightness_param_names)
+#                                quit()
+
 		elif (self.brightness_type == 6):
-			brightness_param_names = ['T_s','l1','l2','insol','albedo','redist']
+			brightness_param_names = ['T_s','l1','l2','insol','albedo','redist','T_int']
 			try:
-				brightness_params = [self.T_s, self.l1, self.l2, self.insol, self.albedo, self.redist]
+				brightness_params = [self.T_s, self.l1, self.l2, self.insol, self.albedo, self.redist,self.T_int]
 			except:
 				print('Brightness parameters incorrectly assigned')
 				print('should be',brightness_param_names)

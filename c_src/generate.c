@@ -142,7 +142,9 @@ double *call_map_model(double la,double lo,double lambda0, double phi0,int brigh
        double insol = brightness_params[3];
        double albedo = brightness_params[4];
        double redist = brightness_params[5];
-       point_T = kreidberg_2016(la, lo, insol, albedo, redist);
+       double T_int = brightness_params[6];
+//       point_T = kreidberg_2016(la, lo, insol, albedo, redist);
+       point_T = Louden_2017(la,lo,insol,albedo,redist,T_int);
        point_b = bb_interp(point_T, bb_g); 
     }
 

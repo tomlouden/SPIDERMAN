@@ -7,5 +7,6 @@ double Two_T(double la, double lo, double p_day, double p_night);
 double zhang_2016(double lat, double lon, double zeta, double T_n, double delta_T);
 double spherical(double lat, double lon, double *a, int therm_flag);
 double kreidberg_2016(double lat, double lon, double insol, double albedo, double redist);
+double Louden_2017(double lat, double lon, double insol, double albedo, double redist,double T_int);
 double lambertian(double lat, double lon, double insol, double albedo);
 double great_circle(double la0,double lo0,double lambda0,double phi0,double r,double theta);
