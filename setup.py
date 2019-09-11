@@ -7,11 +7,11 @@ _web = Extension("spiderman._web",["c_src/_web.c","c_src/heron.c","c_src/segment
 ], extra_compile_args = ["-std=c99"])
 
 setup(	name='spiderman-package', 
-	version="1.0.0",
+	version="1.0.3",
 	author='Tom Louden',
 	author_email = 't.louden@warwick.ac.uk',
 	url = 'https://github.com/tomlouden/spiderman',
-	download_url = 'https://github.com/tomlouden/spiderman/tarball/0.9.2',
+	download_url = 'https://github.com/tomlouden/spiderman/tarball/1.0.2',
 	packages =['spiderman'],
 	license = ['GNU GPLv3'],
 	description ='Fast secondary eclipse and phase curve modeling',
@@ -27,3 +27,4 @@ setup(	name='spiderman-package',
 	ext_modules=[_web],
 	package_data = {'spiderman': ['art/*','test_data/*']},
 )
+

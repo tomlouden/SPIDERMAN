@@ -21,7 +21,7 @@ class MultiModelParams(object):
 
 
 class ModelParams(object):
-	def __init__(self,brightness_model='zhang',thermal=False, nearest=None):
+	def __init__(self,brightness_model='zhang',thermal=False, nearest=None,stellar_model="blackbody"):
 
 		self.n_layers = 5			# The default resolution for the grid
 
@@ -40,6 +40,7 @@ class ModelParams(object):
 		self.grid = [[],[],[[]]]			# needed in case the "direct read" method is wanted
 		self.nearest = nearest         # used for choosing which interpolation model to use - default is spline
 
+		self.stellar_model = stellar_model
 
 		if brightness_model == 'uniform brightness':
 			self.n_layers = 1		# The default resolution for the grid
@@ -91,13 +92,13 @@ class ModelParams(object):
 			else:
 				self.brightness_type= 5	# Integer model identifier
 
-                elif brightness_model == 'Louden':
-                        self.brightness_type= 6 # Integer model identifer
-                        self.insol = None               # insolation in W/m^2
-                        self.albedo = None              # albedo
-                        self.redist = None              # fraction of incident energy redistributed to the night-side
-                        self.T_s = None
-                        self.T_int = None
+		elif brightness_model == 'Louden':
+			self.brightness_type= 6 # Integer model identifer
+			self.insol = None               # insolation in W/m^2
+			self.albedo = None              # albedo
+			self.redist = None              # fraction of incident energy redistributed to the night-side
+			self.T_s = None
+			self.T_int = None
 
 #		elif brightness_model == 'kreidberg':
 #			self.brightness_type= 6 # Integer model identifer
