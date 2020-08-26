@@ -713,6 +713,13 @@ static PyObject *web_lightcurve(PyObject *self, PyObject *args)
     Py_DECREF(flux_array);
     Py_DECREF(bright_array);
 
+    /* Fixes memory leak */
+    Py_DECREF(response_array);
+    Py_DECREF(wvl_array);
+    for (int i = 0; i < 2; ++i) {
+        free(wvl_grid[i]);
+    }
+
     return pylist;
 }
 
