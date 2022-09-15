@@ -79,7 +79,7 @@ def gen_grid(l1,l2,logg=4.5, response = False, stellar_model = "blackbody", verb
 def sum_flux(wvl,flux,l1,l2,filter=False):
 
 
-    mask = [(wvl > l1) & (wvl < l2)]
+    mask = (wvl > l1) & (wvl < l2)
 
     diff = np.diff(wvl)
     diff = (np.append(diff,diff[-1:]) + np.append(diff[1:],diff[-2:]))/2
