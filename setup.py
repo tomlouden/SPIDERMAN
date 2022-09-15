@@ -13,7 +13,7 @@ setup(	name='spiderman-package',
 	url = 'https://github.com/tomlouden/spiderman',
 	download_url = 'https://github.com/tomlouden/spiderman/tarball/1.0.2',
 	packages =['spiderman'],
-	license = ['GNU GPLv3'],
+	license = 'GNU GPLv3',
 	description ='Fast secondary eclipse and phase curve modeling',
 	classifiers = [
 		'Development Status :: 4 - Beta',
